@@ -69,7 +69,7 @@ public class ObjectParameter extends Parameter {
      * Builder class for constructing ObjectParameter objects.
      */
     public static class ObjectParameterBuilder {
-
+        private ObjectParameterBuilder(){}
         private String name;
         private ParameterType type;
         private List<Parameter> parameters;

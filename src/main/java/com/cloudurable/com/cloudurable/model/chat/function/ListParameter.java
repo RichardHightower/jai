@@ -81,7 +81,7 @@ public class ListParameter extends Parameter {
      * Builder class for constructing ListParameter objects.
      */
     public static class ListParameterBuilder {
-
+        private ListParameterBuilder(){}
         private String name;
         private ParameterType type;
         private ParameterType elementType;

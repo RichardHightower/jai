@@ -119,6 +119,7 @@ public class Message {
      * Builder class for constructing Message objects.
      */
     public static class Builder {
+        private Builder(){}
         private Role role;
         private String content;
         private String name;

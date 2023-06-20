@@ -89,6 +89,7 @@ public class FunctionalCall {
      * Builder class for constructing FunctionalCall objects.
      */
     public static class Builder {
+        private Builder(){}
         private String name;
         private List<Argument<?>> arguments;
 

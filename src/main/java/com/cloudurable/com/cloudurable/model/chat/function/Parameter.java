@@ -88,6 +88,7 @@ public class Parameter {
      * Builder class for constructing Parameter objects.
      */
     public static class Builder {
+        private Builder(){}
         private String name;
         private ParameterType type;
 

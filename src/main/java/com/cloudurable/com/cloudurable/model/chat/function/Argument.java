@@ -93,6 +93,7 @@ public class Argument<T> {
      * @param <T> the type of the argument value
      */
     public static class Builder<T> {
+        private Builder() {}
         private ParameterType parameterType;
         private T value;
 

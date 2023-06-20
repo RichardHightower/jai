@@ -1,6 +1,27 @@
 package com.cloudurable.com.cloudurable.model.chat;
 
-/** Chat Role. */
+/**
+ * Represents the roles in a chat system.
+ */
 public enum Role {
-    SYSTEM, USER, ASSISTANT, FUNCTION;
+
+    /**
+     * The role representing the system.
+     */
+    SYSTEM,
+
+    /**
+     * The role representing a user.
+     */
+    USER,
+
+    /**
+     * The role representing an assistant.
+     */
+    ASSISTANT,
+
+    /**
+     * The role representing a function.
+     */
+    FUNCTION
 }
