@@ -22,6 +22,15 @@ public class FunctionalCall {
     }
 
     /**
+     * Returns a new Builder instance to construct a FunctionalCall object.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Gets the name of the function being called.
      *
      * @return the name of the function being called
@@ -77,21 +86,14 @@ public class FunctionalCall {
     }
 
     /**
-     * Returns a new Builder instance to construct a FunctionalCall object.
-     *
-     * @return a new Builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder class for constructing FunctionalCall objects.
      */
     public static class Builder {
-        private Builder(){}
         private String name;
         private List<Argument<?>> arguments;
+
+        private Builder() {
+        }
 
         /**
          * Sets the name of the function being called.

@@ -23,6 +23,15 @@ public class ObjectParameter extends Parameter {
     }
 
     /**
+     * Returns a new ObjectParameterBuilder instance to construct an ObjectParameter object.
+     *
+     * @return a new ObjectParameterBuilder instance
+     */
+    public static ObjectParameterBuilder objectParamBuilder() {
+        return new ObjectParameterBuilder();
+    }
+
+    /**
      * Gets the list of parameters for the object parameter.
      *
      * @return the list of parameters for the object parameter
@@ -57,22 +66,15 @@ public class ObjectParameter extends Parameter {
     }
 
     /**
-     * Returns a new ObjectParameterBuilder instance to construct an ObjectParameter object.
-     *
-     * @return a new ObjectParameterBuilder instance
-     */
-    public static ObjectParameterBuilder objectParamBuilder() {
-        return new ObjectParameterBuilder();
-    }
-
-    /**
      * Builder class for constructing ObjectParameter objects.
      */
     public static class ObjectParameterBuilder {
-        private ObjectParameterBuilder(){}
         private String name;
         private ParameterType type;
         private List<Parameter> parameters;
+
+        private ObjectParameterBuilder() {
+        }
 
         /**
          * Sets the name of the object parameter.

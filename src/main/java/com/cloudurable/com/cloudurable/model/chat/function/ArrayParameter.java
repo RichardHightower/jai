@@ -5,20 +5,29 @@ import java.util.Objects;
 /**
  * Represents a list parameter in a chat system.
  */
-public class ListParameter extends Parameter {
+public class ArrayParameter extends Parameter {
 
-    private final ParameterType type;
+    private final ParameterType elementType;
 
     /**
      * Constructs a new ListParameter object.
      *
-     * @param name the name of the list parameter
-     * @param type the type of the list parameter
+     * @param name  the name of the list parameter
+     * @param type  the type of the list parameter
      * @param type1 the type of the list elements
      */
-    public ListParameter(String name, ParameterType type, ParameterType type1) {
+    public ArrayParameter(String name, ParameterType type, ParameterType type1) {
         super(name, type);
-        this.type = type1;
+        this.elementType = type1;
+    }
+
+    /**
+     * Returns a new ArrayParameterBuilder instance to construct a ListParameter object.
+     *
+     * @return a new ArrayParameterBuilder instance
+     */
+    public static ArrayParameterBuilder arrayParamBuilder() {
+        return new ArrayParameterBuilder();
     }
 
     /**
@@ -27,8 +36,8 @@ public class ListParameter extends Parameter {
      * @return the type of the list parameter
      */
     @Override
-    public ParameterType getType() {
-        return type;
+    public ParameterType getElementType() {
+        return elementType;
     }
 
     /**
@@ -40,10 +49,10 @@ public class ListParameter extends Parameter {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ListParameter)) return false;
+        if (!(o instanceof ArrayParameter)) return false;
         if (!super.equals(o)) return false;
-        ListParameter that = (ListParameter) o;
-        return type == that.type;
+        ArrayParameter that = (ArrayParameter) o;
+        return elementType == that.elementType;
     }
 
     /**
@@ -53,7 +62,7 @@ public class ListParameter extends Parameter {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), type);
+        return Objects.hash(super.hashCode(), elementType);
     }
 
     /**
@@ -64,27 +73,19 @@ public class ListParameter extends Parameter {
     @Override
     public String toString() {
         return "ListParameter{" +
-                "type=" + type +
+                "type=" + elementType +
                 '}';
-    }
-
-    /**
-     * Returns a new ListParameterBuilder instance to construct a ListParameter object.
-     *
-     * @return a new ListParameterBuilder instance
-     */
-    public static ListParameterBuilder listParamBuilder() {
-        return new ListParameterBuilder();
     }
 
     /**
      * Builder class for constructing ListParameter objects.
      */
-    public static class ListParameterBuilder {
-        private ListParameterBuilder(){}
+    public static class ArrayParameterBuilder {
         private String name;
-        private ParameterType type;
         private ParameterType elementType;
+
+        private ArrayParameterBuilder() {
+        }
 
         /**
          * Sets the name of the list parameter.
@@ -92,21 +93,11 @@ public class ListParameter extends Parameter {
          * @param name the name of the list parameter
          * @return the Builder instance
          */
-        public ListParameterBuilder setName(String name) {
+        public ArrayParameterBuilder setName(String name) {
             this.name = name;
             return this;
         }
 
-        /**
-         * Sets the type of the list parameter.
-         *
-         * @param type the type of the list parameter
-         * @return the Builder instance
-         */
-        public ListParameterBuilder setType(ParameterType type) {
-            this.type = type;
-            return this;
-        }
 
         /**
          * Sets the type of the list elements.
@@ -114,7 +105,7 @@ public class ListParameter extends Parameter {
          * @param elementType the type of the list elements
          * @return the Builder instance
          */
-        public ListParameterBuilder setElementType(ParameterType elementType) {
+        public ArrayParameterBuilder setElementType(ParameterType elementType) {
             this.elementType = elementType;
             return this;
         }
@@ -124,8 +115,8 @@ public class ListParameter extends Parameter {
          *
          * @return a new ListParameter object
          */
-        public ListParameter build() {
-            return new ListParameter(this.name, this.type, this.elementType);
+        public ArrayParameter build() {
+            return new ArrayParameter(this.name, ParameterType.ARRAY, this.elementType);
         }
     }
 }

@@ -30,6 +30,15 @@ public class Function {
     }
 
     /**
+     * Returns a new Builder instance to construct a Function object.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Gets the name of the function.
      *
      * @return the name of the function
@@ -81,25 +90,16 @@ public class Function {
     }
 
     /**
-     * Returns a new Builder instance to construct a Function object.
-     *
-     * @return a new Builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder class for constructing Function objects.
      */
     public static class Builder {
 
-        private Builder() {
-        }
-
         private String name;
         private String description;
         private List<Parameter> parameters;
+
+        private Builder() {
+        }
 
         /**
          * Gets the name of the function.

@@ -23,6 +23,16 @@ public class Argument<T> {
     }
 
     /**
+     * Returns a new Builder instance to construct an Argument object.
+     *
+     * @param <T> the type of the argument value
+     * @return a new Builder instance
+     */
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
+    }
+
+    /**
      * Gets the parameter type of the argument.
      *
      * @return the parameter type of the argument
@@ -78,24 +88,16 @@ public class Argument<T> {
     }
 
     /**
-     * Returns a new Builder instance to construct an Argument object.
-     *
-     * @param <T> the type of the argument value
-     * @return a new Builder instance
-     */
-    public static <T> Builder<T> builder() {
-        return new Builder<>();
-    }
-
-    /**
      * Builder class for constructing Argument objects.
      *
      * @param <T> the type of the argument value
      */
     public static class Builder<T> {
-        private Builder() {}
         private ParameterType parameterType;
         private T value;
+
+        private Builder() {
+        }
 
         /**
          * Sets the parameter type of the argument.

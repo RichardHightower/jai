@@ -21,6 +21,15 @@ public class Parameter {
     }
 
     /**
+     * Returns a new Builder instance to construct a Parameter object.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Gets the name of the parameter.
      *
      * @return the name of the parameter
@@ -34,7 +43,7 @@ public class Parameter {
      *
      * @return the type of the parameter
      */
-    public ParameterType getType() {
+    public ParameterType getElementType() {
         return type;
     }
 
@@ -76,21 +85,14 @@ public class Parameter {
     }
 
     /**
-     * Returns a new Builder instance to construct a Parameter object.
-     *
-     * @return a new Builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder class for constructing Parameter objects.
      */
     public static class Builder {
-        private Builder(){}
         private String name;
         private ParameterType type;
+
+        private Builder() {
+        }
 
         /**
          * Sets the name of the parameter.

@@ -29,6 +29,15 @@ public class Message {
     }
 
     /**
+     * Returns a new Builder instance to construct a Message object.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Gets the role of the sender.
      *
      * @return the role of the sender
@@ -107,23 +116,16 @@ public class Message {
     }
 
     /**
-     * Returns a new Builder instance to construct a Message object.
-     *
-     * @return a new Builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder class for constructing Message objects.
      */
     public static class Builder {
-        private Builder(){}
         private Role role;
         private String content;
         private String name;
         private FunctionalCall functionCall;
+
+        private Builder() {
+        }
 
         /**
          * Sets the role of the sender.
