@@ -1,4 +1,4 @@
-package com.cloudurable.com.cloudurable.model.chat.function;
+package com.cloudurable.jai.model.chat.function;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,6 +1,7 @@
-package com.cloudurable.com.cloudurable.model.chat;
+package com.cloudurable.jai.model.chat;
 
-import com.cloudurable.com.cloudurable.model.FinishReason;
+
+import com.cloudurable.jai.model.FinishReason;
 
 /**
  * Represents a chat choice with an index, message, and finish reason.
@@ -21,6 +22,15 @@ public class ChatChoice {
         this.index = index;
         this.message = message;
         this.finishReason = finishReason;
+    }
+
+    /**
+     * Builder
+     *
+     * @return Builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**

@@ -1,7 +1,7 @@
 /**
  * This package contains classes and interfaces related to the Cloudurable library.
  */
-package com.cloudurable;
+package com.cloudurable.jai.model;
 
 import java.util.Optional;
 

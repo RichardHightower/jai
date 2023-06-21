@@ -1,6 +1,5 @@
-package com.cloudurable.impl;
+package com.cloudurable.jai.model;
 
-import com.cloudurable.ClientResponse;
 
 import java.util.Optional;
 

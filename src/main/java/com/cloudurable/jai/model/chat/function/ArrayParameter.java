@@ -1,4 +1,4 @@
-package com.cloudurable.com.cloudurable.model.chat.function;
+package com.cloudurable.jai.model.chat.function;
 
 import java.util.Objects;
 
@@ -35,7 +35,6 @@ public class ArrayParameter extends Parameter {
      *
      * @return the type of the list parameter
      */
-    @Override
     public ParameterType getElementType() {
         return elementType;
     }

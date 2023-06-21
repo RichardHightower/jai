@@ -1,4 +1,4 @@
-package com.cloudurable.com.cloudurable.model.chat.function;
+package com.cloudurable.jai.model.chat.function;
 
 import java.util.Objects;
 
@@ -43,7 +43,7 @@ public class Parameter {
      *
      * @return the type of the parameter
      */
-    public ParameterType getElementType() {
+    public ParameterType getType() {
         return type;
     }
 

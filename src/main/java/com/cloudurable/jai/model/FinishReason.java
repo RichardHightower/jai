@@ -1,4 +1,4 @@
-package com.cloudurable.com.cloudurable.model;
+package com.cloudurable.jai.model;
 
 
 /**
@@ -29,6 +29,13 @@ public enum FinishReason {
     /**
      * API response still in progress or incomplete.
      */
-    NULL
+    NULL,
+
+    /**
+     * API response that we don't know about yet.
+     */
+    OTHER
+
+
 }
 

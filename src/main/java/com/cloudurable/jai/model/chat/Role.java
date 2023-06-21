@@ -1,4 +1,4 @@
-package com.cloudurable.com.cloudurable.model.chat;
+package com.cloudurable.jai.model.chat;
 
 /**
  * Represents the roles in a chat system.
@@ -23,5 +23,10 @@ public enum Role {
     /**
      * The role representing a function.
      */
-    FUNCTION
+    FUNCTION,
+
+    /**
+     * The role representing other or something we don't understand yet
+     */
+    OTHER
 }

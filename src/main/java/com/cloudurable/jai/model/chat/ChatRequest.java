@@ -1,7 +1,7 @@
-package com.cloudurable.com.cloudurable.model.chat;
+package com.cloudurable.jai.model.chat;
 
-import com.cloudurable.com.cloudurable.model.chat.function.Function;
-import com.cloudurable.com.cloudurable.model.chat.function.FunctionalCall;
+import com.cloudurable.jai.model.chat.function.Function;
+import com.cloudurable.jai.model.chat.function.FunctionalCall;
 
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class ChatRequest {
     private final int maxTokens;
     private final float presencePenalty;
     private final float frequencyPenalty;
-    private final Map<String, Float> logitBias;
+    private final Map<Integer, Float> logitBias;
     private final String user;
     private final int completionCount;
 
@@ -90,7 +90,7 @@ public class ChatRequest {
                        FunctionalCall functionalCall, float temperature, float topP,
                        boolean stream, List<String> stop, int maxTokens,
                        float presencePenalty, float frequencyPenalty,
-                       Map<String, Float> logitBias, String user, int completionCount) {
+                       Map<Integer, Float> logitBias, String user, int completionCount) {
         this.model = model;
         this.messages = messages;
         this.functions = functions;
@@ -114,6 +114,15 @@ public class ChatRequest {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * completionCount
+     *
+     * @return completionCount
+     */
+    public int getCompletionCount() {
+        return completionCount;
     }
 
     /**
@@ -220,7 +229,7 @@ public class ChatRequest {
      *
      * @return the logit bias map for the chat request
      */
-    public Map<String, Float> getLogitBias() {
+    public Map<Integer, Float> getLogitBias() {
         return logitBias;
     }
 
@@ -310,7 +319,7 @@ public class ChatRequest {
         private int maxTokens;
         private float presencePenalty;
         private float frequencyPenalty;
-        private Map<String, Float> logitBias;
+        private Map<Integer, Float> logitBias;
         private String user;
 
         private Builder() {
@@ -343,7 +352,7 @@ public class ChatRequest {
          * @param bias  bias
          * @return this
          */
-        public Builder addLogitBias(String token, float bias) {
+        public Builder addLogitBias(Integer token, float bias) {
             this.getLogitBias().put(token, bias);
             return this;
         }
@@ -353,9 +362,9 @@ public class ChatRequest {
          *
          * @return logitBias
          */
-        private Map<String, Float> getLogitBias() {
+        private Map<Integer, Float> getLogitBias() {
             if (logitBias == null) {
-                logitBias = new HashMap<>();
+                logitBias = new TreeMap<>();
             }
             return logitBias;
         }
@@ -366,7 +375,7 @@ public class ChatRequest {
          * @param logitBias the logit bias map for the chat request
          * @return the Builder instance
          */
-        public Builder setLogitBias(Map<String, Float> logitBias) {
+        public Builder setLogitBias(Map<Integer, Float> logitBias) {
             this.logitBias = logitBias;
             return this;
         }
@@ -397,6 +406,9 @@ public class ChatRequest {
          * @return messages
          */
         public List<Message> getMessages() {
+            if (messages == null) {
+                messages = new ArrayList<>();
+            }
             return messages;
         }
 
@@ -657,7 +669,7 @@ public class ChatRequest {
          * @return a new ChatRequest object
          */
         public ChatRequest build() {
-            return new ChatRequest(getModel(), getMessages(), functions, functionalCall, getTemperature(), getTopP(),
+            return new ChatRequest(getModel(), getMessages(), getFunctions(), functionalCall, getTemperature(), getTopP(),
                     isStream(), getStop(), getMaxTokens(), getPresencePenalty(), getFrequencyPenalty(), getLogitBias(),
                     getUser(), getCompletionCount());
         }

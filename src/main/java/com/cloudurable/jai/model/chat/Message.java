@@ -1,6 +1,6 @@
-package com.cloudurable.com.cloudurable.model.chat;
+package com.cloudurable.jai.model.chat;
 
-import com.cloudurable.com.cloudurable.model.chat.function.FunctionalCall;
+import com.cloudurable.jai.model.chat.function.FunctionalCall;
 
 import java.util.Objects;
 
