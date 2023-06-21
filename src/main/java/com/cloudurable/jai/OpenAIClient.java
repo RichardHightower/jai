@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
  * Represents a client for interacting with the OpenAI API.
@@ -49,6 +51,59 @@ public class OpenAIClient {
     }
 
     /**
+     * Helper method to handle an error
+     * @param e error
+     * @param chatRequest chatRequest
+     * @return ClientSuccessResponse
+     */
+    private static ClientResponse<ChatRequest, ChatResponse> getErrorResponseForChatRequest(Throwable e, ChatRequest chatRequest) {
+        ClientErrorResponse.Builder<ChatRequest, ChatResponse> builder = ClientErrorResponse.builder();
+        return builder.setException(e).setRequest(chatRequest).build();
+    }
+
+    /** Helper method to handle a normal response
+     *
+     * @param chatRequest chatRequest
+     * @param response httpResponse
+     * @return ClientSuccessResponse
+     */
+    private static ClientSuccessResponse<ChatRequest, ChatResponse> getChatRequestChatResponseClientSuccessResponse(ChatRequest chatRequest, HttpResponse<String> response) {
+        if (response.statusCode() > 200 && response.statusCode() < 299) {
+            final ChatResponse chatResponse = ChatResponseDeserializer.deserialize(response.body());
+            ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
+            return builder.setRequest(chatRequest).setResponse(chatResponse).setStatusCode(response.statusCode()).build();
+        } else {
+            ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
+            return builder.setRequest(chatRequest).setStatusCode(response.statusCode()).setStatusMessage(response.body()).build();
+        }
+    }
+
+    /**
+     * Sends a chat request to the OpenAI API and returns the client response.
+     *
+     * @param chatRequest The chat request to be sent.
+     * @return The client response containing the chat request and the corresponding chat response.
+     */
+    public CompletableFuture<ClientResponse<ChatRequest, ChatResponse>> chatAsync(final ChatRequest chatRequest) {
+
+        final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply((Function<HttpResponse<String>, ClientResponse<ChatRequest, ChatResponse>>) response -> {
+                    return getChatRequestChatResponseClientSuccessResponse(chatRequest, response);
+                }).exceptionally(new Function<Throwable, ClientResponse<ChatRequest, ChatResponse>>() {
+                    @Override
+                    public ClientResponse<ChatRequest, ChatResponse> apply(Throwable e) {
+                        return getErrorResponseForChatRequest(e, chatRequest);
+                    }
+                });
+
+    }
+
+    /**
      * Sends a chat request to the OpenAI API and returns the client response.
      *
      * @param chatRequest The chat request to be sent.
@@ -57,24 +112,15 @@ public class OpenAIClient {
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-        System.out.println(jsonRequest);
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() > 200 && response.statusCode() < 299) {
-                final ChatResponse chatResponse = ChatResponseDeserializer.deserialize(response.body());
-                ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(chatRequest).setResponse(chatResponse).setStatusCode(response.statusCode()).build();
-            } else {
-                ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(chatRequest).setStatusCode(response.statusCode()).setStatusMessage(response.body()).build();
-            }
+            return getChatRequestChatResponseClientSuccessResponse(chatRequest, response);
         } catch (Exception e) {
-            ClientErrorResponse.Builder<ChatRequest, ChatResponse> builder = ClientErrorResponse.builder();
-            return builder.setException(e).setRequest(chatRequest).build();
+            return getErrorResponseForChatRequest(e, chatRequest);
         }
     }
 

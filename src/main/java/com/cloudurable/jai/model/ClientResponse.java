@@ -45,5 +45,5 @@ public interface ClientResponse<Q, A> {
      *
      * @return An Optional containing the exception, or an empty Optional if no exception is available.
      */
-    Optional<Exception> getException();
+    Optional<Throwable> getException();
 }

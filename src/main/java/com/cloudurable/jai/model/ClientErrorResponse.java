@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
 
     private final Q request;
-    private final Exception exception;
+    private final Throwable exception;
 
     /**
      * Constructs a ClientErrorResponse object.
@@ -20,7 +20,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
      * @param request   The request associated with the client error response.
      * @param exception The exception associated with the client error response.
      */
-    public ClientErrorResponse(Q request, Exception exception) {
+    public ClientErrorResponse(Q request, Throwable exception) {
         this.request = request;
         this.exception = exception;
     }
@@ -82,7 +82,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
      * @return An Optional containing the exception.
      */
     @Override
-    public Optional<Exception> getException() {
+    public Optional<Throwable> getException() {
         return Optional.of(exception);
     }
 
@@ -94,7 +94,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
      */
     public static class Builder<Q, A> {
         private Q request;
-        private Exception exception;
+        private Throwable exception;
 
         private Builder() {
         }
@@ -116,7 +116,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
          * @param exception The exception associated with the client error response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setException(Exception exception) {
+        public Builder<Q, A> setException(Throwable exception) {
             this.exception = exception;
             return this;
         }

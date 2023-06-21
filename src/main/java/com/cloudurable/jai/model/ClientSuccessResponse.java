@@ -87,7 +87,7 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
      * @return An empty Optional.
      */
     @Override
-    public Optional<Exception> getException() {
+    public Optional<Throwable> getException() {
         return Optional.empty();
     }
 
