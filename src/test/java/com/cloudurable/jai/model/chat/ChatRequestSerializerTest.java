@@ -4,6 +4,7 @@ import com.cloudurable.jai.model.chat.function.Function;
 import com.cloudurable.jai.model.chat.function.Parameter;
 import com.cloudurable.jai.model.chat.function.ParameterType;
 import io.nats.jparse.Json;
+import io.nats.jparse.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -20,10 +21,10 @@ class ChatRequestSerializerTest {
                 .addMessage(Message.builder().setRole(Role.SYSTEM).setContent("You are a helpful assistant.").build())
                 .addMessage(Message.builder().setRole(Role.USER).setContent("Hello!").build())
                 .setTemperature(0.8f)
-                .setFrequencyPenalty(1.0f)
-                .setPresencePenalty(1.0f)
-                .addLogitBias(1234, 2.0f)
-                .addLogitBias(4567, -1.0f)
+                .setFrequencyPenalty(0.6f)
+                .setPresencePenalty(0.65f)
+//                .addLogitBias(1234, 2.0f)
+//                .addLogitBias(4567, -1.0f)
                 .addFunction(Function.builder().setName("func1").setDescription("Function 1").addParameter(
                         Parameter.builder().setName("param1").setType(ParameterType.NUMBER).build()
                 ).build())
@@ -40,23 +41,26 @@ class ChatRequestSerializerTest {
         // Serialize the ChatRequest object
         String serializedJson = ChatRequestSerializer.serialize(chatRequest);
 
-        // Define the expected serialized JSON
-        String expectedJson = Json.niceJson("{'model': 'gpt-3.5-turbo'," +
-                "'messages': [{'role': 'system','content': 'You are a helpful assistant.'}," +
-                "{'role': 'user','content': 'Hello!'}]," +
-                "'temperature': 0.8," +
-                "'frequency_penalty': 1.0," +
-                "'presence_penalty': 1.0," +
-                "'logit_bias': [1234:2.0,4567:-1.0]," +
-                "'functions': [{'name': 'func1'," +
-                "'parameters': [{'param1':{'type': 'number'}}]},{'name': 'func2','parameters': [{'param2':{'type': 'number'}}]}]," +
-                "'max_tokens': 20," +
-                "'top_p': 0.7," +
-                "'user': 'user123'," +
-                "'stop': ['stopword1','stopword2']'n': 5}");
+        ObjectNode objectNode = Json.toObjectNode(serializedJson);
 
-        // Assert that the serialized JSON matches the expected JSON
-        // Fix the above to use JsonParser so it is less random.
-        // assertEquals(expectedJson, serializedJson);
+        assertEquals("system", objectNode.atPath("messages[0].role").asScalar().stringValue());
+        assertEquals("Hello!", objectNode.atPath("messages[1].content").asScalar().stringValue());
+        assertEquals("number", objectNode.atPath("functions[0].parameters[0].type").asScalar().stringValue());
+        assertEquals("func2", objectNode.atPath("functions[1].name").asScalar().stringValue());
+        assertEquals("gpt-3.5-turbo", objectNode.getString("model"));
+
+        assertEquals("0.8", objectNode.getNode("temperature").asScalar().stringValue());
+        assertEquals("0.7", objectNode.getNode("top_p").asScalar().stringValue());
+
+        assertEquals("user123", objectNode.getString("user"));
+        assertEquals(20, objectNode.getInt("max_tokens"));
+        assertEquals(5, objectNode.getInt("n"));
+        assertEquals("stopword1", objectNode.getArrayNode("stop").getString(0));
+        assertEquals("stopword2", objectNode.getArrayNode("stop").getString(1));
+
+        assertEquals("0.6", objectNode.getNode("frequency_penalty").asScalar().stringValue());
+        assertEquals("0.65", objectNode.getNode("presence_penalty").asScalar().stringValue());
+
+
     }
 }

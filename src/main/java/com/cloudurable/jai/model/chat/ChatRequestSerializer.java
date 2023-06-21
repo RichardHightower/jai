@@ -3,6 +3,7 @@ package com.cloudurable.jai.model.chat;
 
 import com.cloudurable.jai.model.chat.function.Function;
 import com.cloudurable.jai.model.chat.function.Parameter;
+import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
 import java.util.Map;
@@ -48,116 +49,106 @@ public class ChatRequestSerializer {
      */
     public static String serialize(ChatRequest chatRequest) {
 
-        final StringBuilder jsonBodyBuilder = new StringBuilder(80);
+        final JsonSerializer jsonBodyBuilder = new JsonSerializer();
         // start JSON request body for an open ai API chat request
-        jsonBodyBuilder.append('{');
+        jsonBodyBuilder.startObject();
 
         // Note property values are always in snake case for the JSON output.
-        final String model = chatRequest.getModel();
-        jsonBodyBuilder.append("\"model\": \"").append(model).append("\",");
+        jsonBodyBuilder.addAttribute("model", chatRequest.getModel());
 
         final List<Message> messages = chatRequest.getMessages();
+
         // start JSON list body for messages
-        jsonBodyBuilder.append("\"messages\": [");
+        jsonBodyBuilder.startNestedListAttribute("messages");
         for (Message message : messages) {
-            jsonBodyBuilder.append("{");
-            jsonBodyBuilder.append("\"role\": \"").append(message.getRole().toString().toLowerCase()).append("\",");
-            jsonBodyBuilder.append("\"content\": \"").append(message.getContent()).append("\"");
-            jsonBodyBuilder.append("},");
+            jsonBodyBuilder.startNestedObjectElement();
+            jsonBodyBuilder.addAttribute("role", message.getRole().toString().toLowerCase());
+            jsonBodyBuilder.addAttribute("content", message.getContent());
+            jsonBodyBuilder.endObject();
         }
-        // remove trailing comma
-        jsonBodyBuilder.deleteCharAt(jsonBodyBuilder.length() - 1);
-        jsonBodyBuilder.append("]");
+        jsonBodyBuilder.endList();
 
         final float temperature = chatRequest.getTemperature();
         if (temperature != 0) {
-            jsonBodyBuilder.append("\"temperature\": ").append(temperature).append(",");
+            jsonBodyBuilder.addAttribute("temperature", temperature);
         }
 
         final float frequencyPenalty = chatRequest.getFrequencyPenalty();
         if (frequencyPenalty != 0) {
-            jsonBodyBuilder.append("\"frequency_penalty\": ").append(frequencyPenalty).append(",");
+            jsonBodyBuilder.addAttribute("frequency_penalty", frequencyPenalty);
         }
 
         float presencePenalty = chatRequest.getPresencePenalty();
         if (presencePenalty != 0) {
-            jsonBodyBuilder.append("\"presence_penalty\": ").append(presencePenalty).append(",");
+            jsonBodyBuilder.addAttribute("presence_penalty", presencePenalty);
         }
 
         final Map<Integer, Float> logitBias = chatRequest.getLogitBias();
         if (logitBias != null && !logitBias.isEmpty()) {
-            jsonBodyBuilder.append("\"logit_bias\": [");
+            jsonBodyBuilder.startNestedListAttribute("logit_bias");
             for (Integer key : logitBias.keySet()) {
-                jsonBodyBuilder.append(key).append(':').append(logitBias.get(key)).append(',');
+                jsonBodyBuilder.startNestedObjectElement();
+                jsonBodyBuilder.addAttribute(key, logitBias.get(key));
+                jsonBodyBuilder.endObject();
             }
-            // remove trailing comma
-            jsonBodyBuilder.deleteCharAt(jsonBodyBuilder.length() - 1);
-            jsonBodyBuilder.append("],");
+            jsonBodyBuilder.endList();
         }
 
         final List<Function> functions = chatRequest.getFunctions();
         if (functions != null && !functions.isEmpty()) {
-            jsonBodyBuilder.append("\"functions\": [");
+            jsonBodyBuilder.startNestedListAttribute("functions");
             for (Function function : functions) {
-                jsonBodyBuilder.append("{");
-                jsonBodyBuilder.append("\"name\": \"").append(function.getName()).append("\",");
-
+                jsonBodyBuilder.startNestedObjectElement();
+                jsonBodyBuilder.addAttribute("name", function.getName());
+                jsonBodyBuilder.startNestedListAttribute("parameters");
                 List<Parameter> parameters = function.getParameters();
-                jsonBodyBuilder.append("\"parameters\": [");
                 for (Parameter parameter : parameters) {
-                    jsonBodyBuilder.append("{");
-                    jsonBodyBuilder.append('"').append(parameter.getName()).append('"').append(":{");
-                    jsonBodyBuilder.append("\"type\": \"").append(parameter.getType().toString().toLowerCase()).append('"').append('}');
-                    jsonBodyBuilder.append("},");
+                    jsonBodyBuilder.startNestedObjectElement();
+                    jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
+                    jsonBodyBuilder.endObject();
                 }
-                jsonBodyBuilder.deleteCharAt(jsonBodyBuilder.length() - 1); // remove trailing comma
-                jsonBodyBuilder.append("]");
-
-
-                jsonBodyBuilder.append("},");
+                jsonBodyBuilder.endList();
+                jsonBodyBuilder.endObject();
             }
-            // remove trailing comma
-            jsonBodyBuilder.deleteCharAt(jsonBodyBuilder.length() - 1);
-            jsonBodyBuilder.append("],");
+            jsonBodyBuilder.endList();
         }
 
         final int maxTokens = chatRequest.getMaxTokens();
         if (maxTokens != 0) {
-            jsonBodyBuilder.append("\"max_tokens\": ").append(maxTokens).append(",");
+            jsonBodyBuilder.addAttribute("max_tokens", maxTokens);
         }
 
         final float topP = chatRequest.getTopP();
         if (topP != 0) {
-            jsonBodyBuilder.append("\"top_p\": ").append(topP).append(",");
+            jsonBodyBuilder.addAttribute("top_p", topP);
         }
 
         // add user to JSON
         final String user = chatRequest.getUser();
         if (user != null && !user.isBlank()) {
-            jsonBodyBuilder.append("\"user\": \"").append(user).append("\",");
+            jsonBodyBuilder.addAttribute("user", user);
         }
 
         // add stop to JSON
         final List<String> stop = chatRequest.getStop();
 
         if (stop != null && !stop.isEmpty()) {
-            jsonBodyBuilder.append("\"stop\": [");
+            jsonBodyBuilder.startNestedListAttribute("stop");
             for (String str : stop) {
-                jsonBodyBuilder.append("\"").append(str).append("\"" + ",");
+                jsonBodyBuilder.addElement(str);
             }
             // remove trailing comma
-            jsonBodyBuilder.deleteCharAt(jsonBodyBuilder.length() - 1);
-            jsonBodyBuilder.append("]");
+            jsonBodyBuilder.endList();
         }
 
         // add completionCount to JSON
         final int completionCount = chatRequest.getCompletionCount();
         if (completionCount != 0) {
-            jsonBodyBuilder.append("\"n\": ").append(completionCount);
+            jsonBodyBuilder.addAttribute("n", completionCount);
         }
 
         // end JSON request body for an open ai API chat request
-        jsonBodyBuilder.append('}');
+        jsonBodyBuilder.endObject();
 
         return jsonBodyBuilder.toString();
     }
