@@ -68,7 +68,7 @@ public class OpenAIClient {
      * @return ClientSuccessResponse
      */
     private static ClientSuccessResponse<ChatRequest, ChatResponse> getChatRequestChatResponseClientSuccessResponse(ChatRequest chatRequest, HttpResponse<String> response) {
-        if (response.statusCode() > 200 && response.statusCode() < 299) {
+        if (response.statusCode() >= 200 && response.statusCode() < 299) {
             final ChatResponse chatResponse = ChatResponseDeserializer.deserialize(response.body());
             ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
             return builder.setRequest(chatRequest).setResponse(chatResponse).setStatusCode(response.statusCode()).build();
@@ -92,14 +92,9 @@ public class OpenAIClient {
         final HttpRequest request = requestBuilder.build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply((Function<HttpResponse<String>, ClientResponse<ChatRequest, ChatResponse>>) response -> {
-                    return getChatRequestChatResponseClientSuccessResponse(chatRequest, response);
-                }).exceptionally(new Function<Throwable, ClientResponse<ChatRequest, ChatResponse>>() {
-                    @Override
-                    public ClientResponse<ChatRequest, ChatResponse> apply(Throwable e) {
-                        return getErrorResponseForChatRequest(e, chatRequest);
-                    }
-                });
+                .thenApply((Function<HttpResponse<String>, ClientResponse<ChatRequest, ChatResponse>>) response ->
+                        getChatRequestChatResponseClientSuccessResponse(chatRequest, response)).exceptionally(e ->
+                        getErrorResponseForChatRequest(e, chatRequest));
 
     }
 
@@ -112,12 +107,13 @@ public class OpenAIClient {
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
+        //ystem.out.println(jsonRequest.replace('"', '\'').replace('\\', '`'));
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
+            //ystem.out.println(response.body().replace('"', '\'').replace('\\', '`'));
             return getChatRequestChatResponseClientSuccessResponse(chatRequest, response);
         } catch (Exception e) {
             return getErrorResponseForChatRequest(e, chatRequest);
