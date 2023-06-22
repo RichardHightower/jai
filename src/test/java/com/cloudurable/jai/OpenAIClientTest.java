@@ -7,15 +7,21 @@ import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for the OpenAIClient.
  */
 class OpenAIClientTest {
 
-    HttpClientMock httpClientMock;
-    OpenAIClient client;
+
     String basicChatResponseBody;
     String basicChatRequestBody;
     ChatRequest basicChatRequest;
@@ -26,8 +32,6 @@ class OpenAIClientTest {
      */
     @BeforeEach
     void before() {
-        httpClientMock = new HttpClientMock();
-        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Create the response body
 
@@ -72,8 +76,16 @@ class OpenAIClientTest {
     @Test
     void chat() throws Exception {
 
+
+        HttpClientMock httpClientMock;
+        OpenAIClient client;
+
+        httpClientMock = new HttpClientMock();
+        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
+
         //Mock it
-        httpClientMock.setResponsePost("/chat/completions", basicChatRequestBody, basicChatResponseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePost("/chat/completions", basicChatRequestBody, basicChatResponseBody);
+
 
         final ClientResponse<ChatRequest, ChatResponse> response = client.chat(basicChatRequest);
 
@@ -87,6 +99,11 @@ class OpenAIClientTest {
                     chatResponse.getChoices().get(0).getMessage().getContent());
         });
 
+        HttpClient mock = httpClientMock.getMock();
+
+
+        //verify(mock.send(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString()), times(1));
+
     }
 
     /**
@@ -98,8 +115,13 @@ class OpenAIClientTest {
      */
     @Test
     void chatAsync() throws Exception {
+        HttpClientMock httpClientMock;
+        OpenAIClient client;
 
-        httpClientMock.setResponsePostAsync("/chat/completions", basicChatRequestBody, basicChatResponseBody);
+        httpClientMock = new HttpClientMock();
+        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
+
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePostAsync("/chat/completions", basicChatRequestBody, basicChatResponseBody);
 
         final ClientResponse<ChatRequest, ChatResponse> response = client.chatAsync(basicChatRequest).get();
 
@@ -112,5 +134,7 @@ class OpenAIClientTest {
             assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
                     chatResponse.getChoices().get(0).getMessage().getContent());
         });
+
+        HttpClient mock = httpClientMock.getMock();
     }
 }

@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -25,41 +26,44 @@ public class HttpClientMock extends HttpClient {
     private final String apiEndpoint = "https://api.openai.com/v1/";
     protected HttpClient mockClient;
 
+    public HttpClient getMock() {
+        return mockClient;
+    }
+
+    public static class RequestResponse {
+        private final HttpResponse<String> response;
+        private final HttpRequest request;
+
+        public RequestResponse(HttpRequest request, HttpResponse<String> response) {
+            this.response = response;
+            this.request = request;
+        }
+
+        public HttpResponse<String> getResponse() {
+            return response;
+        }
+
+        public HttpRequest getRequest() {
+            return request;
+        }
+    }
+
     /**
      * Set up a mocked response for a synchronous POST request.
      *
      * @param path the request path
      * @param requestBody the request body as a String
      * @param responseBody the response body as a String
-     * @return this HttpClientMock instance
+     * @return this RequestResponse instance
      * @throws Exception in case of errors
      */
-    public HttpClientMock setResponsePost(String path, String requestBody, String responseBody) throws Exception{
+    public RequestResponse setResponsePost(String path, String requestBody, String responseBody) throws Exception{
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
         final HttpRequest request = requestBuilder.build();
         final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
         when(mockClient.send(request, HttpResponse.BodyHandlers.ofString())).thenReturn(response);
-        return this;
-    }
-
-    /**
-     * Set up a mocked response for a synchronous PUT request.
-     *
-     * @param path the request path
-     * @param requestBody the request body as a String
-     * @param responseBody the response body as a String
-     * @return this HttpClientMock instance
-     * @throws Exception in case of errors
-     */
-    public HttpClientMock setResponsePut(String path, String requestBody, String responseBody) throws Exception{
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
-        requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(requestBody));
-        final HttpRequest request = requestBuilder.build();
-        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
-        when(mockClient.send(request, HttpResponse.BodyHandlers.ofString())).thenReturn(response);
-        verify(mockClient.send(request, HttpResponse.BodyHandlers.ofString()), atLeastOnce());
-        return this;
+        return new RequestResponse(request, response);
     }
 
     /**
@@ -71,34 +75,14 @@ public class HttpClientMock extends HttpClient {
      * @return this HttpClientMock instance
      * @throws Exception in case of errors
      */
-    public HttpClientMock setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception{
+    public RequestResponse setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception{
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
         final HttpRequest request = requestBuilder.build();
         final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
         final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
         when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(future);
-        return this;
-    }
-
-    /**
-     * Set up a mocked response for a asynchronous PUT request.
-     *
-     * @param path the request path
-     * @param requestBody the request body as a String
-     * @param responseBody the response body as a String
-     * @return this HttpClientMock instance
-     * @throws Exception in case of errors
-     */
-    public HttpClientMock setResponsePutAsync(String path, String requestBody, String responseBody) throws Exception{
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
-        requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(requestBody));
-        final HttpRequest request = requestBuilder.build();
-        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
-        final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
-        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(future);
-        verify(mockClient.send(request, HttpResponse.BodyHandlers.ofString()), atLeastOnce());
-        return this;
+        return new RequestResponse(request, response);
     }
 
     /**
