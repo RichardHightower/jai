@@ -42,13 +42,11 @@ public class HttpClientMock extends HttpClient {
 
     public HttpClientMock setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception{
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
-        requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(requestBody));
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
         final HttpRequest request = requestBuilder.build();
         final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
-
         final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
         when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(future);
-        verify(mockClient.send(request, HttpResponse.BodyHandlers.ofString()), atLeastOnce());
         return this;
     }
 

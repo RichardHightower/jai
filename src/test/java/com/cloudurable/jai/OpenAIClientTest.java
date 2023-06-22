@@ -4,24 +4,27 @@ import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.chat.*;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OpenAIClientTest {
 
+    HttpClientMock httpClientMock;
+    OpenAIClient client;
+    String basicChatResponseBody;
+    String basicChatRequestBody;
+    ChatRequest basicChatRequest;
 
-
-    @Test
-    void chat() throws Exception {
-        final HttpClientMock httpClientMock = new HttpClientMock();
-
-        final OpenAIClient client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
+    @BeforeEach
+    void before() {
+        httpClientMock = new HttpClientMock();
+        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Create the response body
-        final String responseBody = Json.niceJson("{\n" +
+
+        basicChatResponseBody = Json.niceJson("{\n" +
                 "  'id': 'chatcmpl-7U7eebdP0zrUDP36wBLvrjCYo7Bkw',\n" +
                 "  'object': 'chat.completion',\n" +
                 "  'created': 1687413620,\n" +
@@ -45,33 +48,49 @@ class OpenAIClientTest {
 
 
         // Create the request body.
-        final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
+       basicChatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
                 .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
                 .build();
-        final String requestBody = ChatRequestSerializer.serialize(chatRequest);
+
+        basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
+    }
+
+
+    @Test
+    void chat() throws Exception {
 
         //Mock it
-        httpClientMock.setResponsePost("/chat/completions", requestBody, responseBody);
+        httpClientMock.setResponsePost("/chat/completions", basicChatRequestBody, basicChatResponseBody);
 
+        final ClientResponse<ChatRequest, ChatResponse> response = client.chat(basicChatRequest);
 
-        final ClientResponse<ChatRequest, ChatResponse> response = client.chat(chatRequest);
-
-        //assertFalse(response.getStatusMessage().isPresent());
+        assertFalse(response.getStatusMessage().isPresent());
         assertEquals(200, response.getStatusCode().orElse(-666));
         assertTrue(response.getResponse().isPresent());
 
-        response.getResponse().ifPresent(new Consumer<ChatResponse>() {
-            @Override
-            public void accept(ChatResponse chatResponse) {
-                assertEquals(1, chatResponse.getChoices().size());
-                assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
-                        chatResponse.getChoices().get(0).getMessage().getContent());
-            }
+        response.getResponse().ifPresent(chatResponse -> {
+            assertEquals(1, chatResponse.getChoices().size());
+            assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
+                    chatResponse.getChoices().get(0).getMessage().getContent());
         });
 
     }
 
     @Test
-    void chatAsync() {
+    void chatAsync() throws Exception {
+
+        httpClientMock.setResponsePostAsync("/chat/completions", basicChatRequestBody, basicChatResponseBody);
+
+        final ClientResponse<ChatRequest, ChatResponse> response = client.chatAsync(basicChatRequest).get();
+
+        assertFalse(response.getStatusMessage().isPresent());
+        assertEquals(200, response.getStatusCode().orElse(-666));
+        assertTrue(response.getResponse().isPresent());
+
+        response.getResponse().ifPresent(chatResponse -> {
+            assertEquals(1, chatResponse.getChoices().size());
+            assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
+                    chatResponse.getChoices().get(0).getMessage().getContent());
+        });
     }
 }
