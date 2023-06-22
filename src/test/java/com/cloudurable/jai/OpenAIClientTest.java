@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for the OpenAIClient.
+ */
 class OpenAIClientTest {
 
     HttpClientMock httpClientMock;
@@ -17,6 +20,10 @@ class OpenAIClientTest {
     String basicChatRequestBody;
     ChatRequest basicChatRequest;
 
+    /**
+     * Setup method to initialize the client, mock HttpClient,
+     * and set up request and response data before each test.
+     */
     @BeforeEach
     void before() {
         httpClientMock = new HttpClientMock();
@@ -55,7 +62,13 @@ class OpenAIClientTest {
         basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
     }
 
-
+    /**
+     * Test method to verify the behavior of the chat method in the OpenAIClient.
+     * This test mocks a POST request to the /chat/completions endpoint and verifies
+     * the response from the OpenAIClient chat method.
+     *
+     * @throws Exception in case of errors
+     */
     @Test
     void chat() throws Exception {
 
@@ -76,6 +89,13 @@ class OpenAIClientTest {
 
     }
 
+    /**
+     * Test method to verify the behavior of the chatAsync method in the OpenAIClient.
+     * This test mocks an asynchronous POST request to the /chat/completions endpoint and verifies
+     * the response from the OpenAIClient chatAsync method.
+     *
+     * @throws Exception in case of errors
+     */
     @Test
     void chatAsync() throws Exception {
 
