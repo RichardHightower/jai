@@ -8,18 +8,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
  * Tests for the OpenAIClient.
  */
-class OpenAIClientTest {
+class ChatClientAsyncTest {
 
 
     String basicChatResponseBody;
@@ -59,51 +57,15 @@ class OpenAIClientTest {
 
 
         // Create the request body.
-       basicChatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+       basicChatRequest = ChatRequest.builder()
+               .setModel("gpt-3.5-turbo")
+                .addMessage(Message.builder()
+                        .setContent("What is AI?")
+                        .setRole(Role.USER).build()
+                )
                 .build();
 
         basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
-    }
-
-    /**
-     * Test method to verify the behavior of the chat method in the OpenAIClient.
-     * This test mocks a POST request to the /chat/completions endpoint and verifies
-     * the response from the OpenAIClient chat method.
-     *
-     * @throws Exception in case of errors
-     */
-    @Test
-    void chat() throws Exception {
-
-
-        HttpClientMock httpClientMock;
-        OpenAIClient client;
-
-        httpClientMock = new HttpClientMock();
-        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
-
-        //Mock it
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePost("/chat/completions", basicChatRequestBody, basicChatResponseBody);
-
-
-        final ClientResponse<ChatRequest, ChatResponse> response = client.chat(basicChatRequest);
-
-        assertFalse(response.getStatusMessage().isPresent());
-        assertEquals(200, response.getStatusCode().orElse(-666));
-        assertTrue(response.getResponse().isPresent());
-
-        response.getResponse().ifPresent(chatResponse -> {
-            assertEquals(1, chatResponse.getChoices().size());
-            assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
-                    chatResponse.getChoices().get(0).getMessage().getContent());
-        });
-
-        HttpClient mock = httpClientMock.getMock();
-
-
-        //verify(mock.send(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString()), times(1));
-
     }
 
     /**
@@ -119,9 +81,12 @@ class OpenAIClientTest {
         OpenAIClient client;
 
         httpClientMock = new HttpClientMock();
-        client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
+        client = OpenAIClient.builder().setApiKey("pk-123456789")
+                .setHttpClient(httpClientMock).build();
 
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePostAsync("/chat/completions", basicChatRequestBody, basicChatResponseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock
+                .setResponsePostAsync("/chat/completions",
+                        basicChatRequestBody, basicChatResponseBody);
 
         final ClientResponse<ChatRequest, ChatResponse> response = client.chatAsync(basicChatRequest).get();
 
@@ -131,10 +96,20 @@ class OpenAIClientTest {
 
         response.getResponse().ifPresent(chatResponse -> {
             assertEquals(1, chatResponse.getChoices().size());
-            assertEquals("AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.",
+            assertEquals("AI stands for artificial intelligence. It refers to the development of computer " +
+                            "systems that can perform tasks that typically require human intelligence, such as visual " +
+                            "perception, speech recognition, decision-making, and language translation. AI technologies " +
+                            "include machine learning, deep learning, natural language processing, and robotics." +
+                            " With AI, machines can learn to recognize patterns in data and make decisions based " +
+                            "on that analysis. AI is rapidly advancing and has the potential to significantly " +
+                            "impact industries such as healthcare, finance, transportation, and manufacturing.",
                     chatResponse.getChoices().get(0).getMessage().getContent());
         });
 
         HttpClient mock = httpClientMock.getMock();
+
+        verify(mock, times(1))
+                .sendAsync(requestResponse.getRequest(),
+                HttpResponse.BodyHandlers.ofString());
     }
 }
