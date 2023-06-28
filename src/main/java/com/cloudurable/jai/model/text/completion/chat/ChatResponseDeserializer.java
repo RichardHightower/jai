@@ -2,6 +2,7 @@ package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.FinishReason;
 import com.cloudurable.jai.model.Usage;
+import com.cloudurable.jai.model.text.DeserializerUtils;
 import io.nats.jparse.node.ArrayNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
@@ -56,12 +57,12 @@ public class ChatResponseDeserializer {
      */
     public static ChatResponse deserialize(final String jsonBody) {
 
-        final JsonParser parser = JsonParserBuilder.builder().setStrict(true).build();
+        final JsonParser parser = JsonParserBuilder.builder().build();
         final ObjectNode objectNode = parser.parse(jsonBody).asObject();
         final String id = objectNode.getString("id");
         final String object = objectNode.getString("object");
         final int createdTime = objectNode.getInt("created");
-        final Usage usage = deserializeUsage(objectNode.getObjectNode("usage"));
+        final Usage usage = DeserializerUtils.deserializeUsage(objectNode.getObjectNode("usage"));
         final ArrayNode choicesNode = objectNode.getArrayNode("choices");
         final List<ChatChoice> chatChoices = choicesNode.mapObjectNode(ChatResponseDeserializer::deserializeChoice);
 
@@ -70,18 +71,12 @@ public class ChatResponseDeserializer {
                 .setObject(object).setCreated(Instant.ofEpochSecond(createdTime)).build();
     }
 
-    private static Usage deserializeUsage(final ObjectNode usageNode) {
-        Usage.Builder builder = Usage.builder();
-        builder.setCompletionTokens(usageNode.getInt("completion_tokens"));
-        builder.setPromptTokens(usageNode.getInt("prompt_tokens"));
-        builder.setTotalTokens(usageNode.getInt("total_tokens"));
-        return builder.build();
-    }
+
 
     private static ChatChoice deserializeChoice(final ObjectNode choiceNode) {
         ChatChoice.Builder builder = ChatChoice.builder();
         builder.setIndex(choiceNode.getInt("index"))
-                .setFinishReason(deserializeFinishReason(choiceNode.getString("finish_reason")))
+                .setFinishReason(DeserializerUtils.deserializeFinishReason(choiceNode.getString("finish_reason")))
                 .setMessage(deserializeMessage(choiceNode.getObjectNode("message")));
 
         return builder.build();
@@ -113,18 +108,5 @@ public class ChatResponseDeserializer {
         }
     }
 
-    private static FinishReason deserializeFinishReason(final String finishReason) {
-        switch (finishReason) {
-            case "stop":
-                return FinishReason.STOP;
-            case "content_filter":
-                return FinishReason.CONTENT_FILTER;
-            case "length":
-                return FinishReason.LENGTH;
-            case "null":
-                return FinishReason.NULL;
-            default:
-                return FinishReason.OTHER;
-        }
-    }
+
 }

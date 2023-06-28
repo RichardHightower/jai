@@ -14,6 +14,10 @@ public class CompletionResponse extends TextResponse {
         this.choices = choices;
     }
 
+    public List<CompletionChoice> getChoices() {
+        return choices;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

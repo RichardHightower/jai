@@ -251,7 +251,7 @@ public class OpenAIClient implements Client, ClientAsync {
         final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
 
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completion")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {

@@ -44,6 +44,20 @@ public class CompletionChoice extends Choice {
         return logprobs;
     }
 
+    @Override
+    public String toString() {
+        return "CompletionChoice{" +
+                "text='" + text + '\'' +
+                ", index=" + index +
+                ", logprobs=" + logprobs +
+                ", finishReason=" + finishReason +
+                '}';
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * Builder class for constructing CompletionChoice objects.
      */
