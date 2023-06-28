@@ -1,6 +1,6 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
 
-import com.cloudurable.jai.model.chat.function.FunctionalCall;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 
 import java.util.Objects;
 

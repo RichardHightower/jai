@@ -2,7 +2,7 @@ package com.cloudurable.jai;
 
 
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.chat.*;
+import com.cloudurable.jai.model.text.completion.chat.*;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;

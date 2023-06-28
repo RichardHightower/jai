@@ -1,7 +1,8 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
 
-import com.cloudurable.jai.model.chat.function.Function;
-import com.cloudurable.jai.model.chat.function.FunctionalCall;
+import com.cloudurable.jai.model.text.completion.CommonCompletionRequest;
+import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 
 import java.util.*;
 
@@ -52,21 +53,10 @@ import java.util.*;
  * <p>
  * logitBias (map, optional): Modifies the likelihood of specific tokens appearing in the completion. It accepts a JSON object
  */
-public class ChatRequest {
-    private final String model;
+public class ChatRequest extends CommonCompletionRequest {
     private final List<Message> messages;
     private final List<Function> functions;
     private final FunctionalCall functionalCall;
-    private final float temperature;
-    private final float topP;
-    private final boolean stream;
-    private final List<String> stop;
-    private final int maxTokens;
-    private final float presencePenalty;
-    private final float frequencyPenalty;
-    private final Map<Integer, Float> logitBias;
-    private final String user;
-    private final int completionCount;
 
     /**
      * Constructs a new ChatRequest object.
@@ -91,20 +81,10 @@ public class ChatRequest {
                        boolean stream, List<String> stop, int maxTokens,
                        float presencePenalty, float frequencyPenalty,
                        Map<Integer, Float> logitBias, String user, int completionCount) {
-        this.model = model;
+        super(model, temperature, topP, completionCount, stream, stop, maxTokens, presencePenalty, frequencyPenalty, logitBias, user);
         this.messages = messages;
         this.functions = functions;
         this.functionalCall = functionalCall;
-        this.temperature = temperature;
-        this.topP = topP;
-        this.stream = stream;
-        this.stop = stop;
-        this.maxTokens = maxTokens;
-        this.presencePenalty = presencePenalty;
-        this.frequencyPenalty = frequencyPenalty;
-        this.logitBias = logitBias;
-        this.user = user;
-        this.completionCount = completionCount;
     }
 
     /**
@@ -114,24 +94,6 @@ public class ChatRequest {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * completionCount
-     *
-     * @return completionCount
-     */
-    public int getCompletionCount() {
-        return completionCount;
-    }
-
-    /**
-     * Gets the model used for the chat request.
-     *
-     * @return the model used for the chat request
-     */
-    public String getModel() {
-        return model;
     }
 
     /**
@@ -162,87 +124,6 @@ public class ChatRequest {
     }
 
     /**
-     * Gets the temperature value for the chat request.
-     *
-     * @return the temperature value for the chat request
-     */
-    public float getTemperature() {
-        return temperature;
-    }
-
-    /**
-     * Gets the top-p value for the chat request.
-     *
-     * @return the top-p value for the chat request
-     */
-    public float getTopP() {
-        return topP;
-    }
-
-    /**
-     * Checks if the chat request should be streamed.
-     *
-     * @return true if the chat request should be streamed, false otherwise
-     */
-    public boolean isStream() {
-        return stream;
-    }
-
-    /**
-     * Gets the list of stop tokens for the chat request.
-     *
-     * @return the list of stop tokens for the chat request
-     */
-    public List<String> getStop() {
-        return stop;
-    }
-
-    /**
-     * Gets the maximum number of tokens for the chat request.
-     *
-     * @return the maximum number of tokens for the chat request
-     */
-    public int getMaxTokens() {
-        return maxTokens;
-    }
-
-    /**
-     * Gets the presence penalty value for the chat request.
-     *
-     * @return the presence penalty value for the chat request
-     */
-    public float getPresencePenalty() {
-        return presencePenalty;
-    }
-
-    /**
-     * Gets the frequency penalty value for the chat request.
-     *
-     * @return the frequency penalty value for the chat request
-     */
-    public float getFrequencyPenalty() {
-        return frequencyPenalty;
-    }
-
-    /**
-     * Gets the logit bias map for the chat request.
-     *
-     * @return the logit bias map for the chat request
-     */
-    public Map<Integer, Float> getLogitBias() {
-        return logitBias;
-    }
-
-    /**
-     * Gets the user associated with the chat request.
-     *
-     * @return the user associated with the chat request
-     */
-    public String getUser() {
-        return user;
-    }
-
-    /**
      * Returns a string representation of the ChatRequest.
      *
      * @return a string representation of the ChatRequest
@@ -250,19 +131,19 @@ public class ChatRequest {
     @Override
     public String toString() {
         return "ChatRequest{" +
-                "model='" + model + '\'' +
+                "model='" + getModel() + '\'' +
                 ", messages=" + messages +
                 ", functions=" + functions +
                 ", functionalCall=" + functionalCall +
-                ", temperature=" + temperature +
-                ", topP=" + topP +
-                ", stream=" + stream +
-                ", stop=" + stop +
-                ", maxTokens=" + maxTokens +
-                ", presencePenalty=" + presencePenalty +
-                ", frequencyPenalty=" + frequencyPenalty +
-                ", logitBias=" + logitBias +
-                ", user='" + user + '\'' +
+                ", temperature=" + getTemperature() +
+                ", topP=" + getTopP() +
+                ", stream=" + isStream() +
+                ", stop=" + getStop() +
+                ", maxTokens=" + getMaxTokens() +
+                ", presencePenalty=" + getPresencePenalty() +
+                ", frequencyPenalty=" + getFrequencyPenalty() +
+                ", logitBias=" + getLogitBias() +
+                ", user='" + getUser() + '\'' +
                 '}';
     }
 
@@ -277,19 +158,19 @@ public class ChatRequest {
         if (this == o) return true;
         if (!(o instanceof ChatRequest)) return false;
         ChatRequest that = (ChatRequest) o;
-        return Float.compare(that.temperature, temperature) == 0 &&
-                Float.compare(that.topP, topP) == 0 &&
-                stream == that.stream &&
-                maxTokens == that.maxTokens &&
-                Float.compare(that.presencePenalty, presencePenalty) == 0 &&
-                Float.compare(that.frequencyPenalty, frequencyPenalty) == 0 &&
-                Objects.equals(model, that.model) &&
+        return Float.compare(that.getTemperature(), getTemperature()) == 0 &&
+                Float.compare(that.getTopP(), getTopP()) == 0 &&
+                isStream() == that.isStream() &&
+                getMaxTokens() == that.getMaxTokens() &&
+                Float.compare(that.getPresencePenalty(), getPresencePenalty()) == 0 &&
+                Float.compare(that.getFrequencyPenalty(), getFrequencyPenalty()) == 0 &&
+                Objects.equals(getModel(), that.getModel()) &&
                 Objects.equals(messages, that.messages) &&
                 Objects.equals(functions, that.functions) &&
                 Objects.equals(functionalCall, that.functionalCall) &&
-                Objects.equals(stop, that.stop) &&
-                Objects.equals(logitBias, that.logitBias) &&
-                Objects.equals(user, that.user);
+                Objects.equals(getStop(), that.getStop()) &&
+                Objects.equals(getLogitBias(), that.getLogitBias()) &&
+                Objects.equals(getUser(), that.getUser());
     }
 
     /**
@@ -299,8 +180,8 @@ public class ChatRequest {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(model, messages, functions, functionalCall, temperature, topP,
-                stream, stop, maxTokens, presencePenalty, frequencyPenalty, logitBias, user);
+        return Objects.hash(getModel(), messages, functions, functionalCall, getTemperature(), getTopP(),
+                isStream(), getStop(), getMaxTokens(), getPresencePenalty(), getFrequencyPenalty(), getLogitBias(), getUser());
     }
 
     /**

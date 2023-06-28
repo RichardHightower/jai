@@ -1,11 +1,13 @@
 package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.chat.*;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.completion.chat.Message;
+import com.cloudurable.jai.model.text.completion.chat.Role;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
@@ -54,6 +56,7 @@ public class Main {
         // Create the chat request
         final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
                 .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+                .setCompletionCount(5)
                 .build();
 
         // Call Open AI API with chat message

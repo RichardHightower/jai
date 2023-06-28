@@ -1,15 +1,14 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
 
 
 import com.cloudurable.jai.model.FinishReason;
+import com.cloudurable.jai.model.text.Choice;
 
 /**
  * Represents a chat choice with an index, message, and finish reason.
  */
-public class ChatChoice {
-    private final int index;
+public class ChatChoice extends Choice {
     private final Message message;
-    private final FinishReason finishReason;
 
     /**
      * Constructs a ChatChoice object.
@@ -19,9 +18,8 @@ public class ChatChoice {
      * @param finishReason The finish reason for the chat choice.
      */
     public ChatChoice(int index, Message message, FinishReason finishReason) {
-        this.index = index;
+        super(index, finishReason);
         this.message = message;
-        this.finishReason = finishReason;
     }
 
     /**
@@ -34,30 +32,12 @@ public class ChatChoice {
     }
 
     /**
-     * Returns the index of the chat choice.
-     *
-     * @return The index of the chat choice.
-     */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
      * Returns the message associated with the chat choice.
      *
      * @return The message associated with the chat choice.
      */
     public Message getMessage() {
         return message;
-    }
-
-    /**
-     * Returns the finish reason for the chat choice.
-     *
-     * @return The finish reason for the chat choice.
-     */
-    public FinishReason getFinishReason() {
-        return finishReason;
     }
 
     /**
@@ -68,9 +48,9 @@ public class ChatChoice {
     @Override
     public String toString() {
         return "ChatChoice{" +
-                "index=" + index +
+                "index=" + getIndex() +
                 ", message=" + message +
-                ", finishReason=" + finishReason +
+                ", finishReason=" + getFinishReason() +
                 '}';
     }
 
@@ -85,7 +65,7 @@ public class ChatChoice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatChoice that = (ChatChoice) o;
-        return index == that.index && message.equals(that.message) && finishReason == that.finishReason;
+        return getIndex() == that.getIndex() && message.equals(that.message) && getFinishReason() == that.getFinishReason();
     }
 
     /**
@@ -95,9 +75,9 @@ public class ChatChoice {
      */
     @Override
     public int hashCode() {
-        int result = index;
+        int result = getIndex();
         result = 31 * result + message.hashCode();
-        result = 31 * result + finishReason.hashCode();
+        result = 31 * result + getFinishReason().hashCode();
         return result;
     }
 

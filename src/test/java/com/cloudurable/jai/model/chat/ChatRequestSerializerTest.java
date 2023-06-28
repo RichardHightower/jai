@@ -1,8 +1,12 @@
 package com.cloudurable.jai.model.chat;
 
-import com.cloudurable.jai.model.chat.function.Function;
-import com.cloudurable.jai.model.chat.function.Parameter;
-import com.cloudurable.jai.model.chat.function.ParameterType;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequestSerializer;
+import com.cloudurable.jai.model.text.completion.chat.Message;
+import com.cloudurable.jai.model.text.completion.chat.Role;
+import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
+import com.cloudurable.jai.model.text.completion.chat.function.ParameterType;
 import io.nats.jparse.Json;
 import io.nats.jparse.node.ObjectNode;
 import org.junit.jupiter.api.Test;

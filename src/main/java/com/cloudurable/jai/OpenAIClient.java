@@ -7,10 +7,14 @@ import com.cloudurable.jai.model.ClientErrorResponse;
 import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.SecretHolder;
-import com.cloudurable.jai.model.chat.ChatRequest;
-import com.cloudurable.jai.model.chat.ChatRequestSerializer;
-import com.cloudurable.jai.model.chat.ChatResponse;
-import com.cloudurable.jai.model.chat.ChatResponseDeserializer;
+import com.cloudurable.jai.model.text.completion.CompletionRequest;
+import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
+import com.cloudurable.jai.model.text.completion.CompletionResponse;
+import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequestSerializer;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponseDeserializer;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,7 +26,7 @@ import java.util.function.Function;
 /**
  * Represents a client for interacting with the OpenAI API.
  */
-public class OpenAIClient {
+public class OpenAIClient implements Client, ClientAsync {
 
     private final SecretHolder apiKey;
     private final String apiEndpoint;
@@ -52,7 +56,8 @@ public class OpenAIClient {
 
     /**
      * Helper method to handle an error
-     * @param e error
+     *
+     * @param e           error
      * @param chatRequest chatRequest
      * @return ClientSuccessResponse
      */
@@ -61,10 +66,11 @@ public class OpenAIClient {
         return builder.setException(e).setRequest(chatRequest).build();
     }
 
-    /** Helper method to handle a normal response
+    /**
+     * Helper method to handle a normal response
      *
      * @param chatRequest chatRequest
-     * @param response httpResponse
+     * @param response    httpResponse
      * @return ClientSuccessResponse
      */
     private static ClientSuccessResponse<ChatRequest, ChatResponse> getChatRequestChatResponseClientSuccessResponse(ChatRequest chatRequest, HttpResponse<String> response) {
@@ -84,6 +90,7 @@ public class OpenAIClient {
      * @param chatRequest The chat request to be sent.
      * @return The client response containing the chat request and the corresponding chat response.
      */
+    @Override
     public CompletableFuture<ClientResponse<ChatRequest, ChatResponse>> chatAsync(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
@@ -104,6 +111,7 @@ public class OpenAIClient {
      * @param chatRequest The chat request to be sent.
      * @return The client response containing the chat request and the corresponding chat response.
      */
+    @Override
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
@@ -235,4 +243,43 @@ public class OpenAIClient {
 
         }
     }
+
+
+
+    @Override
+    public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
+        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
+
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completion")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 299) {
+                final CompletionResponse completionResponse = CompletionResponseDeserializer.deserialize(response.body());
+                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
+                return builder.setRequest(completionRequest)
+                        .setResponse(completionResponse)
+                        .setStatusCode(response.statusCode())
+                        .build();
+            } else {
+                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
+                return builder.setRequest(completionRequest)
+                        .setStatusCode(response.statusCode())
+                        .setStatusMessage(response.body())
+                        .build();
+            }
+        } catch (Exception e) {
+            return getErrorResponseForCompletionRequest(e, completionRequest);
+        }
+    }
+
+    private static ClientResponse<CompletionRequest, CompletionResponse> getErrorResponseForCompletionRequest(Throwable e, CompletionRequest completionRequest) {
+        ClientErrorResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientErrorResponse.builder();
+        return builder.setException(e)
+                .setRequest(completionRequest)
+                .build();
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model;
 
 /**
  * Represents the usage statistics for a chat conversation.

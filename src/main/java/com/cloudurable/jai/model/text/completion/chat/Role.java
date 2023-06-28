@@ -1,4 +1,4 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
 
 /**
  * Represents the roles in a chat system.

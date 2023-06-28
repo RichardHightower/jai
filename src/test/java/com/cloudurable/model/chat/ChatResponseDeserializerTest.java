@@ -1,9 +1,9 @@
 package com.cloudurable.model.chat;
 
 import com.cloudurable.jai.model.FinishReason;
-import com.cloudurable.jai.model.chat.ChatResponse;
-import com.cloudurable.jai.model.chat.ChatResponseDeserializer;
-import com.cloudurable.jai.model.chat.Role;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponseDeserializer;
+import com.cloudurable.jai.model.text.completion.chat.Role;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.Test;
 

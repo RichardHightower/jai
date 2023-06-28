@@ -1,4 +1,4 @@
-package com.cloudurable.jai.model.chat.function;
+package com.cloudurable.jai.model.text.completion.chat.function;
 
 /**
  * Represents the types of parameters in a chat system.

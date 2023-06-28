@@ -1,6 +1,7 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.FinishReason;
+import com.cloudurable.jai.model.Usage;
 import io.nats.jparse.node.ArrayNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;

@@ -1,4 +1,7 @@
-package com.cloudurable.jai.model.chat;
+package com.cloudurable.jai.model.text.completion.chat;
+
+import com.cloudurable.jai.model.Usage;
+import com.cloudurable.jai.model.text.TextResponse;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -7,12 +10,8 @@ import java.util.List;
 /**
  * Represents a chat response containing the ID, object, creation time, chat choices, and usage statistics.
  */
-public class ChatResponse {
-    private final String id;
-    private final String object;
-    private final Instant created;
+public class ChatResponse extends TextResponse {
     private final List<ChatChoice> choices;
-    private final Usage usage;
 
     /**
      * Constructs a ChatResponse object.
@@ -24,11 +23,8 @@ public class ChatResponse {
      * @param usage   The usage statistics for the chat response.
      */
     public ChatResponse(String id, String object, Instant created, List<ChatChoice> choices, Usage usage) {
-        this.id = id;
-        this.object = object;
-        this.created = created;
+        super(id, object, created, usage);
         this.choices = choices;
-        this.usage = usage;
     }
 
     /**
@@ -41,48 +37,12 @@ public class ChatResponse {
     }
 
     /**
-     * Returns the ID of the chat response.
-     *
-     * @return The ID of the chat response.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Returns the object of the chat response.
-     *
-     * @return The object of the chat response.
-     */
-    public String getObject() {
-        return object;
-    }
-
-    /**
-     * Returns the creation time of the chat response.
-     *
-     * @return The creation time of the chat response.
-     */
-    public Instant getCreated() {
-        return created;
-    }
-
-    /**
      * Returns the list of chat choices.
      *
      * @return The list of chat choices.
      */
     public List<ChatChoice> getChoices() {
         return choices;
-    }
-
-    /**
-     * Returns the usage statistics for the chat response.
-     *
-     * @return The usage statistics for the chat response.
-     */
-    public Usage getUsage() {
-        return usage;
     }
 
     /**
@@ -93,11 +53,11 @@ public class ChatResponse {
     @Override
     public String toString() {
         return "ChatResponse{" +
-                "id='" + id + '\'' +
-                ", object='" + object + '\'' +
-                ", created=" + created +
+                "id='" + getId() + '\'' +
+                ", object='" + getObject() + '\'' +
+                ", created=" + getCreated() +
                 ", choices=" + choices +
-                ", usage=" + usage +
+                ", usage=" + getUsage() +
                 '}';
     }
 
@@ -112,7 +72,7 @@ public class ChatResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatResponse that = (ChatResponse) o;
-        return id.equals(that.id) && object.equals(that.object) && created.equals(that.created) && choices.equals(that.choices) && usage.equals(that.usage);
+        return getId().equals(that.getId()) && getObject().equals(that.getObject()) && getCreated().equals(that.getCreated()) && choices.equals(that.choices) && getUsage().equals(that.getUsage());
     }
 
     /**
@@ -122,11 +82,11 @@ public class ChatResponse {
      */
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + object.hashCode();
-        result = 31 * result + created.hashCode();
+        int result = getId().hashCode();
+        result = 31 * result + getObject().hashCode();
+        result = 31 * result + getCreated().hashCode();
         result = 31 * result + choices.hashCode();
-        result = 31 * result + usage.hashCode();
+        result = 31 * result + getUsage().hashCode();
         return result;
     }
 

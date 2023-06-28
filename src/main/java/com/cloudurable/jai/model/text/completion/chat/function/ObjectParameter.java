@@ -1,4 +1,4 @@
-package com.cloudurable.jai.model.chat.function;
+package com.cloudurable.jai.model.text.completion.chat.function;
 
 import java.util.List;
 import java.util.Objects;
