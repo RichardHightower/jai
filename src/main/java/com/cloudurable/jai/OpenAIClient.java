@@ -63,7 +63,7 @@ public class OpenAIClient implements Client, ClientAsync {
      */
     private static ClientResponse<ChatRequest, ChatResponse> getErrorResponseForChatRequest(Throwable e, ChatRequest chatRequest) {
         ClientErrorResponse.Builder<ChatRequest, ChatResponse> builder = ClientErrorResponse.builder();
-        return builder.setException(e).setRequest(chatRequest).build();
+        return builder.exception(e).request(chatRequest).build();
     }
 
     /**
@@ -277,8 +277,8 @@ public class OpenAIClient implements Client, ClientAsync {
 
     private static ClientResponse<CompletionRequest, CompletionResponse> getErrorResponseForCompletionRequest(Throwable e, CompletionRequest completionRequest) {
         ClientErrorResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientErrorResponse.builder();
-        return builder.setException(e)
-                .setRequest(completionRequest)
+        return builder.exception(e)
+                .request(completionRequest)
                 .build();
     }
 
