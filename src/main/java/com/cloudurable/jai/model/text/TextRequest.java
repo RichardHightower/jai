@@ -105,13 +105,4 @@ public abstract class TextRequest implements Request {
         return Objects.hash(model, temperature, topP, completionCount);
     }
 
-    @Override
-    public String toString() {
-        return "TextRequest{" +
-                "model='" + model + '\'' +
-                ", temperature=" + temperature +
-                ", topP=" + topP +
-                ", completionCount=" + completionCount +
-                '}';
-    }
 }

@@ -84,6 +84,13 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
+    private static ClientResponse<CompletionRequest, CompletionResponse> getErrorResponseForCompletionRequest(Throwable e, CompletionRequest completionRequest) {
+        ClientErrorResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(completionRequest)
+                .build();
+    }
+
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
      *
@@ -139,6 +146,35 @@ public class OpenAIClient implements Client, ClientAsync {
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .header("Content-Type", "application/json")
                 .uri(URI.create(apiEndpoint + path));
+    }
+
+    @Override
+    public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
+        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
+
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 299) {
+                final CompletionResponse completionResponse = CompletionResponseDeserializer.deserialize(response.body());
+                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
+                return builder.setRequest(completionRequest)
+                        .setResponse(completionResponse)
+                        .setStatusCode(response.statusCode())
+                        .build();
+            } else {
+                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
+                return builder.setRequest(completionRequest)
+                        .setStatusCode(response.statusCode())
+                        .setStatusMessage(response.body())
+                        .build();
+            }
+        } catch (Exception e) {
+            return getErrorResponseForCompletionRequest(e, completionRequest);
+        }
     }
 
     /**
@@ -242,44 +278,6 @@ public class OpenAIClient implements Client, ClientAsync {
             }
 
         }
-    }
-
-
-
-    @Override
-    public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
-        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
-
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
-        try {
-            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 299) {
-                final CompletionResponse completionResponse = CompletionResponseDeserializer.deserialize(response.body());
-                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(completionRequest)
-                        .setResponse(completionResponse)
-                        .setStatusCode(response.statusCode())
-                        .build();
-            } else {
-                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(completionRequest)
-                        .setStatusCode(response.statusCode())
-                        .setStatusMessage(response.body())
-                        .build();
-            }
-        } catch (Exception e) {
-            return getErrorResponseForCompletionRequest(e, completionRequest);
-        }
-    }
-
-    private static ClientResponse<CompletionRequest, CompletionResponse> getErrorResponseForCompletionRequest(Throwable e, CompletionRequest completionRequest) {
-        ClientErrorResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientErrorResponse.builder();
-        return builder.exception(e)
-                .request(completionRequest)
-                .build();
     }
 
 }

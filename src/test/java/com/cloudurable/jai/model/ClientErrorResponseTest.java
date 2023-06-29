@@ -4,7 +4,7 @@ package com.cloudurable.jai.model;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import org.junit.jupiter.api.Assertions;
-        import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClientErrorResponseTest {
 

@@ -26,6 +26,10 @@ public class CompletionChoice extends Choice {
         this.logprobs = logprobs;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * Returns the text of the choice.
      *
@@ -52,10 +56,6 @@ public class CompletionChoice extends Choice {
                 ", logprobs=" + logprobs +
                 ", finishReason=" + finishReason +
                 '}';
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

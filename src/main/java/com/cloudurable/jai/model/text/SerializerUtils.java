@@ -1,7 +1,6 @@
 package com.cloudurable.jai.model.text;
 
 import com.cloudurable.jai.model.text.completion.CommonCompletionRequest;
-import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
@@ -9,7 +8,8 @@ import java.util.Map;
 
 public class SerializerUtils {
 
-    private SerializerUtils() {}
+    private SerializerUtils() {
+    }
 
 
     public static void outputModel(TextRequest chatRequest, JsonSerializer jsonBodyBuilder) {

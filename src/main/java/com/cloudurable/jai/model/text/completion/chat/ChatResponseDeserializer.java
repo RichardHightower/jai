@@ -1,6 +1,5 @@
 package com.cloudurable.jai.model.text.completion.chat;
 
-import com.cloudurable.jai.model.FinishReason;
 import com.cloudurable.jai.model.Usage;
 import com.cloudurable.jai.model.text.DeserializerUtils;
 import io.nats.jparse.node.ArrayNode;
@@ -70,7 +69,6 @@ public class ChatResponseDeserializer {
         return ChatResponse.builder().setChoices(chatChoices).setId(id).setUsage(usage)
                 .setObject(object).setCreated(Instant.ofEpochSecond(createdTime)).build();
     }
-
 
 
     private static ChatChoice deserializeChoice(final ObjectNode choiceNode) {

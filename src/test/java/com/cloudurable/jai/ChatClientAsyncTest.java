@@ -57,8 +57,8 @@ class ChatClientAsyncTest {
 
 
         // Create the request body.
-       basicChatRequest = ChatRequest.builder()
-               .setModel("gpt-3.5-turbo")
+        basicChatRequest = ChatRequest.builder()
+                .setModel("gpt-3.5-turbo")
                 .addMessage(Message.builder()
                         .setContent("What is AI?")
                         .setRole(Role.USER).build()
@@ -110,6 +110,6 @@ class ChatClientAsyncTest {
 
         verify(mock, times(1))
                 .sendAsync(requestResponse.getRequest(),
-                HttpResponse.BodyHandlers.ofString());
+                        HttpResponse.BodyHandlers.ofString());
     }
 }

@@ -27,8 +27,6 @@ class ChatRequestSerializerTest {
                 .setTemperature(0.8f)
                 .setFrequencyPenalty(0.6f)
                 .setPresencePenalty(0.65f)
-//                .addLogitBias(1234, 2.0f)
-//                .addLogitBias(4567, -1.0f)
                 .addFunction(Function.builder().setName("func1").setDescription("Function 1").addParameter(
                         Parameter.builder().setName("param1").setType(ParameterType.NUMBER).build()
                 ).build())

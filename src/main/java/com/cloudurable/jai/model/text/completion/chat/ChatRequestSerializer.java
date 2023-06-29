@@ -7,7 +7,6 @@ import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
 import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class provides serialization functionality for ChatRequest objects.
@@ -69,9 +68,7 @@ public class ChatRequestSerializer {
         jsonBodyBuilder.endList();
 
 
-
         SerializerUtils.outputTextParams(chatRequest, jsonBodyBuilder);
-
 
 
         final List<Function> functions = chatRequest.getFunctions();
@@ -95,7 +92,6 @@ public class ChatRequestSerializer {
 
 
         SerializerUtils.outputCompletionParams(chatRequest, jsonBodyBuilder);
-
 
 
         // end JSON request body for an open ai API chat request

@@ -2,13 +2,7 @@ package com.cloudurable.jai.model.text.completion;
 
 
 import com.cloudurable.jai.model.text.SerializerUtils;
-import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
-import com.cloudurable.jai.model.text.completion.chat.Message;
-import com.cloudurable.jai.model.text.completion.chat.function.Function;
-import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
 import com.cloudurable.jai.util.JsonSerializer;
-
-import java.util.List;
 
 /**
  * This class provides serialization functionality for ChatRequest objects.
@@ -37,17 +31,13 @@ public class CompletionRequestSerializer {
 
         jsonBodyBuilder.addAttribute("prompt", request.getPrompt());
         jsonBodyBuilder.addAttribute("suffix", request.getSuffix());
-
         jsonBodyBuilder.addAttribute("echo", request.isEcho());
         jsonBodyBuilder.addAttribute("logprobs", request.getLogprobs());
+        jsonBodyBuilder.addAttribute("stream", request.isStream());
+        jsonBodyBuilder.addAttribute("best_of", request.getBestOf());
 
         SerializerUtils.outputTextParams(request, jsonBodyBuilder);
-
-
-
         SerializerUtils.outputCompletionParams(request, jsonBodyBuilder);
-
-
 
         // end JSON request body for an open ai API chat request
         jsonBodyBuilder.endObject();
