@@ -26,7 +26,6 @@ public class CompletionResponseDeserializer {
      * @return The deserialized CompletionResponse object.
      */
     public static CompletionResponse deserialize(final String jsonBody) {
-
         final JsonParser parser = JsonParserBuilder.builder().build();
         final ObjectNode objectNode = parser.parse(jsonBody).asObject();
         final String id = objectNode.getString("id");

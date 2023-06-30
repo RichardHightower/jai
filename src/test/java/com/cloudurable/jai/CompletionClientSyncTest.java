@@ -6,6 +6,7 @@ import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.test.mock.HttpClientMock;
+import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,9 +44,10 @@ public class CompletionClientSyncTest {
 
         final ClientResponse<CompletionRequest, CompletionResponse> response = client.completion(basicCompletionRequest);
 
-        assertFalse(response.getStatusMessage().isPresent());
-//        assertEquals(200, response.getStatusCode().orElse(-666));
-//        assertTrue(response.getResponse().isPresent());
+        response.getException().ifPresent(throwable -> throwable.printStackTrace());
+        assertFalse(response.getException().isPresent());
+        assertEquals(200, response.getStatusCode().orElse(-666));
+        assertTrue(response.getResponse().isPresent());
 
         response.getResponse().ifPresent(completionResponse -> {
             assertEquals("This is the completion response.", completionResponse.getChoices().get(0).getText());
@@ -62,7 +64,7 @@ public class CompletionClientSyncTest {
     @BeforeEach
     void before() {
         // Create the response body
-        basicCompletionResponseBody = "{\n" +
+        basicCompletionResponseBody = Json.niceJson("{\n" +
                 "  'id': 'completion-123',\n" +
                 "  'object': 'completion',\n" +
                 "  'created': 1687413620,\n" +
@@ -79,7 +81,7 @@ public class CompletionClientSyncTest {
                 "    'completion_tokens': 5,\n" +
                 "    'total_tokens': 15\n" +
                 "  }\n" +
-                "}";
+                "}");
 
         // Create the request body
         basicCompletionRequest = CompletionRequest.builder()
@@ -89,5 +91,6 @@ public class CompletionClientSyncTest {
                 .build();
 
         basicCompletionRequestBody = CompletionRequestSerializer.serialize(basicCompletionRequest);
+        System.out.println(basicCompletionRequestBody);
     }
 }

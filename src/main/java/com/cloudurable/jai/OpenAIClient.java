@@ -3,18 +3,14 @@
  */
 package com.cloudurable.jai;
 
-import com.cloudurable.jai.model.ClientErrorResponse;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.SecretHolder;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
-import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequestSerializer;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
-import com.cloudurable.jai.model.text.completion.chat.ChatResponseDeserializer;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,6 +18,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
+import static com.cloudurable.jai.util.RequestResponseUtils.*;
 
 /**
  * Represents a client for interacting with the OpenAI API.
@@ -54,42 +52,6 @@ public class OpenAIClient implements Client, ClientAsync {
         return new Builder();
     }
 
-    /**
-     * Helper method to handle an error
-     *
-     * @param e           error
-     * @param chatRequest chatRequest
-     * @return ClientSuccessResponse
-     */
-    private static ClientResponse<ChatRequest, ChatResponse> getErrorResponseForChatRequest(Throwable e, ChatRequest chatRequest) {
-        ClientErrorResponse.Builder<ChatRequest, ChatResponse> builder = ClientErrorResponse.builder();
-        return builder.exception(e).request(chatRequest).build();
-    }
-
-    /**
-     * Helper method to handle a normal response
-     *
-     * @param chatRequest chatRequest
-     * @param response    httpResponse
-     * @return ClientSuccessResponse
-     */
-    private static ClientSuccessResponse<ChatRequest, ChatResponse> getChatRequestChatResponseClientSuccessResponse(ChatRequest chatRequest, HttpResponse<String> response) {
-        if (response.statusCode() >= 200 && response.statusCode() < 299) {
-            final ChatResponse chatResponse = ChatResponseDeserializer.deserialize(response.body());
-            ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
-            return builder.setRequest(chatRequest).setResponse(chatResponse).setStatusCode(response.statusCode()).build();
-        } else {
-            ClientSuccessResponse.Builder<ChatRequest, ChatResponse> builder = ClientSuccessResponse.builder();
-            return builder.setRequest(chatRequest).setStatusCode(response.statusCode()).setStatusMessage(response.body()).build();
-        }
-    }
-
-    private static ClientResponse<CompletionRequest, CompletionResponse> getErrorResponseForCompletionRequest(Throwable e, CompletionRequest completionRequest) {
-        ClientErrorResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientErrorResponse.builder();
-        return builder.exception(e)
-                .request(completionRequest)
-                .build();
-    }
 
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
@@ -107,7 +69,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<ChatRequest, ChatResponse>>) response ->
-                        getChatRequestChatResponseClientSuccessResponse(chatRequest, response)).exceptionally(e ->
+                        getChatResponse(chatRequest, response)).exceptionally(e ->
                         getErrorResponseForChatRequest(e, chatRequest));
 
     }
@@ -122,18 +84,17 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-        //ystem.out.println(jsonRequest.replace('"', '\'').replace('\\', '`'));
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            //ystem.out.println(response.body().replace('"', '\'').replace('\\', '`'));
-            return getChatRequestChatResponseClientSuccessResponse(chatRequest, response);
+            return getChatResponse(chatRequest, response);
         } catch (Exception e) {
             return getErrorResponseForChatRequest(e, chatRequest);
         }
     }
+
 
     /**
      * Creates an HTTP request builder with common headers and the specified path.
@@ -148,30 +109,23 @@ public class OpenAIClient implements Client, ClientAsync {
                 .uri(URI.create(apiEndpoint + path));
     }
 
+
+    /**
+     * Sends a chat request to the OpenAI API and returns the client response.
+     *
+     * @param completionRequest The completion request to be sent.
+     * @return The client response containing the completion request and the corresponding chat response.
+     */
     @Override
     public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
         final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
-
         // Build and send the HTTP request
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 299) {
-                final CompletionResponse completionResponse = CompletionResponseDeserializer.deserialize(response.body());
-                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(completionRequest)
-                        .setResponse(completionResponse)
-                        .setStatusCode(response.statusCode())
-                        .build();
-            } else {
-                ClientSuccessResponse.Builder<CompletionRequest, CompletionResponse> builder = ClientSuccessResponse.builder();
-                return builder.setRequest(completionRequest)
-                        .setStatusCode(response.statusCode())
-                        .setStatusMessage(response.body())
-                        .build();
-            }
+            return getCompletionResponse(completionRequest, response);
         } catch (Exception e) {
             return getErrorResponseForCompletionRequest(e, completionRequest);
         }
