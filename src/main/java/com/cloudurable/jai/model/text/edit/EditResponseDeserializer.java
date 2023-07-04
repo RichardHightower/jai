@@ -2,15 +2,12 @@ package com.cloudurable.jai.model.text.edit;
 
 import com.cloudurable.jai.model.Usage;
 import com.cloudurable.jai.model.text.DeserializerUtils;
-import com.cloudurable.jai.model.text.completion.CompletionChoice;
-import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import io.nats.jparse.node.ArrayNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
 import io.nats.jparse.parser.JsonParserBuilder;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 /**

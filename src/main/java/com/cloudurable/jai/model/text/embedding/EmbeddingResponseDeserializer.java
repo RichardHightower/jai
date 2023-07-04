@@ -2,11 +2,11 @@ package com.cloudurable.jai.model.text.embedding;
 
 import com.cloudurable.jai.model.Usage;
 import com.cloudurable.jai.model.text.DeserializerUtils;
-
 import io.nats.jparse.node.ArrayNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
 import io.nats.jparse.parser.JsonParserBuilder;
+
 import java.util.List;
 
 public class EmbeddingResponseDeserializer {

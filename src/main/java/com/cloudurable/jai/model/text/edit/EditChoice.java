@@ -8,9 +8,14 @@ import java.util.Objects;
 public class EditChoice extends Choice {
 
     private final String text;
+
     public EditChoice(int index, String text) {
         super(index, FinishReason.NULL);
         this.text = text;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String getText() {
@@ -34,20 +39,15 @@ public class EditChoice extends Choice {
     public String toString() {
         return "EditChoice{" +
                 "text='" + text + '\'' +
-                "super=" + super.toString() +',' +
+                "super=" + super.toString() + ',' +
                 '}';
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
     public static class Builder {
-        private Builder() {
-        }
-
         private int index;
         private String text;
-
+        private Builder() {
+        }
 
         public int getIndex() {
             return index;
@@ -57,7 +57,6 @@ public class EditChoice extends Choice {
             this.index = index;
             return this;
         }
-
 
 
         public String getText() {

@@ -15,11 +15,15 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 
 public interface Client {
     ClientResponse<ChatRequest, ChatResponse> chat(ChatRequest chatRequest);
+
     ClientResponse<CompletionRequest, CompletionResponse> completion(CompletionRequest completionRequest);
+
     ClientResponse<EditRequest, EditResponse> edit(EditRequest editRequest);
+
     ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest);
 
     ClientResponse<TranscriptionRequest, AudioResponse> transcribe(TranscriptionRequest transcriptionRequest);
+
     ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest);
 
 }

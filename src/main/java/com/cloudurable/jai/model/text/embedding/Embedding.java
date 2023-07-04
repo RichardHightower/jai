@@ -24,6 +24,15 @@ public class Embedding {
     }
 
     /**
+     * Returns a new Builder instance to build an Embedding.
+     *
+     * @return A new Builder instance.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Returns the index of the embedding.
      *
      * @return The index of the embedding.
@@ -79,15 +88,6 @@ public class Embedding {
                 ", index=" + index +
                 ", embedding=" + Arrays.toString(embedding) +
                 '}';
-    }
-
-    /**
-     * Returns a new Builder instance to build an Embedding.
-     *
-     * @return A new Builder instance.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

@@ -24,6 +24,15 @@ public class EmbeddingRequest implements Request {
     }
 
     /**
+     * Returns a new Builder instance to build an EmbeddingRequest.
+     *
+     * @return A new Builder instance.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Returns the model used for the embedding.
      *
      * @return The model used for the embedding.
@@ -60,15 +69,6 @@ public class EmbeddingRequest implements Request {
                 "model='" + model + '\'' +
                 ", input='" + input + '\'' +
                 '}';
-    }
-
-    /**
-     * Returns a new Builder instance to build an EmbeddingRequest.
-     *
-     * @return A new Builder instance.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

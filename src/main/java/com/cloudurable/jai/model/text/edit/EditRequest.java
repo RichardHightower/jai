@@ -15,6 +15,7 @@ public class EditRequest extends TextRequest {
      * The instruction that tells the model how to edit the prompt.
      */
     private final String instruction;
+
     /**
      * Constructs a TextRequest object.
      *
@@ -29,6 +30,10 @@ public class EditRequest extends TextRequest {
         super(model, temperature, topP, completionCount);
         this.input = input;
         this.instruction = instruction;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String getInput() {
@@ -53,28 +58,21 @@ public class EditRequest extends TextRequest {
         return Objects.hash(super.hashCode(), input, instruction);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
     public static class Builder {
-        private Builder(){}
-
-
         /**
          * The input text to use as a starting point for the edit.
          */
         private String input;
-
         /**
          * The instruction that tells the model how to edit the prompt.
          */
         private String instruction;
-
-
         private String model;
         private float temperature;
         private float topP;
         private int completionCount;
+        private Builder() {
+        }
 
         public String getInput() {
             return input;

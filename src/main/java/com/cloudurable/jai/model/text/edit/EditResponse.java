@@ -17,6 +17,10 @@ public class EditResponse extends TextResponse {
         this.choices = choices;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public List<EditChoice> getChoices() {
         return choices;
     }
@@ -45,18 +49,13 @@ public class EditResponse extends TextResponse {
                 '}';
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
     public static class Builder {
-        private Builder() {
-        }
-
         private String object;
         private Instant created;
         private Usage usage;
         private List<EditChoice> choices;
-
+        private Builder() {
+        }
 
         public String getObject() {
             return object;

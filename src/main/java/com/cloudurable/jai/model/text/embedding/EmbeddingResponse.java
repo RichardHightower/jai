@@ -31,6 +31,10 @@ public class EmbeddingResponse implements Response {
         this.data = data;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * Returns the object associated with the response.
      *
@@ -92,26 +96,20 @@ public class EmbeddingResponse implements Response {
         return Objects.hash(object, model, usage, data);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     /**
      * Builder class for constructing EmbeddingResponse objects.
      */
     public static class Builder {
 
-        /**
-         * Constructs a new Builder object.
-         */
-        private Builder() {}
-
         private String object;
         private String model;
         private Usage usage;
         private List<Embedding> data;
-
-
+        /**
+         * Constructs a new Builder object.
+         */
+        private Builder() {
+        }
 
         /**
          * Sets the object associated with the response.

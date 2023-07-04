@@ -2,7 +2,6 @@ package com.cloudurable.jai.model.text.edit;
 
 
 import com.cloudurable.jai.model.text.SerializerUtils;
-import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.util.JsonSerializer;
 
 /**

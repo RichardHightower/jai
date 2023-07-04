@@ -23,18 +23,12 @@ import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import com.cloudurable.jai.util.MultipartEntityBuilder;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.channels.Channels;
-import java.nio.channels.Pipe;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -72,6 +66,26 @@ public class OpenAIClient implements Client, ClientAsync {
         return new Builder();
     }
 
+    private static MultipartEntityBuilder buildForm(AudioRequest audioRequest) {
+        MultipartEntityBuilder form = MultipartEntityBuilder.create()
+                .addTextBody("model", audioRequest.getModel());
+
+
+        if (audioRequest.getPrompt() != null) {
+            form.addTextBody("prompt", audioRequest.getPrompt());
+        }
+
+        if (audioRequest.getResponseFormat() != null) {
+            form.addTextBody("response_format", audioRequest.getResponseFormat());
+        }
+
+        if (audioRequest.getTemperature() != 0.0) {
+            form.addTextBody("temperature", String.valueOf(audioRequest.getTemperature()));
+        }
+
+        form.addBinaryBody("file", audioRequest.getFile(), "application/binary", "transcribe.m4a");
+        return form;
+    }
 
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
@@ -135,7 +149,6 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
-
     /**
      * Creates an HTTP request builder with common headers and the specified path.
      *
@@ -154,6 +167,7 @@ public class OpenAIClient implements Client, ClientAsync {
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .uri(URI.create(apiEndpoint + path));
     }
+
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
      *
@@ -214,31 +228,13 @@ public class OpenAIClient implements Client, ClientAsync {
             form.addTextBody("language", transcriptionRequest.getLanguage());
         }
 
-
-        HttpEntity httpEntity = form.build();
-
         try {
-           final Pipe pipe = Pipe.open();
 
-        // Pipeline streams must be used in a multi-threaded environment. Using one
-        // thread for simultaneous reads and writes can lead to deadlocks.
-        new Thread(() -> {
-            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                // Write the encoded data to the pipeline.
-                httpEntity.writeTo(outputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }).start();
-
-        System.out.println(httpEntity.getContentType().getValue());
-
-        HttpRequest request = createRequestBuilderWithBody("/audio/transcriptions")
-                // The Content-Type header is important, don't forget to set it.
-                .header("Content-Type", httpEntity.getContentType().getValue())
-                // Reads data from a pipeline stream.
-                .POST(HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()))).build();
+            HttpRequest request = createRequestBuilderWithBody("/audio/transcriptions")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", "multipart/form-data; boundary")
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
 
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -256,55 +252,19 @@ public class OpenAIClient implements Client, ClientAsync {
 
     }
 
-    private static MultipartEntityBuilder buildForm(AudioRequest audioRequest) {
-        MultipartEntityBuilder form = MultipartEntityBuilder.create()
-                .addTextBody("model", audioRequest.getModel());
-
-
-        if (audioRequest.getPrompt() != null) {
-            form.addTextBody("prompt", audioRequest.getPrompt());
-        }
-
-        if (audioRequest.getResponseFormat() != null) {
-            form.addTextBody("response_format", audioRequest.getResponseFormat());
-        }
-
-        if (audioRequest.getTemperature() != 0.0) {
-            form.addTextBody("temperature", String.valueOf(audioRequest.getTemperature()));
-        }
-
-        form.addBinaryBody("file", audioRequest.getFile(), ContentType.DEFAULT_BINARY, "transcribe.m4a");
-        return form;
-    }
-
     @Override
     public ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest) {
 
         MultipartEntityBuilder form = buildForm(translateRequest);
 
-
-        HttpEntity httpEntity = form.build();
-
         try {
-            final Pipe pipe = Pipe.open();
-
-            // Pipeline streams must be used in a multi-threaded environment. Using one
-            // thread for simultaneous reads and writes can lead to deadlocks.
-            new Thread(() -> {
-                try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                    // Write the encoded data to the pipeline.
-                    httpEntity.writeTo(outputStream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }).start();
-
+            final String contentType = "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
             HttpRequest request = createRequestBuilderWithBody("/audio/translations")
                     // The Content-Type header is important, don't forget to set it.
-                    .header("Content-Type", httpEntity.getContentType().getValue())
+                    .header("Content-Type", contentType)
                     // Reads data from a pipeline stream.
-                    .POST(HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()))).build();
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 

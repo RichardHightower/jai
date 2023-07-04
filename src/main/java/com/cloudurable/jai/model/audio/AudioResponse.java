@@ -1,4 +1,5 @@
 package com.cloudurable.jai.model.audio;
+
 /**
  * Represents an audio response.
  */
