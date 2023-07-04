@@ -1,6 +1,9 @@
 package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientResponse;
+import com.cloudurable.jai.model.audio.AudioResponse;
+import com.cloudurable.jai.model.audio.TranscriptionRequest;
+import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -12,6 +15,9 @@ import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +25,9 @@ public class Main {
     public static void main(final String... args) {
         try {
 
+            callTranslate();
+
+//            callTranscribe();
 //            callEmbeddingAsyncExample();
 //            callEmbeddingExample();
 //            callEditAsyncExample();
@@ -33,6 +42,77 @@ public class Main {
 
     }
 
+
+
+    private static void callTranslate() throws IOException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
+
+        File file = new File("spanish.m4a");
+
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        // Create the chat request
+        final TranslateRequest request = TranslateRequest.builder()
+                .model("whisper-1").prompt("translate from Spanish to English").file(bytes).responseFormat("json")
+                .build();
+
+
+        /*
+         *  verbose json
+         * {"task":"translate","language":"english","duration":4.73,
+         * "segments":[{"id":0,"seek":0,"start":0.0,"end":4.0,
+         * "text":" I am hungry.","tokens":[50414,286,669,8067,13,50564],"temperature":0.0,"avg_logprob":-0.5544586522238595,"compression_ratio":0.6,"no_speech_prob":0.03266291320323944,"transient":false}],
+         * "text":"I am hungry."}
+         * srt
+            1
+            00:00:00,000 --> 00:00:04,000
+            I am hungry.
+            *
+          vtt
+            WEBVTT
+            00:00:00.000 --> 00:00:04.000
+            I am hungry.
+          text
+          I am hungry.
+          Json
+          {"text":"I am hungry."}
+         *
+         *
+         * */
+        // Call Open AI API with chat message
+        final ClientResponse<TranslateRequest, AudioResponse> response = client.translate(request);
+
+        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getBody()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+
+    private static void callTranscribe() throws IOException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
+
+        File file = new File("test.m4a");
+
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        // Create the chat request
+        final TranscriptionRequest request = TranscriptionRequest.builder()
+                .model("whisper-1").prompt("Write up notes").language("en").file(bytes)
+                .build();
+
+
+        // Call Open AI API with chat message
+        final ClientResponse<TranscriptionRequest, AudioResponse> response = client.transcribe(request);
+
+        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getBody()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
 
 
     private static void callEmbeddingAsyncExample() throws Exception {

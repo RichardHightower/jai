@@ -3,8 +3,14 @@
  */
 package com.cloudurable.jai;
 
+import com.cloudurable.jai.model.ClientErrorResponse;
 import com.cloudurable.jai.model.ClientResponse;
+import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.SecretHolder;
+import com.cloudurable.jai.model.audio.AudioRequest;
+import com.cloudurable.jai.model.audio.AudioResponse;
+import com.cloudurable.jai.model.audio.TranscriptionRequest;
+import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -17,11 +23,19 @@ import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -69,7 +83,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public CompletableFuture<ClientResponse<ChatRequest, ChatResponse>> chatAsync(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
 
@@ -90,7 +104,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public CompletableFuture<ClientResponse<CompletionRequest, CompletionResponse>> completionAsync(
             final CompletionRequest completionRequest) {
         final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
 
@@ -110,7 +124,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/chat/completions")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
@@ -128,14 +142,18 @@ public class OpenAIClient implements Client, ClientAsync {
      * @param path The path for the HTTP request.
      * @return The HTTP request builder.
      */
-    private HttpRequest.Builder createRequestBuilderWithBody(final String path) {
+    private HttpRequest.Builder createRequestBuilderWithJsonBody(final String path) {
         return HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .header("Content-Type", "application/json")
                 .uri(URI.create(apiEndpoint + path));
     }
 
-
+    private HttpRequest.Builder createRequestBuilderWithBody(final String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + apiKey.getSecret())
+                .uri(URI.create(apiEndpoint + path));
+    }
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
      *
@@ -146,7 +164,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
         final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
@@ -161,7 +179,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<EditRequest, EditResponse> edit(final EditRequest editRequest) {
         final String jsonRequest = EditRequestSerializer.serialize(editRequest);
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/edits")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/edits")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
@@ -176,7 +194,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/embeddings")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         try {
@@ -187,10 +205,125 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
+    @Override
+    public ClientResponse<TranscriptionRequest, AudioResponse> transcribe(TranscriptionRequest transcriptionRequest) {
+
+        MultipartEntityBuilder form = buildForm(transcriptionRequest);
+
+        if (transcriptionRequest.getLanguage() != null) {
+            form.addTextBody("language", transcriptionRequest.getLanguage());
+        }
+
+
+        HttpEntity httpEntity = form.build();
+
+        try {
+           final Pipe pipe = Pipe.open();
+
+        // Pipeline streams must be used in a multi-threaded environment. Using one
+        // thread for simultaneous reads and writes can lead to deadlocks.
+        new Thread(() -> {
+            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+                // Write the encoded data to the pipeline.
+                httpEntity.writeTo(outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }).start();
+
+        System.out.println(httpEntity.getContentType().getValue());
+
+        HttpRequest request = createRequestBuilderWithBody("/audio/transcriptions")
+                // The Content-Type header is important, don't forget to set it.
+                .header("Content-Type", httpEntity.getContentType().getValue())
+                // Reads data from a pipeline stream.
+                .POST(HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()))).build();
+
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+            ClientSuccessResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientSuccessResponse.builder();
+            return builder.setRequest(transcriptionRequest)
+                    .setResponse(AudioResponse.builder().body(response.body()).build())
+                    .setStatusCode(response.statusCode())
+                    .build();
+        } catch (Exception e) {
+            ClientErrorResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientErrorResponse.builder();
+            return builder.exception(e).request(transcriptionRequest)
+                    .build();
+        }
+
+    }
+
+    private static MultipartEntityBuilder buildForm(AudioRequest audioRequest) {
+        MultipartEntityBuilder form = MultipartEntityBuilder.create()
+                .addTextBody("model", audioRequest.getModel());
+
+
+        if (audioRequest.getPrompt() != null) {
+            form.addTextBody("prompt", audioRequest.getPrompt());
+        }
+
+        if (audioRequest.getResponseFormat() != null) {
+            form.addTextBody("response_format", audioRequest.getResponseFormat());
+        }
+
+        if (audioRequest.getTemperature() != 0.0) {
+            form.addTextBody("temperature", String.valueOf(audioRequest.getTemperature()));
+        }
+
+        form.addBinaryBody("file", audioRequest.getFile(), ContentType.DEFAULT_BINARY, "transcribe.m4a");
+        return form;
+    }
+
+    @Override
+    public ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest) {
+
+        MultipartEntityBuilder form = buildForm(translateRequest);
+
+
+        HttpEntity httpEntity = form.build();
+
+        try {
+            final Pipe pipe = Pipe.open();
+
+            // Pipeline streams must be used in a multi-threaded environment. Using one
+            // thread for simultaneous reads and writes can lead to deadlocks.
+            new Thread(() -> {
+                try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+                    // Write the encoded data to the pipeline.
+                    httpEntity.writeTo(outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }).start();
+
+            HttpRequest request = createRequestBuilderWithBody("/audio/translations")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", httpEntity.getContentType().getValue())
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()))).build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+            ClientSuccessResponse.Builder<TranslateRequest, AudioResponse> builder = ClientSuccessResponse.builder();
+            return builder.setRequest(translateRequest)
+                    .setResponse(AudioResponse.builder().body(response.body()).build())
+                    .setStatusCode(response.statusCode())
+                    .build();
+        } catch (Exception e) {
+            ClientErrorResponse.Builder<TranslateRequest, AudioResponse> builder = ClientErrorResponse.builder();
+            return builder.exception(e).request(translateRequest)
+                    .build();
+        }
+    }
+
     public CompletableFuture<ClientResponse<EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/embeddings")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -203,7 +336,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public CompletableFuture<ClientResponse<EditRequest, EditResponse>> editAsync(EditRequest editRequest) {
         final String jsonRequest = EditRequestSerializer.serialize(editRequest);
         // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/edits")
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/edits")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
