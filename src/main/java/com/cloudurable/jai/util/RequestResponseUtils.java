@@ -9,6 +9,12 @@ import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponseDeserializer;
+import com.cloudurable.jai.model.text.edit.EditRequest;
+import com.cloudurable.jai.model.text.edit.EditResponse;
+import com.cloudurable.jai.model.text.edit.EditResponseDeserializer;
+import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
+import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
+import com.cloudurable.jai.model.text.embedding.EmbeddingResponseDeserializer;
 
 import java.net.http.HttpResponse;
 
@@ -147,5 +153,80 @@ public class RequestResponseUtils {
         } else {
             return getCompletionResponseNotOk(completionRequest, response.statusCode(), response.body());
         }
+    }
+
+
+    //getEmbeddingResponse
+
+    public static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse>
+    getEmbeddingResponse(EmbeddingRequest embeddingRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            final EmbeddingResponse embeddingResponse = EmbeddingResponseDeserializer.deserialize(response.body());
+            return getEmbeddingResponseSuccess(embeddingRequest, response.statusCode(), embeddingResponse);
+        } else {
+            return getEmbeddingResponseNotOk(embeddingRequest, response.statusCode(), response.body());
+        }
+    }
+
+    private static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseNotOk(EmbeddingRequest embeddingRequest, int statusCode, String statusMessage) {
+        ClientSuccessResponse.Builder<EmbeddingRequest, EmbeddingResponse> builder = ClientSuccessResponse.builder();
+        return builder.setRequest(embeddingRequest)
+                .setStatusCode(statusCode)
+                .setStatusMessage(statusMessage)
+                .build();
+    }
+
+    private static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseSuccess(EmbeddingRequest embeddingRequest, int statusCode, EmbeddingResponse embeddingResponse) {
+        ClientSuccessResponse.Builder<EmbeddingRequest, EmbeddingResponse> builder = ClientSuccessResponse.builder();
+        return builder.setRequest(embeddingRequest)
+                .setResponse(embeddingResponse)
+                .setStatusCode(statusCode)
+                .build();
+    }
+
+
+    public static ClientSuccessResponse<EditRequest, EditResponse>
+    getEditResponse(EditRequest editRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            final EditResponse editResponse = EditResponseDeserializer.deserialize(response.body());
+            return getEditResponseSuccess(editRequest, response.statusCode(), editResponse);
+        } else {
+            return getEditResponseNotOk(editRequest, response.statusCode(), response.body());
+        }
+    }
+
+    public static ClientSuccessResponse<EditRequest, EditResponse> getEditResponseSuccess(EditRequest editRequest,
+                                                                                          int statusCode,
+                                                                                          EditResponse editResponse) {
+        ClientSuccessResponse.Builder<EditRequest, EditResponse> builder = ClientSuccessResponse.builder();
+        return builder.setRequest(editRequest)
+                .setResponse(editResponse)
+                .setStatusCode(statusCode)
+                .build();
+    }
+
+    public static ClientSuccessResponse<EditRequest, EditResponse> getEditResponseNotOk(EditRequest editRequest, int statusCode, String status) {
+        ClientSuccessResponse.Builder<EditRequest, EditResponse> builder = ClientSuccessResponse.builder();
+        return builder.setRequest(editRequest)
+                .setStatusCode(statusCode)
+                .setStatusMessage(status)
+                .build();
+    }
+
+
+    //getErrorResponseForEmbeddingRequest
+
+    public static ClientResponse<EditRequest, EditResponse> getErrorResponseForEditRequest(Throwable e, EditRequest editRequest) {
+        ClientErrorResponse.Builder<EditRequest, EditResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(editRequest)
+                .build();
+    }
+
+    public static ClientResponse<EmbeddingRequest, EmbeddingResponse> getErrorResponseForEmbeddingRequest(Throwable e, EmbeddingRequest embeddingRequest) {
+        ClientErrorResponse.Builder<EmbeddingRequest, EmbeddingResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(embeddingRequest)
+                .build();
     }
 }

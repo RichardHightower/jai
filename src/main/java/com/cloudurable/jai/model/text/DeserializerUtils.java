@@ -8,7 +8,10 @@ public class DeserializerUtils {
 
     public static Usage deserializeUsage(final ObjectNode usageNode) {
         Usage.Builder builder = Usage.builder();
-        builder.setCompletionTokens(usageNode.getInt("completion_tokens"));
+
+        if (usageNode.getNode("completion_tokens") != null) {
+            builder.setCompletionTokens(usageNode.getInt("completion_tokens"));
+        }
         builder.setPromptTokens(usageNode.getInt("prompt_tokens"));
         builder.setTotalTokens(usageNode.getInt("total_tokens"));
         return builder.build();

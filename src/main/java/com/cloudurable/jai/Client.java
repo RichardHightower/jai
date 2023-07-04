@@ -5,9 +5,15 @@ import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.edit.EditRequest;
+import com.cloudurable.jai.model.text.edit.EditResponse;
+import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
+import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 
 public interface Client {
     ClientResponse<ChatRequest, ChatResponse> chat(ChatRequest chatRequest);
-
     ClientResponse<CompletionRequest, CompletionResponse> completion(CompletionRequest completionRequest);
+    ClientResponse<EditRequest, EditResponse> edit(EditRequest editRequest);
+    ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest);
+
 }

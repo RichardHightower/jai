@@ -11,6 +11,12 @@ import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequestSerializer;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.edit.EditRequest;
+import com.cloudurable.jai.model.text.edit.EditRequestSerializer;
+import com.cloudurable.jai.model.text.edit.EditResponse;
+import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
+import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
+import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -150,6 +156,62 @@ public class OpenAIClient implements Client, ClientAsync {
             return getErrorResponseForCompletionRequest(e, completionRequest);
         }
     }
+
+    @Override
+    public ClientResponse<EditRequest, EditResponse> edit(final EditRequest editRequest) {
+        final String jsonRequest = EditRequestSerializer.serialize(editRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/edits")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getEditResponse(editRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForEditRequest(e, editRequest);
+        }
+    }
+
+    @Override
+    public ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest) {
+        final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/embeddings")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getEmbeddingResponse(embeddingRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForEmbeddingRequest(e, embeddingRequest);
+        }
+    }
+
+    public CompletableFuture<ClientResponse<EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final EmbeddingRequest embeddingRequest) {
+        final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/embeddings")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply((Function<HttpResponse<String>, ClientResponse<EmbeddingRequest, EmbeddingResponse>>) response ->
+                        getEmbeddingResponse(embeddingRequest, response)).exceptionally(e ->
+                        getErrorResponseForEmbeddingRequest(e, embeddingRequest));
+    }
+
+    @Override
+    public CompletableFuture<ClientResponse<EditRequest, EditResponse>> editAsync(EditRequest editRequest) {
+        final String jsonRequest = EditRequestSerializer.serialize(editRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/edits")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply((Function<HttpResponse<String>, ClientResponse<EditRequest, EditResponse>>) response ->
+                        getEditResponse(editRequest, response)).exceptionally(e ->
+                        getErrorResponseForEditRequest(e, editRequest));
+    }
+
 
     /**
      * Builder for client.
