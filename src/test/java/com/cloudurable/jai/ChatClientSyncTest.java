@@ -2,7 +2,7 @@ package com.cloudurable.jai;
 
 
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.chat.*;
+import com.cloudurable.jai.model.text.completion.chat.*;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,9 +100,11 @@ class ChatClientSyncTest {
 
 
         // Create the request body.
-        basicChatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+        basicChatRequest = ChatRequest.builder().model("gpt-3.5-turbo").addStop("FUIYAH")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
                 .build();
+
+        basicChatRequest.toString();
 
         basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
     }

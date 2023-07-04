@@ -105,7 +105,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
          * @param request The request associated with the client error response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setRequest(Q request) {
+        public Builder<Q, A> request(Q request) {
             this.request = request;
             return this;
         }
@@ -116,7 +116,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
          * @param exception The exception associated with the client error response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setException(Throwable exception) {
+        public Builder<Q, A> exception(Throwable exception) {
             this.exception = exception;
             return this;
         }

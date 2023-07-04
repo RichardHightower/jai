@@ -11,12 +11,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * HttpClientMock extends HttpClient for creating a mock HttpClient useful for testing.
@@ -26,38 +26,36 @@ public class HttpClientMock extends HttpClient {
     private final String apiEndpoint = "https://api.openai.com/v1/";
     protected HttpClient mockClient;
 
-    public HttpClient getMock() {
-        return mockClient;
+    /**
+     * Constructor for HttpClientMock, creating a mock HttpClient instance.
+     */
+    public HttpClientMock() {
+        mockClient = mock(HttpClient.class);
     }
 
-    public static class RequestResponse {
-        private final HttpResponse<String> response;
-        private final HttpRequest request;
+    /**
+     * Get an instance of HttpResponseBuilder.
+     *
+     * @return HttpResponseBuilder instance
+     */
+    public static HttpResponseBuilder httpResponseBuilder() {
+        return new HttpResponseBuilder();
+    }
 
-        public RequestResponse(HttpRequest request, HttpResponse<String> response) {
-            this.response = response;
-            this.request = request;
-        }
-
-        public HttpResponse<String> getResponse() {
-            return response;
-        }
-
-        public HttpRequest getRequest() {
-            return request;
-        }
+    public HttpClient getMock() {
+        return mockClient;
     }
 
     /**
      * Set up a mocked response for a synchronous POST request.
      *
-     * @param path the request path
-     * @param requestBody the request body as a String
+     * @param path         the request path
+     * @param requestBody  the request body as a String
      * @param responseBody the response body as a String
      * @return this RequestResponse instance
      * @throws Exception in case of errors
      */
-    public RequestResponse setResponsePost(String path, String requestBody, String responseBody) throws Exception{
+    public RequestResponse setResponsePost(String path, String requestBody, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
         final HttpRequest request = requestBuilder.build();
@@ -69,13 +67,13 @@ public class HttpClientMock extends HttpClient {
     /**
      * Set up a mocked response for a asynchronous POST request.
      *
-     * @param path the request path
-     * @param requestBody the request body as a String
+     * @param path         the request path
+     * @param requestBody  the request body as a String
      * @param responseBody the response body as a String
      * @return this HttpClientMock instance
      * @throws Exception in case of errors
      */
-    public RequestResponse setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception{
+    public RequestResponse setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
         final HttpRequest request = requestBuilder.build();
@@ -96,73 +94,6 @@ public class HttpClientMock extends HttpClient {
                 .header("Authorization", "Bearer " + "pk-123456789")
                 .header("Content-Type", "application/json")
                 .uri(URI.create(apiEndpoint + path));
-    }
-
-    /**
-     * Get an instance of HttpResponseBuilder.
-     *
-     * @return HttpResponseBuilder instance
-     */
-    public static HttpResponseBuilder httpResponseBuilder() {
-        return new HttpResponseBuilder();
-    }
-
-
-    /**
-     * HttpResponseBuilder is a builder for creating mock HttpResponse instances for testing.
-     */
-    public static class HttpResponseBuilder {
-        private HttpResponseBuilder(){}
-
-        private String contentType = "application/json";
-        private int statusCode = 200;
-
-        private String body = "null";
-
-        public String getBody() {
-            return body;
-        }
-
-        public HttpResponseBuilder setBody(String body) {
-            this.body = body;
-            return this;
-        }
-
-        public String getContentType() {
-            return contentType;
-        }
-
-        public HttpResponseBuilder setContentType(String contentType) {
-            this.contentType = contentType;
-            return this;
-        }
-
-        public int getStatusCode() {
-            return statusCode;
-        }
-
-        public HttpResponseBuilder setStatusCode(int statusCode) {
-            this.statusCode = statusCode;
-            return this;
-        }
-
-        public HttpResponse<String> build() {
-
-            final HttpResponse<String> mockResponse = mock(HttpResponse.class);
-            when(mockResponse.statusCode()).thenReturn(this.getStatusCode());
-            when(mockResponse.body()).thenReturn(this.getBody());
-            return mockResponse;
-        }
-    }
-
-
-
-
-    /**
-     * Constructor for HttpClientMock, creating a mock HttpClient instance.
-     */
-    public HttpClientMock() {
-        mockClient = mock(HttpClient.class);
     }
 
     @Override
@@ -224,5 +155,70 @@ public class HttpClientMock extends HttpClient {
     public <T> CompletableFuture<HttpResponse<T>> sendAsync(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler,
                                                             HttpResponse.PushPromiseHandler<T> pushPromiseHandler) {
         return mockClient.sendAsync(request, responseBodyHandler, pushPromiseHandler);
+    }
+
+    public static class RequestResponse {
+        private final HttpResponse<String> response;
+        private final HttpRequest request;
+
+        public RequestResponse(HttpRequest request, HttpResponse<String> response) {
+            this.response = response;
+            this.request = request;
+        }
+
+        public HttpResponse<String> getResponse() {
+            return response;
+        }
+
+        public HttpRequest getRequest() {
+            return request;
+        }
+    }
+
+    /**
+     * HttpResponseBuilder is a builder for creating mock HttpResponse instances for testing.
+     */
+    public static class HttpResponseBuilder {
+        private String contentType = "application/json";
+        private int statusCode = 200;
+        private String body = "null";
+
+        private HttpResponseBuilder() {
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public HttpResponseBuilder setBody(String body) {
+            this.body = body;
+            return this;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public HttpResponseBuilder setContentType(String contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public HttpResponseBuilder setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        public HttpResponse<String> build() {
+
+            final HttpResponse<String> mockResponse = mock(HttpResponse.class);
+            when(mockResponse.statusCode()).thenReturn(this.getStatusCode());
+            when(mockResponse.body()).thenReturn(this.getBody());
+            return mockResponse;
+        }
     }
 }

@@ -1,22 +1,49 @@
 package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.chat.*;
+import com.cloudurable.jai.model.text.completion.CompletionRequest;
+import com.cloudurable.jai.model.text.completion.CompletionResponse;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
+import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.completion.chat.Message;
+import com.cloudurable.jai.model.text.completion.chat.Role;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
-            callChatExample();
-            callChatExampleAsync();
+            callCompletionExample();
+            //callChatExample();
+            //callChatExampleAsync();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
+
+    }
+
+    private static void callCompletionExample() {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
+
+        // Create the chat request
+        final CompletionRequest request = CompletionRequest.builder()
+                .model("text-davinci-003").maxTokens(500)
+                .prompt("What is AI?")
+                .completionCount(3)
+                .build();
+
+        // Call Open AI API with chat message
+        final ClientResponse<CompletionRequest, CompletionResponse> response = client.completion(request);
+
+        response.getResponse().ifPresent(completionResponse -> completionResponse.getChoices().forEach(System.out::println));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
 
     }
 
@@ -28,8 +55,8 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the chat request
-        final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+        final ChatRequest chatRequest = ChatRequest.builder().model("gpt-3.5-turbo")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
                 .build();
 
         // Call Open AI API with chat message
@@ -52,8 +79,9 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the chat request
-        final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+        final ChatRequest chatRequest = ChatRequest.builder().model("gpt-3.5-turbo")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
+                .completionCount(5)
                 .build();
 
         // Call Open AI API with chat message

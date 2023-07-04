@@ -1,8 +1,12 @@
 package com.cloudurable.jai.model.chat;
 
-import com.cloudurable.jai.model.chat.function.Function;
-import com.cloudurable.jai.model.chat.function.Parameter;
-import com.cloudurable.jai.model.chat.function.ParameterType;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
+import com.cloudurable.jai.model.text.completion.chat.ChatRequestSerializer;
+import com.cloudurable.jai.model.text.completion.chat.Message;
+import com.cloudurable.jai.model.text.completion.chat.Role;
+import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
+import com.cloudurable.jai.model.text.completion.chat.function.ParameterType;
 import io.nats.jparse.Json;
 import io.nats.jparse.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -17,25 +21,23 @@ class ChatRequestSerializerTest {
     void serialize() {
         // Create a sample ChatRequest object using the builder
         ChatRequest chatRequest = ChatRequest.builder()
-                .setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setRole(Role.SYSTEM).setContent("You are a helpful assistant.").build())
-                .addMessage(Message.builder().setRole(Role.USER).setContent("Hello!").build())
-                .setTemperature(0.8f)
-                .setFrequencyPenalty(0.6f)
-                .setPresencePenalty(0.65f)
-//                .addLogitBias(1234, 2.0f)
-//                .addLogitBias(4567, -1.0f)
+                .model("gpt-3.5-turbo")
+                .addMessage(Message.builder().role(Role.SYSTEM).content("You are a helpful assistant.").build())
+                .addMessage(Message.builder().role(Role.USER).content("Hello!").build())
+                .temperature(0.8f)
+                .frequencyPenalty(0.6f)
+                .presencePenalty(0.65f)
                 .addFunction(Function.builder().setName("func1").setDescription("Function 1").addParameter(
                         Parameter.builder().setName("param1").setType(ParameterType.NUMBER).build()
                 ).build())
                 .addFunction(Function.builder().setName("func2").setDescription("Function 2").addParameter(
                         Parameter.builder().setName("param2").setType(ParameterType.NUMBER).build()
                 ).build())
-                .setMaxTokens(20)
-                .setTopP(0.7f)
-                .setUser("user123")
-                .setStop(Arrays.asList("stopword1", "stopword2"))
-                .setCompletionCount(5)
+                .maxTokens(20)
+                .topP(0.7f)
+                .user("user123")
+                .stop(Arrays.asList("stopword1", "stopword2"))
+                .completionCount(5)
                 .build();
 
         // Serialize the ChatRequest object
