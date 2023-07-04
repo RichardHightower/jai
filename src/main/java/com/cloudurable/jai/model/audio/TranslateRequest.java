@@ -27,7 +27,7 @@ public class TranslateRequest extends AudioRequest {
      */
     public static class Builder {
         private byte[] file;
-        private String model;
+        private String model = "whisper-1";
         private String prompt;
         private String responseFormat;
         private float temperature;
