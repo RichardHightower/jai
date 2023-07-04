@@ -4,7 +4,6 @@ import com.cloudurable.jai.model.text.completion.CommonCompletionRequest;
 import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
-import java.util.Map;
 
 public class SerializerUtils {
 
@@ -45,16 +44,17 @@ public class SerializerUtils {
             jsonBodyBuilder.addAttribute("presence_penalty", presencePenalty);
         }
 
-        final Map<Integer, Float> logitBias = chatRequest.getLogitBias();
-        if (logitBias != null && !logitBias.isEmpty()) {
-            jsonBodyBuilder.startNestedListAttribute("logit_bias");
-            for (Integer key : logitBias.keySet()) {
-                jsonBodyBuilder.startNestedObjectElement();
-                jsonBodyBuilder.addAttribute(key, logitBias.get(key));
-                jsonBodyBuilder.endObject();
-            }
-            jsonBodyBuilder.endList();
-        }
+        //TODO FIX
+//        final Map<Integer, Float> logitBias = chatRequest.getLogitBias();
+//        if (logitBias != null && !logitBias.isEmpty()) {
+//            jsonBodyBuilder.startNestedListAttribute("logit_bias");
+//            for (Integer key : logitBias.keySet()) {
+//                jsonBodyBuilder.startNestedObjectElement();
+//                jsonBodyBuilder.addAttribute(key, logitBias.get(key));
+//                jsonBodyBuilder.endObject();
+//            }
+//            jsonBodyBuilder.endList();
+//        }
 
         final int maxTokens = chatRequest.getMaxTokens();
         if (maxTokens != 0) {

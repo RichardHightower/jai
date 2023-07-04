@@ -66,27 +66,27 @@ public class ChatResponseDeserializer {
         final List<ChatChoice> chatChoices = choicesNode.mapObjectNode(ChatResponseDeserializer::deserializeChoice);
 
 
-        return ChatResponse.builder().setChoices(chatChoices).setId(id).setUsage(usage)
-                .setObject(object).setCreated(Instant.ofEpochSecond(createdTime)).build();
+        return ChatResponse.builder().choices(chatChoices).id(id).usage(usage)
+                .object(object).created(Instant.ofEpochSecond(createdTime)).build();
     }
 
 
     private static ChatChoice deserializeChoice(final ObjectNode choiceNode) {
         ChatChoice.Builder builder = ChatChoice.builder();
-        builder.setIndex(choiceNode.getInt("index"))
-                .setFinishReason(DeserializerUtils.deserializeFinishReason(choiceNode.getString("finish_reason")))
-                .setMessage(deserializeMessage(choiceNode.getObjectNode("message")));
+        builder.index(choiceNode.getInt("index"))
+                .finishReason(DeserializerUtils.deserializeFinishReason(choiceNode.getString("finish_reason")))
+                .message(deserializeMessage(choiceNode.getObjectNode("message")));
 
         return builder.build();
     }
 
     private static Message deserializeMessage(ObjectNode message) {
         Message.Builder builder = Message.builder();
-        builder.setContent(message.getString("content"));
+        builder.content(message.getString("content"));
         if (message.get("name") != null) {
-            builder.setName(message.getString("name"));
+            builder.name(message.getString("name"));
         }
-        builder.setRole(deserializeRole(message.getString("role")));
+        builder.role(deserializeRole(message.getString("role")));
         //TODO builder.setFunctionCall(deserializeFunctionCall(message.getObjectNode("function_call")));
         return builder.build();
     }

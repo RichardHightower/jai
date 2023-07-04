@@ -16,10 +16,10 @@ class MessageTest {
 
         // Create a Message using the builder
         Message message = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
-                .setName("Sender")
-                .setFunctionCall(functionalCall)
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
+                .name("Sender")
+                .functionCall(functionalCall)
                 .build();
 
         // Verify the values of the Message
@@ -37,16 +37,16 @@ class MessageTest {
                 .build();
 
         Message message1 = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
-                .setName("Sender")
-                .setFunctionCall(functionalCall)
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
+                .name("Sender")
+                .functionCall(functionalCall)
                 .build();
         Message message2 = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
-                .setName("Sender")
-                .setFunctionCall(functionalCall)
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
+                .name("Sender")
+                .functionCall(functionalCall)
                 .build();
 
         // Verify that the two Messages are equal

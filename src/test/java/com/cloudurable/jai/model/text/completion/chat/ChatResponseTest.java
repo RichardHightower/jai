@@ -23,11 +23,11 @@ class ChatResponseTest {
         Usage usage = new Usage(10, 1000, 1010);
 
         ChatResponse.Builder builder = ChatResponse.builder()
-                .setId(id)
-                .setObject(object)
-                .setCreated(created)
-                .setChoices(choices)
-                .setUsage(usage);
+                .id(id)
+                .object(object)
+                .created(created)
+                .choices(choices)
+                .usage(usage);
 
         ChatResponse chatResponse = builder.build();
 
@@ -42,28 +42,28 @@ class ChatResponseTest {
     void testEqualsAndHashCode() {
         final Instant now = Instant.now();
         ChatResponse chatResponse1 = ChatResponse.builder()
-                .setId("id1")
-                .setObject("object1")
-                .setCreated(now)
-                .setChoices(new ArrayList<>())
-                .setUsage(new Usage(10, 1000, 1010))
+                .id("id1")
+                .object("object1")
+                .created(now)
+                .choices(new ArrayList<>())
+                .usage(new Usage(10, 1000, 1010))
                 .build();
 
         ChatResponse chatResponse2 = ChatResponse.builder()
-                .setId("id1")
-                .setObject("object1")
-                .setCreated(now)
-                .setChoices(new ArrayList<>())
-                .setUsage(new Usage(10, 1000, 1010))
+                .id("id1")
+                .object("object1")
+                .created(now)
+                .choices(new ArrayList<>())
+                .usage(new Usage(10, 1000, 1010))
                 .build();
 
         ChatResponse chatResponse3 = ChatResponse.builder()
-                .setId("id2")
-                .setObject("object2")
-                .setCreated(now)
-                .addChoice(ChatChoice.builder().setIndex(99).setMessage(Message.builder().build())
-                        .setFinishReason(FinishReason.STOP).build())
-                .setUsage(new Usage(20, 2000, 2020))
+                .id("id2")
+                .object("object2")
+                .created(now)
+                .addChoice(ChatChoice.builder().index(99).message(Message.builder().build())
+                        .finishReason(FinishReason.STOP).build())
+                .usage(new Usage(20, 2000, 2020))
                 .build();
 
         // Test equality

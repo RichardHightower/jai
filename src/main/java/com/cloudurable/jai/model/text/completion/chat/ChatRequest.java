@@ -221,22 +221,23 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param completionCount completion Count
          * @return this
          */
-        public Builder setCompletionCount(int completionCount) {
+        public Builder completionCount(int completionCount) {
             this.completionCount = completionCount;
             return this;
         }
 
-        /**
-         * Add a logit bias
-         *
-         * @param token token
-         * @param bias  bias
-         * @return this
-         */
-        public Builder addLogitBias(Integer token, float bias) {
-            this.getLogitBias().put(token, bias);
-            return this;
-        }
+        //TODO FIX
+//        /**
+//         * Add a logit bias
+//         *
+//         * @param token token
+//         * @param bias  bias
+//         * @return this
+//         */
+//        public Builder addLogitBias(Integer token, float bias) {
+//            this.getLogitBias().put(token, bias);
+//            return this;
+//        }
 
         /**
          * Returns the logit bias map for the chat request.
@@ -256,7 +257,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param logitBias the logit bias map for the chat request
          * @return the Builder instance
          */
-        public Builder setLogitBias(Map<Integer, Float> logitBias) {
+        public Builder logitBias(Map<Integer, Float> logitBias) {
             this.logitBias = logitBias;
             return this;
         }
@@ -276,7 +277,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param model the model used for the chat request
          * @return the Builder instance
          */
-        public Builder setModel(String model) {
+        public Builder model(String model) {
             this.model = model;
             return this;
         }
@@ -299,7 +300,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param messages the list of messages in the chat request
          * @return the Builder instance
          */
-        public Builder setMessages(List<Message> messages) {
+        public Builder messages(List<Message> messages) {
             this.messages = messages;
             return this;
         }
@@ -322,7 +323,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param functions the list of functions available for the chat request
          * @return the Builder instance
          */
-        public Builder setFunctions(List<Function> functions) {
+        public Builder functions(List<Function> functions) {
             this.functions = functions;
             return this;
         }
@@ -342,7 +343,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param functionalCall the functional call associated with the chat request
          * @return the Builder instance
          */
-        public Builder setFunctionalCall(FunctionalCall functionalCall) {
+        public Builder functionalCall(FunctionalCall functionalCall) {
             this.functionalCall = functionalCall;
             return this;
         }
@@ -362,7 +363,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param temperature the temperature value for the chat request
          * @return the Builder instance
          */
-        public Builder setTemperature(float temperature) {
+        public Builder temperature(float temperature) {
             this.temperature = temperature;
             return this;
         }
@@ -382,7 +383,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param topP the top-p value for the chat request
          * @return the Builder instance
          */
-        public Builder setTopP(float topP) {
+        public Builder topP(float topP) {
             this.topP = topP;
             return this;
         }
@@ -402,7 +403,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param stream the stream flag indicating if the chat request should be streamed
          * @return the Builder instance
          */
-        public Builder setStream(boolean stream) {
+        public Builder stream(boolean stream) {
             this.stream = stream;
             return this;
         }
@@ -425,7 +426,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param stop the list of stop tokens for the chat request
          * @return the Builder instance
          */
-        public Builder setStop(List<String> stop) {
+        public Builder stop(List<String> stop) {
             this.stop = stop;
             return this;
         }
@@ -445,7 +446,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param maxTokens the maximum number of tokens for the chat request
          * @return the Builder instance
          */
-        public Builder setMaxTokens(int maxTokens) {
+        public Builder maxTokens(int maxTokens) {
             this.maxTokens = maxTokens;
             return this;
         }
@@ -465,7 +466,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param presencePenalty the presence penalty value for the chat request
          * @return the Builder instance
          */
-        public Builder setPresencePenalty(float presencePenalty) {
+        public Builder presencePenalty(float presencePenalty) {
             this.presencePenalty = presencePenalty;
             return this;
         }
@@ -485,7 +486,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param frequencyPenalty the frequency penalty value for the chat request
          * @return the Builder instance
          */
-        public Builder setFrequencyPenalty(float frequencyPenalty) {
+        public Builder frequencyPenalty(float frequencyPenalty) {
             this.frequencyPenalty = frequencyPenalty;
             return this;
         }
@@ -505,7 +506,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param user the user associated with the chat request
          * @return the Builder instance
          */
-        public Builder setUser(String user) {
+        public Builder user(String user) {
             this.user = user;
             return this;
         }

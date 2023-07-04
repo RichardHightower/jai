@@ -72,7 +72,8 @@ public class ArrayParameter extends Parameter {
     @Override
     public String toString() {
         return "ListParameter{" +
-                "type=" + elementType +
+                "type=" + elementType + ',' +
+                "super=" + super.toString() +
                 '}';
     }
 

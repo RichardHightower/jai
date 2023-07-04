@@ -11,15 +11,15 @@ class ChatChoiceTest {
     void testChatChoiceBuilder() {
         // Create a Message for the ChatChoice
         Message message = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
                 .build();
 
         // Create a ChatChoice using the builder
         ChatChoice chatChoice = ChatChoice.builder()
-                .setIndex(1)
-                .setMessage(message)
-                .setFinishReason(FinishReason.STOP)
+                .index(1)
+                .message(message)
+                .finishReason(FinishReason.STOP)
                 .build();
 
         // Verify the values of the ChatChoice
@@ -33,21 +33,21 @@ class ChatChoiceTest {
     void testHashCodeToString() {
         // Create a Message for the ChatChoice
         Message message = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
                 .build();
 
         // Create a ChatChoice using the builder
         ChatChoice chatChoice = ChatChoice.builder()
-                .setIndex(1)
-                .setMessage(message)
-                .setFinishReason(FinishReason.STOP)
+                .index(1)
+                .message(message)
+                .finishReason(FinishReason.STOP)
                 .build();
 
         ChatChoice chatChoice2 = ChatChoice.builder()
-                .setIndex(1)
-                .setMessage(message)
-                .setFinishReason(FinishReason.STOP)
+                .index(1)
+                .message(message)
+                .finishReason(FinishReason.STOP)
                 .build();
 
         // Verify the values of the ChatChoice
@@ -61,19 +61,19 @@ class ChatChoiceTest {
     void testChatChoiceEquality() {
         // Create two ChatChoices with the same values
         Message message = Message.builder()
-                .setRole(Role.SYSTEM)
-                .setContent("This is a system message.")
+                .role(Role.SYSTEM)
+                .content("This is a system message.")
                 .build();
 
         ChatChoice chatChoice1 = ChatChoice.builder()
-                .setIndex(1)
-                .setMessage(message)
-                .setFinishReason(FinishReason.STOP)
+                .index(1)
+                .message(message)
+                .finishReason(FinishReason.STOP)
                 .build();
         ChatChoice chatChoice2 = ChatChoice.builder()
-                .setIndex(1)
-                .setMessage(message)
-                .setFinishReason(FinishReason.STOP)
+                .index(1)
+                .message(message)
+                .finishReason(FinishReason.STOP)
                 .build();
 
         // Verify that the two ChatChoices are equal

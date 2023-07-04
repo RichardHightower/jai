@@ -1,4 +1,4 @@
-package com.cloudurable.model.chat;
+package com.cloudurable.jai.model.chat;
 
 import com.cloudurable.jai.model.FinishReason;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
@@ -26,6 +26,38 @@ class ChatResponseDeserializerTest {
                 "            'content':'`n`nHello there, how may I assist you today?'\n" +
                 "         },\n" +
                 "         'finish_reason':'stop'\n" +
+                "      },\n" +
+                "      {\n" +
+                "         'index':0,\n" +
+                "         'message':{\n" +
+                "            'role':'user',\n" +
+                "            'content':'`n`nHello there, how may I assist you today?'\n" +
+                "         },\n" +
+                "         'finish_reason':'stop'\n" +
+                "      },\n" +
+                "      {\n" +
+                "         'index':0,\n" +
+                "         'message':{\n" +
+                "            'role':'system',\n" +
+                "            'content':'`n`nHello there, how may I assist you today?'\n" +
+                "         },\n" +
+                "         'finish_reason':'stop'\n" +
+                "      },\n" +
+                "      {\n" +
+                "         'index':0,\n" +
+                "         'message':{\n" +
+                "            'role':'function',\n" +
+                "            'content':'`n`nHello there, how may I assist you today?'\n" +
+                "         },\n" +
+                "         'finish_reason':'stop'\n" +
+                "      },\n" +
+                "      {\n" +
+                "         'index':0,\n" +
+                "         'message':{\n" +
+                "            'role':'other_stuff',\n" +
+                "            'content':'`n`nHello there, how may I assist you today?'\n" +
+                "         },\n" +
+                "         'finish_reason':'stop'\n" +
                 "      }\n" +
                 "   ],\n" +
                 "   'usage':{\n" +
@@ -42,8 +74,12 @@ class ChatResponseDeserializerTest {
         assertEquals(12, response.getUsage().getCompletionTokens());
         assertEquals(21, response.getUsage().getTotalTokens());
 
-        assertEquals(1, response.getChoices().size());
+        assertEquals(5, response.getChoices().size());
         assertEquals(Role.ASSISTANT, response.getChoices().get(0).getMessage().getRole());
+        assertEquals(Role.USER, response.getChoices().get(1).getMessage().getRole());
+        assertEquals(Role.SYSTEM, response.getChoices().get(2).getMessage().getRole());
+        assertEquals(Role.FUNCTION, response.getChoices().get(3).getMessage().getRole());
+        assertEquals(Role.OTHER, response.getChoices().get(4).getMessage().getRole());
         assertEquals("\n\nHello there, how may I assist you today?", response.getChoices().get(0).getMessage().getContent());
         assertEquals(FinishReason.STOP, response.getChoices().get(0).getFinishReason());
 

@@ -133,7 +133,7 @@ public class Message {
          * @param role the role of the sender
          * @return the Builder instance
          */
-        public Builder setRole(Role role) {
+        public Builder role(Role role) {
             this.role = role;
             return this;
         }
@@ -144,7 +144,7 @@ public class Message {
          * @param content the content of the message
          * @return the Builder instance
          */
-        public Builder setContent(String content) {
+        public Builder content(String content) {
             this.content = content;
             return this;
         }
@@ -155,7 +155,7 @@ public class Message {
          * @param name the name of the sender
          * @return the Builder instance
          */
-        public Builder setName(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
@@ -166,7 +166,7 @@ public class Message {
          * @param functionCall the functional call associated with the message
          * @return the Builder instance
          */
-        public Builder setFunctionCall(FunctionalCall functionCall) {
+        public Builder functionCall(FunctionalCall functionCall) {
             this.functionCall = functionCall;
             return this;
         }

@@ -139,7 +139,8 @@ public class RequestResponseUtils {
      * @param response          The HTTP response.
      * @return The client success response.
      */
-    public static ClientSuccessResponse<CompletionRequest, CompletionResponse> getCompletionResponse(CompletionRequest completionRequest, HttpResponse<String> response) {
+    public static ClientSuccessResponse<CompletionRequest, CompletionResponse>
+    getCompletionResponse(CompletionRequest completionRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
             final CompletionResponse completionResponse = CompletionResponseDeserializer.deserialize(response.body());
             return getCompletionResponseSuccess(completionRequest, response.statusCode(), completionResponse);

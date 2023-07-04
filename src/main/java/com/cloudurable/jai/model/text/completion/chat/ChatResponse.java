@@ -109,7 +109,7 @@ public class ChatResponse extends TextResponse {
          * @param id The ID of the chat response.
          * @return The Builder instance.
          */
-        public Builder setId(String id) {
+        public Builder id(String id) {
             this.id = id;
             return this;
         }
@@ -120,7 +120,7 @@ public class ChatResponse extends TextResponse {
          * @param object The object of the chat response.
          * @return The Builder instance.
          */
-        public Builder setObject(String object) {
+        public Builder object(String object) {
             this.object = object;
             return this;
         }
@@ -131,7 +131,7 @@ public class ChatResponse extends TextResponse {
          * @param created The creation time of the chat response.
          * @return The Builder instance.
          */
-        public Builder setCreated(Instant created) {
+        public Builder created(Instant created) {
             this.created = created;
             return this;
         }
@@ -165,7 +165,7 @@ public class ChatResponse extends TextResponse {
          * @param choices The list of chat choices.
          * @return The Builder instance.
          */
-        public Builder setChoices(List<ChatChoice> choices) {
+        public Builder choices(List<ChatChoice> choices) {
             this.choices = choices;
             return this;
         }
@@ -176,7 +176,7 @@ public class ChatResponse extends TextResponse {
          * @param usage The usage statistics for the chat response.
          * @return The Builder instance.
          */
-        public Builder setUsage(Usage usage) {
+        public Builder usage(Usage usage) {
             this.usage = usage;
             return this;
         }

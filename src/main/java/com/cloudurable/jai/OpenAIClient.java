@@ -75,6 +75,26 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     /**
+     * Sends a completion request to the OpenAI API and returns the client response.
+     *
+     * @param completionRequest The chat request to be sent.
+     * @return The client response containing the completion request and the corresponding completion response.
+     */
+    @Override
+    public CompletableFuture<ClientResponse<CompletionRequest, CompletionResponse>> completionAsync(
+            final CompletionRequest completionRequest) {
+        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/completions")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply((Function<HttpResponse<String>, ClientResponse<CompletionRequest, CompletionResponse>>) response ->
+                        getCompletionResponse(completionRequest, response)).exceptionally(e ->
+                        getErrorResponseForCompletionRequest(e, completionRequest));
+    }
+
+    /**
      * Sends a chat request to the OpenAI API and returns the client response.
      *
      * @param chatRequest The chat request to be sent.

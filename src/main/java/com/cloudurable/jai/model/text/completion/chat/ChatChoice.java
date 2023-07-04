@@ -98,7 +98,7 @@ public class ChatChoice extends Choice {
          * @param index The index of the chat choice.
          * @return The Builder instance.
          */
-        public Builder setIndex(int index) {
+        public Builder index(int index) {
             this.index = index;
             return this;
         }
@@ -109,7 +109,7 @@ public class ChatChoice extends Choice {
          * @param message The message associated with the chat choice.
          * @return The Builder instance.
          */
-        public Builder setMessage(Message message) {
+        public Builder message(Message message) {
             this.message = message;
             return this;
         }
@@ -120,7 +120,7 @@ public class ChatChoice extends Choice {
          * @param finishReason The finish reason for the chat choice.
          * @return The Builder instance.
          */
-        public Builder setFinishReason(FinishReason finishReason) {
+        public Builder finishReason(FinishReason finishReason) {
             this.finishReason = finishReason;
             return this;
         }

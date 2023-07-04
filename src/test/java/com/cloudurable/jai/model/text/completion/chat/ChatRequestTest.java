@@ -32,20 +32,20 @@ class ChatRequestTest {
         int completionCount = 5;
 
         ChatRequest.Builder builder = ChatRequest.builder()
-                .setModel(model)
-                .setMessages(messages)
-                .setFunctions(functions)
-                .setFunctionalCall(functionalCall)
-                .setTemperature(temperature)
-                .setTopP(topP)
-                .setStream(stream)
-                .setStop(stop)
-                .setMaxTokens(maxTokens)
-                .setPresencePenalty(presencePenalty)
-                .setFrequencyPenalty(frequencyPenalty)
-                .setLogitBias(logitBias)
-                .setUser(user)
-                .setCompletionCount(completionCount);
+                .model(model)
+                .messages(messages)
+                .functions(functions)
+                .functionalCall(functionalCall)
+                .temperature(temperature)
+                .topP(topP)
+                .stream(stream)
+                .stop(stop)
+                .maxTokens(maxTokens)
+                .presencePenalty(presencePenalty)
+                .frequencyPenalty(frequencyPenalty)
+                .logitBias(logitBias)
+                .user(user)
+                .completionCount(completionCount);
 
         ChatRequest chatRequest = builder.build();
 
@@ -53,6 +53,7 @@ class ChatRequestTest {
         assertEquals(messages, chatRequest.getMessages());
         assertEquals(functions, chatRequest.getFunctions());
         assertEquals(functionalCall, chatRequest.getFunctionalCall());
+        assertEquals(functionalCall, builder.getFunctionalCall());
         assertEquals(temperature, chatRequest.getTemperature());
         assertEquals(topP, chatRequest.getTopP());
         assertEquals(stream, chatRequest.isStream());
@@ -63,59 +64,60 @@ class ChatRequestTest {
         assertEquals(logitBias, chatRequest.getLogitBias());
         assertEquals(user, chatRequest.getUser());
         assertEquals(completionCount, builder.getCompletionCount());
+        assertEquals(completionCount, builder.build().getN());
     }
 
     @Test
     void testEqualsAndHashCode() {
         ChatRequest chatRequest1 = ChatRequest.builder()
-                .setModel("model1")
-                .setMessages(new ArrayList<>())
-                .setFunctions(new ArrayList<>())
-                .setFunctionalCall(new FunctionalCall("function1", null))
-                .setTemperature(0.8f)
-                .setTopP(0.9f)
-                .setStream(true)
-                .setStop(new ArrayList<>())
-                .setMaxTokens(100)
-                .setPresencePenalty(1.0f)
-                .setFrequencyPenalty(0.5f)
-                .setLogitBias(new TreeMap<>())
-                .setUser("user1")
-                .setCompletionCount(5)
+                .model("model1")
+                .messages(new ArrayList<>())
+                .functions(new ArrayList<>())
+                .functionalCall(new FunctionalCall("function1", null))
+                .temperature(0.8f)
+                .topP(0.9f)
+                .stream(true)
+                .stop(new ArrayList<>())
+                .maxTokens(100)
+                .presencePenalty(1.0f)
+                .frequencyPenalty(0.5f)
+                .logitBias(new TreeMap<>())
+                .user("user1")
+                .completionCount(5)
                 .build();
 
         ChatRequest chatRequest2 = ChatRequest.builder()
-                .setModel("model1")
-                .setMessages(new ArrayList<>())
-                .setFunctions(new ArrayList<>())
-                .setFunctionalCall(new FunctionalCall("function1", null))
-                .setTemperature(0.8f)
-                .setTopP(0.9f)
-                .setStream(true)
-                .setStop(new ArrayList<>())
-                .setMaxTokens(100)
-                .setPresencePenalty(1.0f)
-                .setFrequencyPenalty(0.5f)
-                .setLogitBias(new TreeMap<>())
-                .setUser("user1")
-                .setCompletionCount(5)
+                .model("model1")
+                .messages(new ArrayList<>())
+                .functions(new ArrayList<>())
+                .functionalCall(new FunctionalCall("function1", null))
+                .temperature(0.8f)
+                .topP(0.9f)
+                .stream(true)
+                .stop(new ArrayList<>())
+                .maxTokens(100)
+                .presencePenalty(1.0f)
+                .frequencyPenalty(0.5f)
+                .logitBias(new TreeMap<>())
+                .user("user1")
+                .completionCount(5)
                 .build();
 
         ChatRequest chatRequest3 = ChatRequest.builder()
-                .setModel("model2")
-                .setMessages(new ArrayList<>())
-                .setFunctions(new ArrayList<>())
-                .setFunctionalCall(new FunctionalCall("function2", null))
-                .setTemperature(0.7f)
-                .setTopP(0.8f)
-                .setStream(false)
-                .setStop(new ArrayList<>())
-                .setMaxTokens(200)
-                .setPresencePenalty(0.9f)
-                .setFrequencyPenalty(0.4f)
-                .setLogitBias(new TreeMap<>())
-                .setUser("user2")
-                .setCompletionCount(10)
+                .model("model2")
+                .messages(new ArrayList<>())
+                .functions(new ArrayList<>())
+                .functionalCall(new FunctionalCall("function2", null))
+                .temperature(0.7f)
+                .topP(0.8f)
+                .stream(false)
+                .stop(new ArrayList<>())
+                .maxTokens(200)
+                .presencePenalty(0.9f)
+                .frequencyPenalty(0.4f)
+                .logitBias(new TreeMap<>())
+                .user("user2")
+                .completionCount(10)
                 .build();
 
         // Test equality

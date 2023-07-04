@@ -51,5 +51,9 @@ class FunctionalCallTest {
 
         // Verify that the two FunctionalCalls are equal
         assertEquals(functionalCall1, functionalCall2);
+        assertEquals(functionalCall1.toString(),
+                functionalCall2.toString());
+        assertEquals(functionalCall1.hashCode(),
+                functionalCall2.hashCode());
     }
 }

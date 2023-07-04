@@ -55,5 +55,7 @@ class FunctionTest {
 
         // Verify that the two Functions are equal
         assertEquals(function1, function2);
+        assertEquals(function1.hashCode(), function2.hashCode());
+        assertEquals(function1.toString(), function2.toString());
     }
 }

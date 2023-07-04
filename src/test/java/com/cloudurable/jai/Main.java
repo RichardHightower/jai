@@ -55,8 +55,8 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the chat request
-        final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+        final ChatRequest chatRequest = ChatRequest.builder().model("gpt-3.5-turbo")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
                 .build();
 
         // Call Open AI API with chat message
@@ -79,9 +79,9 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the chat request
-        final ChatRequest chatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
-                .setCompletionCount(5)
+        final ChatRequest chatRequest = ChatRequest.builder().model("gpt-3.5-turbo")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
+                .completionCount(5)
                 .build();
 
         // Call Open AI API with chat message

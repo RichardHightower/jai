@@ -77,4 +77,31 @@ class JsonSerializerTest {
         assertEquals(111, arrayNode.atPath("[2].c").asScalar().intValue());
     }
 
+
+    @Test
+    void writeNestedList() {
+        JsonSerializer serializer = new JsonSerializer();
+        serializer.startObject();
+        serializer.addAttribute("a", "b");
+        serializer.addAttribute("c", 11);
+        serializer.startNestedListAttribute("b");
+        serializer.addElement("b1");
+        serializer.addElement(111);
+        serializer.startNestedListElement();
+        serializer.addElement("abcd");
+        serializer.endList();
+        serializer.endList();
+        serializer.endObject();
+        String json = serializer.toString();
+        ObjectNode objectNode = Json.toObjectNode(json);
+        assertEquals("b", objectNode.getString("a"));
+        assertEquals(11, objectNode.getInt("c"));
+        assertEquals("b1", objectNode.atPath("b[0]").asScalar().stringValue());
+        assertEquals(111, objectNode.atPath("b[1]").asScalar().intValue());
+        assertEquals("abcd", objectNode.atPath("b[2][0]").asScalar().stringValue());
+
+
+    }
+
+
 }

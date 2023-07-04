@@ -79,8 +79,9 @@ public class Parameter {
     @Override
     public String toString() {
         return "Parameter{" +
-                "name='" + name + '\'' +
-                ", type=" + type +
+                "name='" + name + ',' +
+                "type=" + type + ',' +
+                "super=" + super.toString() +
                 '}';
     }
 

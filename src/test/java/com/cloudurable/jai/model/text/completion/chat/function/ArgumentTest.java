@@ -33,5 +33,8 @@ class ArgumentTest {
 
         // Verify that the two Arguments are equal
         assertEquals(argument1, argument2);
+        assertEquals(argument1.toString(), argument2.toString());
+        assertEquals(argument1.hashCode(), argument2.hashCode());
+
     }
 }

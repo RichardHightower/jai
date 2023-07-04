@@ -169,16 +169,18 @@ public class JsonSerializer {
         builder.append(':').append(value);
     }
 
-    /**
-     * Adds a JSON attribute to the current object.
-     *
-     * @param key   The key of the attribute.
-     * @param value The value of the attribute.
-     */
-    public void addAttribute(Number key, Number value) {
-        trackAndAddCommaIfNeeded();
-        builder.append(key).append(':').append(value);
-    }
+
+    //TODO FIX
+//    /**
+//     * Adds a JSON attribute to the current object.
+//     *
+//     * @param key   The key of the attribute.
+//     * @param value The value of the attribute.
+//     */
+//    public void addAttribute(Number key, Number value) {
+//        trackAndAddCommaIfNeeded();
+//        builder.append(key).append(':').append(value);
+//    }
 
     /**
      * Adds a JSON attribute to the current object.

@@ -100,9 +100,11 @@ class ChatClientSyncTest {
 
 
         // Create the request body.
-        basicChatRequest = ChatRequest.builder().setModel("gpt-3.5-turbo")
-                .addMessage(Message.builder().setContent("What is AI?").setRole(Role.USER).build())
+        basicChatRequest = ChatRequest.builder().model("gpt-3.5-turbo").addStop("FUIYAH")
+                .addMessage(Message.builder().content("What is AI?").role(Role.USER).build())
                 .build();
+
+        basicChatRequest.toString();
 
         basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
     }

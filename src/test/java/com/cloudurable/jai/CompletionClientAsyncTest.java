@@ -1,7 +1,9 @@
 package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.text.completion.chat.*;
+import com.cloudurable.jai.model.text.completion.CompletionRequest;
+import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
+import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
@@ -17,12 +20,12 @@ import static org.mockito.Mockito.verify;
 /**
  * Tests for the OpenAIClient.
  */
-class ChatClientAsyncTest {
+class CompletionClientAsyncTest {
 
 
-    String basicChatResponseBody;
-    String basicChatRequestBody;
-    ChatRequest basicChatRequest;
+    String basicResponseBody;
+    String basicRequestBody;
+    CompletionRequest basicRequest;
 
     /**
      * Setup method to initialize the client, mock HttpClient,
@@ -33,7 +36,7 @@ class ChatClientAsyncTest {
 
         // Create the response body
 
-        basicChatResponseBody = Json.niceJson("{\n" +
+        basicResponseBody = Json.niceJson("{\n" +
                 "  'id': 'chatcmpl-7U7eebdP0zrUDP36wBLvrjCYo7Bkw',\n" +
                 "  'object': 'chat.completion',\n" +
                 "  'created': 1687413620,\n" +
@@ -41,10 +44,13 @@ class ChatClientAsyncTest {
                 "  'choices': [\n" +
                 "    {\n" +
                 "      'index': 0,\n" +
-                "      'message': {\n" +
-                "        'role': 'assistant',\n" +
-                "        'content': 'AI stands for artificial intelligence. It refers to the development of computer systems that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. AI technologies include machine learning, deep learning, natural language processing, and robotics. With AI, machines can learn to recognize patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the potential to significantly impact industries such as healthcare, finance, transportation, and manufacturing.'\n" +
-                "      },\n" +
+                "      'text': 'AI stands for artificial intelligence. It refers to the development of computer systems " +
+                "that can perform tasks that typically require human intelligence, such as visual perception, speech " +
+                "recognition, decision-making, and language translation. AI technologies include machine learning, " +
+                "deep learning, natural language processing, and robotics. With AI, machines can learn to recognize " +
+                "patterns in data and make decisions based on that analysis. AI is rapidly advancing and has the " +
+                "potential to significantly impact industries such as healthcare, finance, " +
+                "transportation, and manufacturing.',\n" +
                 "      'finish_reason': 'stop'\n" +
                 "    }\n" +
                 "  ],\n" +
@@ -56,16 +62,32 @@ class ChatClientAsyncTest {
                 "}");
 
 
-        // Create the request body.
-        basicChatRequest = ChatRequest.builder()
-                .model("gpt-3.5-turbo")
-                .addMessage(Message.builder()
-                        .content("What is AI?")
-                        .role(Role.USER).build()
-                )
+        CompletionRequest request = CompletionRequest.builder()
+                .model("model")
+                .prompt("Hello")
+                .suffix("World")
+                .bestOf(3)
+                .temperature(0.8f)
+                .topP(0.9f)
+                .completionCount(1)
+                .stream(false)
+                .stop(Collections.singletonList("||STOP"))
+                .maxTokens(100)
+                .presencePenalty(0.33f)
+                .frequencyPenalty(0.66f)
+                .logitBias(Collections.emptyMap())
+                .user("john_doe")
+                .logprobs(1)
+                .echo(true)
                 .build();
 
-        basicChatRequestBody = ChatRequestSerializer.serialize(basicChatRequest);
+
+        // Create the request body.
+        basicRequest = CompletionRequest.builder()
+                .model("gpt-3.5-turbo").prompt("What is AI?")
+                .build();
+
+        basicRequestBody = CompletionRequestSerializer.serialize(basicRequest);
     }
 
     /**
@@ -85,10 +107,10 @@ class ChatClientAsyncTest {
                 .setHttpClient(httpClientMock).build();
 
         final HttpClientMock.RequestResponse requestResponse = httpClientMock
-                .setResponsePostAsync("/chat/completions",
-                        basicChatRequestBody, basicChatResponseBody);
+                .setResponsePostAsync("/completions",
+                        basicRequestBody, basicResponseBody);
 
-        final ClientResponse<ChatRequest, ChatResponse> response = client.chatAsync(basicChatRequest).get();
+        final ClientResponse<CompletionRequest, CompletionResponse> response = client.completionAsync(basicRequest).get();
 
         assertFalse(response.getStatusMessage().isPresent());
         assertEquals(200, response.getStatusCode().orElse(-666));
@@ -103,7 +125,7 @@ class ChatClientAsyncTest {
                             " With AI, machines can learn to recognize patterns in data and make decisions based " +
                             "on that analysis. AI is rapidly advancing and has the potential to significantly " +
                             "impact industries such as healthcare, finance, transportation, and manufacturing.",
-                    chatResponse.getChoices().get(0).getMessage().getContent());
+                    chatResponse.getChoices().get(0).getText());
         });
 
         HttpClient mock = httpClientMock.getMock();

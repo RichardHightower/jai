@@ -55,5 +55,9 @@ class ObjectParameterTest {
 
         // Verify that the two ObjectParameters are equal
         assertEquals(objectParameter1, objectParameter2);
+        assertEquals(objectParameter1.toString(),
+                objectParameter2.toString());
+        assertEquals(objectParameter1.hashCode(),
+                objectParameter2.hashCode());
     }
 }

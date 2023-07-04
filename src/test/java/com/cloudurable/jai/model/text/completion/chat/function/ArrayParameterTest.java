@@ -34,5 +34,9 @@ class ArrayParameterTest {
 
         // Verify that the two ArrayParameters are equal
         assertEquals(arrayParameter1, arrayParameter2);
+        assertEquals(arrayParameter1.toString(), arrayParameter2.toString());
+        assertEquals(arrayParameter1.hashCode(), arrayParameter2.hashCode());
+        assertEquals(arrayParameter1.getElementType(), arrayParameter2.getElementType());
+
     }
 }
