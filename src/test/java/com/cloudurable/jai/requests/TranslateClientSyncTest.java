@@ -3,7 +3,7 @@ package com.cloudurable.jai.requests;
 
 import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.audio.AudioRequestEncoder;
+import com.cloudurable.jai.model.audio.AudioRequestSerializer;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranslateRequest;
@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import static com.cloudurable.jai.model.audio.AudioRequestEncoder.getEncodingContentType;
+import static com.cloudurable.jai.model.audio.AudioRequestSerializer.getEncodingContentType;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TranslateClientSyncTest {
@@ -80,15 +80,12 @@ public class TranslateClientSyncTest {
                 .file(new File("test.m4a"))
                 .build();
 
-        final MultipartEntityBuilder form = AudioRequestEncoder.buildForm(translateRequest);
+        final MultipartEntityBuilder form = AudioRequestSerializer.buildForm(translateRequest);
 
         contentType = getEncodingContentType(form);
 
-        try {
-            requestBody = form.build();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        requestBody = form.build();
+
         System.out.println(requestBody);
 
 

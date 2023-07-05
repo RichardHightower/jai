@@ -5,7 +5,7 @@ import com.cloudurable.jai.util.MultipartEntityBuilder;
 /**
  * Encoder class for building a multipart form for an audio transcription request.
  */
-public class AudioRequestEncoder {
+public class AudioRequestSerializer {
 
     /**
      * Builds a multipart form for an audio transcription request.
@@ -33,7 +33,7 @@ public class AudioRequestEncoder {
         }
 
         // Add the audio file as binary body
-        form.addBinaryBody("file", audioRequest.getFile(), "application/binary", "transcribe.m4a");
+        form.addBinaryBody("file", audioRequest.getFile(), "application/binary", audioRequest.getFileName());
 
         return form;
     }

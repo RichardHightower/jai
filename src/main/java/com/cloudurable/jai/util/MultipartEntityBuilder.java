@@ -77,20 +77,27 @@ public class MultipartEntityBuilder {
      * @return The byte array representation of the multipart entity.
      * @throws IOException If an I/O error occurs while building the entity.
      */
-    public byte[] build() throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        for (Part part : parts) {
-            outputStream.write(getBoundaryLine().getBytes(StandardCharsets.UTF_8));
+    public byte[] build() {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            for (Part part : parts) {
+
+                outputStream.write(getBoundaryLine().getBytes(StandardCharsets.UTF_8));
+
+                outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
+                outputStream.write(part.buildHeader().getBytes(StandardCharsets.UTF_8));
+                outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
+                outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
+                outputStream.write(part.buildBody());
+                outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
+            }
+            outputStream.write(getFinalBoundaryLine().getBytes(StandardCharsets.UTF_8));
             outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
-            outputStream.write(part.buildHeader().getBytes(StandardCharsets.UTF_8));
-            outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
-            outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
-            outputStream.write(part.buildBody());
-            outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
+            return outputStream.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        outputStream.write(getFinalBoundaryLine().getBytes(StandardCharsets.UTF_8));
-        outputStream.write(LINE_BREAK.getBytes(StandardCharsets.UTF_8));
-        return outputStream.toByteArray();
     }
 
     /**

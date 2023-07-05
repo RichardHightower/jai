@@ -23,14 +23,11 @@ class AudioRequestEncoderTest {
         AudioRequest audioRequest = new AudioRequestImpl(file, model, prompt, responseFormat, temperature);
 
         // Build the form using AudioRequestEncoder
-        MultipartEntityBuilder form = AudioRequestEncoder.buildForm(audioRequest);
+        MultipartEntityBuilder form = AudioRequestSerializer.buildForm(audioRequest);
 
         // Verify the form contents
-        try {
-            assertNotNull(form.build());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        assertNotNull(form.build());
+
 
 //        assertEquals(model, form.getParameter("model").getValue());
 //        assertEquals(prompt, form.getParameter("prompt").getValue());

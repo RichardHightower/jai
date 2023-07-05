@@ -4,6 +4,10 @@ import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.CreateImageRequest;
+import com.cloudurable.jai.model.image.CreateImageVariationRequest;
+import com.cloudurable.jai.model.image.EditImageRequest;
+import com.cloudurable.jai.model.image.ImageResponse;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -25,5 +29,11 @@ public interface Client {
     ClientResponse<TranscriptionRequest, AudioResponse> transcribe(TranscriptionRequest transcriptionRequest);
 
     ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest);
+
+    ClientResponse<CreateImageRequest, ImageResponse> createImage(CreateImageRequest imageRequest);
+
+    ClientResponse<EditImageRequest, ImageResponse> editImage(EditImageRequest imageRequest);
+
+    ClientResponse<CreateImageVariationRequest, ImageResponse> createImageVariation(CreateImageVariationRequest imageRequest);
 
 }

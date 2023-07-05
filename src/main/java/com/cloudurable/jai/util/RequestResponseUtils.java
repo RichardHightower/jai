@@ -6,6 +6,7 @@ import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
@@ -207,6 +208,80 @@ public class RequestResponseUtils {
                     .statusMessage(response.body())
                     .build();
         }
+    }
+
+    public static ClientResponse<CreateImageRequest, ImageResponse>
+    getCreateImageResponse(CreateImageRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    public static ClientResponse<EditImageRequest, ImageResponse>
+    getEditImageResponse(EditImageRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<EditImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<EditImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    public static ClientResponse<CreateImageVariationRequest, ImageResponse>
+    getCreateVariationImageResponse(CreateImageVariationRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+    public static ClientResponse<CreateImageRequest, ImageResponse> getErrorResponseForCreateImageRequest(Throwable e, CreateImageRequest createImageRequest) {
+        ClientErrorResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(createImageRequest)
+                .build();
+    }
+
+    public static ClientResponse<EditImageRequest, ImageResponse> getErrorResponseForEditImageRequest(Throwable e, EditImageRequest imageRequest) {
+        ClientErrorResponse.Builder<EditImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(imageRequest)
+                .build();
+    }
+
+    public static ClientResponse<CreateImageVariationRequest, ImageResponse> getErrorResponseForCreateImageVariationRequest(Throwable e, CreateImageVariationRequest imageRequest) {
+        ClientErrorResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(imageRequest)
+                .build();
     }
 
     private static ClientSuccessResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseNotOk(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest, int statusCode, String statusMessage) {

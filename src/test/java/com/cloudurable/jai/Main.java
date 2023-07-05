@@ -5,6 +5,7 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -19,12 +20,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
+ //           createVariationsImageAsync();
+ //           editImageAsync();
+ //           callCreateImageAsync();
+//            createVariationsImage();
+//            editImage();
+//            callCreateImage();
 //           callTranslate();
 //            callTranscribe();
 //            callEmbeddingAsyncExample();
@@ -38,6 +46,131 @@ public class Main {
             ex.printStackTrace();
         }
 
+
+    }
+
+
+
+    private static void createVariationsImageAsync() throws ExecutionException, InterruptedException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final CreateImageVariationRequest request = CreateImageVariationRequest.builder()
+                .imageFile(new File("super_hero.png"))
+                .n(5)
+                .responseFormat(ImageResponseFormat.URL)
+                .build();
+
+        final ClientResponse<CreateImageVariationRequest, ImageResponse> response = client.createImageVariationAsync(request).get();
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+    private static void editImageAsync() throws IOException, ExecutionException, InterruptedException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final EditImageRequest request = EditImageRequest.builder()
+                .imageFile(new File("super_hero.png"))
+                .n(5)
+                .prompt("make the super hero have a cape and larger muscles")
+                .responseFormat(ImageResponseFormat.URL)
+                .build();
+
+        final ClientResponse<EditImageRequest, ImageResponse> response = client.editImageAsync(request).get();
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+
+    private static void callCreateImageAsync() throws ExecutionException, InterruptedException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final CreateImageRequest request = CreateImageRequest.builder()
+                .prompt("super hero").responseFormat(ImageResponseFormat.URL)
+                .build();
+
+
+        final ClientResponse<CreateImageRequest, ImageResponse> response  = client.createImageAsync(request).get();
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+
+    private static void createVariationsImage() throws IOException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final CreateImageVariationRequest request = CreateImageVariationRequest.builder()
+                .imageFile(new File("super_hero.png"))
+                .n(5)
+                .responseFormat(ImageResponseFormat.URL)
+                .build();
+
+        final ClientResponse<CreateImageVariationRequest, ImageResponse> response = client.createImageVariation(request);
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+    private static void editImage() throws IOException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final EditImageRequest request = EditImageRequest.builder()
+                .imageFile(new File("super_hero.png"))
+                .n(5)
+                .prompt("make the super hero have a cape and larger muscles")
+                .responseFormat(ImageResponseFormat.URL)
+                .build();
+
+        final ClientResponse<EditImageRequest, ImageResponse> response = client.editImage(request);
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
+
+    }
+
+    private static void callCreateImage() throws IOException {
+        // Create the client
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        final CreateImageRequest request = CreateImageRequest.builder()
+                .prompt("super hero").responseFormat(ImageResponseFormat.URL)
+                .build();
+
+        final ClientResponse<CreateImageRequest, ImageResponse> response = client.createImage(request);
+
+        response.getResponse().ifPresent(r -> System.out.println(r.toString()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
+
+        response.getException().ifPresent(Throwable::printStackTrace);
+
+        response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
 
     }
 
