@@ -131,13 +131,13 @@ response.getStatusMessage().ifPresent(
 
 ### Next steps
 
-1. Add support for completions
-2. Add support for edits
-3. Add support for updates
-4. Add support for file uploads
-5. Add support for tunings
-6. Add support for text to audio
-7. Add support for audio to text
+1. Add support for completions DONE
+2. Add support for edits DONE
+3. Add support for updates DONE
+7. Add support for audio to text DONE
+8. Add support for images
+4. Add support for file uploads 
+5. Add support for fine tunings 
 8. Create some examples with chat streaming
 9. Create some examples with chat functions and function callbacks
 
