@@ -6,12 +6,37 @@ import com.cloudurable.jai.model.Usage;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Base Text Response.
+ */
 public abstract class TextResponse implements Response {
+    /**
+     * The unique identifier associated with the response.
+     */
     protected final String id;
-    protected final String object;
-    protected final Instant created;
-    protected final Usage usage;
 
+    /**
+     * The object type of the response.
+     */
+    protected final String object;
+
+    /**
+     * The timestamp indicating when the response was created.
+     */
+    protected final Instant created;
+
+    /**
+     * The usage information related to the response.
+     */
+    protected final Usage usage;
+    /**
+     * Construct.
+     *
+     * @param id      id
+     * @param object  object
+     * @param created created
+     * @param usage   usage
+     */
     public TextResponse(String id, String object, Instant created, Usage usage) {
         this.id = id;
         this.object = object;

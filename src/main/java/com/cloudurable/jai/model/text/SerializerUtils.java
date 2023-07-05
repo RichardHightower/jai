@@ -5,17 +5,29 @@ import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
 
+/**
+ * Utility class for serializing text-related requests.
+ */
 public class SerializerUtils {
+    private SerializerUtils(){}
 
-    private SerializerUtils() {
-    }
-
-
+    /**
+     * Outputs the model property to the JSON body.
+     *
+     * @param chatRequest     The text request object.
+     * @param jsonBodyBuilder The JSON body builder.
+     */
     public static void outputModel(TextRequest chatRequest, JsonSerializer jsonBodyBuilder) {
         // Note property values are always in snake case for the JSON output.
         jsonBodyBuilder.addAttribute("model", chatRequest.getModel());
     }
 
+    /**
+     * Outputs the text-related parameters to the JSON body.
+     *
+     * @param chatRequest     The text request object.
+     * @param jsonBodyBuilder The JSON body builder.
+     */
     public static void outputTextParams(TextRequest chatRequest, JsonSerializer jsonBodyBuilder) {
         final float temperature = chatRequest.getTemperature();
         if (temperature != 0) {
@@ -32,6 +44,12 @@ public class SerializerUtils {
         }
     }
 
+    /**
+     * Outputs the completion-related parameters to the JSON body.
+     *
+     * @param chatRequest     The completion request object.
+     * @param jsonBodyBuilder The JSON body builder.
+     */
     public static void outputCompletionParams(CommonCompletionRequest chatRequest, JsonSerializer jsonBodyBuilder) {
 
         final float frequencyPenalty = chatRequest.getFrequencyPenalty();

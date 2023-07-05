@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class CompletionResponseDeserializer {
 
+    private CompletionResponseDeserializer(){}
+
     /**
      * Deserializes a JSON string representation into a CompletionResponse object.
      *

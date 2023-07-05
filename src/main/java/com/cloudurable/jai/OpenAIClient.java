@@ -9,6 +9,7 @@ import com.cloudurable.jai.model.SecretHolder;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -18,6 +19,7 @@ import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditRequestSerializer;
 import com.cloudurable.jai.model.text.edit.EditResponse;
+import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
@@ -31,8 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static com.cloudurable.jai.model.audio.AudioRequestEncoder.buildForm;
-import static com.cloudurable.jai.model.audio.AudioRequestEncoder.getEncodingContentType;
+import static com.cloudurable.jai.model.audio.AudioRequestSerializer.buildForm;
+import static com.cloudurable.jai.model.audio.AudioRequestSerializer.getEncodingContentType;
 import static com.cloudurable.jai.util.RequestResponseUtils.*;
 
 /**
@@ -185,7 +187,7 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     @Override
-    public ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> embedding(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest) {
+    public ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
@@ -218,9 +220,7 @@ public class OpenAIClient implements Client, ClientAsync {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             return RequestResponseUtils.getTranscriptionResponse(transcriptionRequest, response);
         } catch (Exception e) {
-            ClientErrorResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientErrorResponse.builder();
-            return builder.exception(e).request(transcriptionRequest)
-                    .build();
+            return RequestResponseUtils.getErrorResponseForTranscriptionRequest(e, transcriptionRequest);
         }
 
     }
@@ -266,6 +266,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     }
 
+
     @Override
     public ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest) {
         MultipartEntityBuilder form = buildForm(translateRequest);
@@ -285,14 +286,109 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
-    public CompletableFuture<ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest) {
+    @Override
+    public ClientResponse<CreateImageRequest, ImageResponse> createImage(CreateImageRequest imageRequest) {
+        final String jsonRequest = ImageRequestSerializer.buildJson(imageRequest);
+
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/images/generations")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getCreateImageResponse(imageRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForCreateImageRequest(e, imageRequest);
+        }
+    }
+
+    @Override
+    public ClientResponse<EditImageRequest, ImageResponse> editImage(EditImageRequest imageRequest) {
+        MultipartEntityBuilder form = ImageRequestSerializer.buildEditForm(imageRequest);
+        try {
+            final String contentType = getEncodingContentType(form);
+            final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/edits")
+                    .header("Content-Type", contentType)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
+            final HttpRequest request = requestBuilder.build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getEditImageResponse(imageRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForEditImageRequest(e, imageRequest);
+        }
+    }
+
+    @Override
+    public ClientResponse<CreateImageVariationRequest, ImageResponse> createImageVariation(CreateImageVariationRequest imageRequest) {
+        MultipartEntityBuilder form = ImageRequestSerializer.buildVariationForm(imageRequest);
+        try {
+            final String contentType = getEncodingContentType(form);
+            final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/variations")
+                    .header("Content-Type", contentType)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
+            final HttpRequest request = requestBuilder.build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getCreateVariationImageResponse(imageRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForCreateImageVariationRequest(e, imageRequest);
+        }
+    }
+
+
+    @Override
+    public CompletableFuture<ClientResponse<CreateImageRequest, ImageResponse>> createImageAsync(CreateImageRequest imageRequest) {
+        final String jsonRequest = ImageRequestSerializer.buildJson(imageRequest);
+
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/images/generations")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response ->
+                        getCreateImageResponse(imageRequest, response)).exceptionally(e ->
+                        getErrorResponseForCreateImageRequest(e, imageRequest));
+
+    }
+
+    @Override
+    public CompletableFuture<ClientResponse<EditImageRequest, ImageResponse>> editImageAsync(EditImageRequest imageRequest) {
+        MultipartEntityBuilder form = ImageRequestSerializer.buildEditForm(imageRequest);
+        final String contentType = getEncodingContentType(form);
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/edits")
+                .header("Content-Type", contentType)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
+        final HttpRequest request = requestBuilder.build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response ->
+                        getEditImageResponse(imageRequest, response)).exceptionally(e ->
+                        getErrorResponseForEditImageRequest(e, imageRequest));
+
+    }
+
+    @Override
+    public CompletableFuture<ClientResponse<CreateImageVariationRequest, ImageResponse>> createImageVariationAsync(CreateImageVariationRequest imageRequest) {
+
+        final MultipartEntityBuilder form = ImageRequestSerializer.buildVariationForm(imageRequest);
+        final String contentType = getEncodingContentType(form);
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/variations")
+                .header("Content-Type", contentType)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
+        final HttpRequest request = requestBuilder.build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response ->
+                        getCreateVariationImageResponse(imageRequest, response)).exceptionally(e ->
+                        getErrorResponseForCreateImageVariationRequest(e, imageRequest));
+    }
+
+    public CompletableFuture<ClientResponse<EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply((Function<HttpResponse<String>, ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse>>) response ->
+                .thenApply((Function<HttpResponse<String>, ClientResponse<EmbeddingRequest, EmbeddingResponse>>) response ->
                         getEmbeddingResponse(embeddingRequest, response)).exceptionally(e ->
                         getErrorResponseForEmbeddingRequest(e, embeddingRequest));
     }

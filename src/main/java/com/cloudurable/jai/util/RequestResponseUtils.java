@@ -6,6 +6,7 @@ import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
@@ -159,8 +160,13 @@ public class RequestResponseUtils {
     }
 
 
-    //getEmbeddingResponse
-
+    /**
+     * Retrieves the embedding response from the HTTP response.
+     *
+     * @param embeddingRequest The embedding request.
+     * @param response         The HTTP response containing the embedding response data.
+     * @return The client success response with the embedding request and response, or an error response.
+     */
     public static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse>
     getEmbeddingResponse(EmbeddingRequest embeddingRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -171,6 +177,13 @@ public class RequestResponseUtils {
         }
     }
 
+    /**
+     * Retrieves the translate response from the HTTP response.
+     *
+     * @param translateRequest The translate request.
+     * @param response         The HTTP response containing the translate response data.
+     * @return The client response with the translate request and audio response, or an error response.
+     */
     public static ClientResponse<TranslateRequest, AudioResponse>
     getTranslateResponse(TranslateRequest translateRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -190,6 +203,13 @@ public class RequestResponseUtils {
         }
     }
 
+    /**
+     * Retrieves the transcription response from the HTTP response.
+     *
+     * @param transcriptionRequest The transcription request.
+     * @param response             The HTTP response containing the transcription response data.
+     * @return The client response with the transcription request and audio response, or an error response.
+     */
     public static ClientResponse<TranscriptionRequest, AudioResponse>
     getTranscriptionResponse(TranscriptionRequest transcriptionRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -209,7 +229,126 @@ public class RequestResponseUtils {
         }
     }
 
-    private static ClientSuccessResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseNotOk(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest, int statusCode, String statusMessage) {
+    /**
+     * getCreateImageResponse
+     * @param imageRequest imageRequest
+     * @param response response
+     * @return cilent response
+     */
+    public static ClientResponse<CreateImageRequest, ImageResponse>
+    getCreateImageResponse(CreateImageRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    /**
+     * getEditImageResponse
+     * @param imageRequest imageRequest
+     * @param response response
+     * @return cilent response
+     */
+    public static ClientResponse<EditImageRequest, ImageResponse>
+    getEditImageResponse(EditImageRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<EditImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<EditImageRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    /**
+     * getCreateVariationImageResponse
+     * @param imageRequest imageRequest
+     * @param response response
+     * @return cilent response
+     */
+    public static ClientResponse<CreateImageVariationRequest, ImageResponse>
+    getCreateVariationImageResponse(CreateImageVariationRequest imageRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            ImageResponse imageResponse = ImageResponseDeserializer.deserialize(response.body());
+            return builder.request(imageRequest)
+                    .response(imageResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(imageRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    /**
+     * getErrorResponseForCreateImageRequest
+     * @param e exception
+     * @param createImageRequest image request
+     * @return cilent response
+     */
+    public static ClientResponse<CreateImageRequest, ImageResponse> getErrorResponseForCreateImageRequest(Throwable e, CreateImageRequest createImageRequest) {
+        ClientErrorResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(createImageRequest)
+                .build();
+    }
+
+    /**
+     * getErrorResponseForEditImageRequest
+     * @param e exception
+     * @param imageRequest image request
+     * @return cilent response
+     */
+    public static ClientResponse<EditImageRequest, ImageResponse> getErrorResponseForEditImageRequest(Throwable e, EditImageRequest imageRequest) {
+        ClientErrorResponse.Builder<EditImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(imageRequest)
+                .build();
+    }
+
+    /**
+     * getErrorResponseForCreateImageVariationRequest
+     * @param e exception
+     * @param imageRequest image request
+     * @return cilent response
+     */
+    public static ClientResponse<CreateImageVariationRequest, ImageResponse> getErrorResponseForCreateImageVariationRequest(Throwable e, CreateImageVariationRequest imageRequest) {
+        ClientErrorResponse.Builder<CreateImageVariationRequest, ImageResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(imageRequest)
+                .build();
+    }
+
+
+    /**
+     * getEmbeddingResponseNotOk
+     * @param embeddingRequest embedding Request
+     * @param statusCode status Code
+     * @param statusMessage status Message
+     * @return client response
+     */
+    private static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseNotOk(EmbeddingRequest embeddingRequest, int statusCode, String statusMessage) {
         ClientSuccessResponse.Builder<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> builder = ClientSuccessResponse.builder();
         return builder.request(embeddingRequest)
                 .statusCode(statusCode)
@@ -217,8 +356,15 @@ public class RequestResponseUtils {
                 .build();
     }
 
-    private static ClientSuccessResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseSuccess(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest, int statusCode, EmbeddingResponse embeddingResponse) {
-        ClientSuccessResponse.Builder<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> builder = ClientSuccessResponse.builder();
+    /**
+     * getEmbeddingResponseSuccess
+     * @param embeddingRequest embeddingRequest
+     * @param statusCode http status code
+     * @param embeddingResponse response
+     * @return cilent response
+     */
+    private static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseSuccess(EmbeddingRequest embeddingRequest, int statusCode, EmbeddingResponse embeddingResponse) {
+        ClientSuccessResponse.Builder<EmbeddingRequest, EmbeddingResponse> builder = ClientSuccessResponse.builder();
         return builder.request(embeddingRequest)
                 .response(embeddingResponse)
                 .statusCode(statusCode)
@@ -226,6 +372,12 @@ public class RequestResponseUtils {
     }
 
 
+    /**
+     * getEditResponse
+     * @param editRequest editRequest
+     * @param response http response
+     * @return cilent response
+     */
     public static ClientSuccessResponse<EditRequest, EditResponse>
     getEditResponse(EditRequest editRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -236,6 +388,13 @@ public class RequestResponseUtils {
         }
     }
 
+    /**
+     * getEditResponseSuccess
+     * @param editRequest editRequest
+     * @param statusCode http status code
+     * @param editResponse edit repsonse
+     * @return cilent response
+     */
     public static ClientSuccessResponse<EditRequest, EditResponse> getEditResponseSuccess(EditRequest editRequest,
                                                                                           int statusCode,
                                                                                           EditResponse editResponse) {
@@ -245,7 +404,14 @@ public class RequestResponseUtils {
                 .statusCode(statusCode)
                 .build();
     }
-
+    /**
+     * Retrieves an error response for an edit request that encountered an error.
+     *
+     * @param editRequest The edit request.
+     * @param statusCode  The status code indicating the error.
+     * @param status      The status message of the error.
+     * @return The client response with the edit request and error response.
+     */
     public static ClientSuccessResponse<EditRequest, EditResponse> getEditResponseNotOk(EditRequest editRequest, int statusCode, String status) {
         ClientSuccessResponse.Builder<EditRequest, EditResponse> builder = ClientSuccessResponse.builder();
         return builder.request(editRequest)
@@ -254,9 +420,13 @@ public class RequestResponseUtils {
                 .build();
     }
 
-
-    //getErrorResponseForEmbeddingRequest
-
+    /**
+     * Retrieves an error response for an edit request that encountered an exception.
+     *
+     * @param e           The exception encountered during the edit request.
+     * @param editRequest The edit request.
+     * @return The client response with the edit request and error response.
+     */
     public static ClientResponse<EditRequest, EditResponse> getErrorResponseForEditRequest(Throwable e, EditRequest editRequest) {
         ClientErrorResponse.Builder<EditRequest, EditResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
@@ -264,6 +434,13 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * Retrieves an error response for an embedding request that encountered an exception.
+     *
+     * @param e               The exception encountered during the embedding request.
+     * @param embeddingRequest The embedding request.
+     * @return The client response with the embedding request and error response.
+     */
     public static ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> getErrorResponseForEmbeddingRequest(Throwable e, com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest) {
         ClientErrorResponse.Builder<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
@@ -271,6 +448,13 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * Retrieves an error response for a translate request that encountered an exception.
+     *
+     * @param e                The exception encountered during the translate request.
+     * @param translateRequest The translate request.
+     * @return The client response with the translate request and error response.
+     */
     public static ClientResponse<TranslateRequest, AudioResponse> getErrorResponseForTranslateRequest(Throwable e, TranslateRequest translateRequest) {
         ClientErrorResponse.Builder<TranslateRequest, AudioResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
@@ -278,10 +462,18 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * Retrieves an error response for a transcription request that encountered an exception.
+     *
+     * @param e                   The exception encountered during the transcription request.
+     * @param transcriptionRequest The transcription request.
+     * @return The client response with the transcription request and error response.
+     */
     public static ClientResponse<TranscriptionRequest, AudioResponse> getErrorResponseForTranscriptionRequest(Throwable e, TranscriptionRequest transcriptionRequest) {
         ClientErrorResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
                 .request(transcriptionRequest)
                 .build();
     }
+
 }

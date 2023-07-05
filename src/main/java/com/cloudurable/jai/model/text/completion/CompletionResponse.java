@@ -50,6 +50,9 @@ public class CompletionResponse extends TextResponse {
      * Builder class for constructing CompletionResponse objects.
      */
     public static class Builder {
+
+        private Builder(){}
+
         private String id;
         private String object;
         private Instant created;

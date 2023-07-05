@@ -23,6 +23,11 @@ public class EditRequestSerializer {
     private EditRequestSerializer() {
     }
 
+    /**
+     * Serialize Edit Request to JSON.
+     * @param request Edit Request
+     * @return json
+     */
     public static String serialize(EditRequest request) {
 
         final JsonSerializer jsonBodyBuilder = new JsonSerializer();

@@ -24,9 +24,24 @@ import java.util.Objects;
  * subclasses that provide specific implementations based on the requirements of the application.
  */
 public abstract class TextRequest implements Request {
+    /**
+     * The model to use for the text request.
+     */
     protected final String model;
+
+    /**
+     * The temperature for controlling randomness of the generated text.
+     */
     protected final float temperature;
+
+    /**
+     * The cumulative probability for choosing a token during text generation.
+     */
     protected final float topP;
+
+    /**
+     * The number of completions to generate for each request.
+     */
     protected final int completionCount;
 
     /**

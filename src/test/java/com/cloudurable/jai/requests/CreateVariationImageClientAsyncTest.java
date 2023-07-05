@@ -3,10 +3,10 @@ package com.cloudurable.jai.requests;
 
 import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.audio.AudioRequestSerializer;
-import com.cloudurable.jai.model.audio.AudioResponse;
-import com.cloudurable.jai.model.audio.AudioResponseFormat;
-import com.cloudurable.jai.model.audio.TranscriptionRequest;
+import com.cloudurable.jai.model.image.CreateImageVariationRequest;
+import com.cloudurable.jai.model.image.ImageRequestSerializer;
+import com.cloudurable.jai.model.image.ImageResponse;
+import com.cloudurable.jai.model.image.ImageResponseFormat;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,34 +33,28 @@ import java.util.concurrent.Executor;
 import static com.cloudurable.jai.model.audio.AudioRequestSerializer.getEncodingContentType;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TranscribeClientSyncTest {
+public class CreateVariationImageClientAsyncTest {
     HttpClient httpClientMock;
     OpenAIClient client;
     String responseBody;
     String contentType;
     byte[] requestBody;
-    TranscriptionRequest transcriptionRequest;
+    CreateImageVariationRequest imageRequest;
 
-    /**
-     * Test method to verify the behavior of the completion method in the OpenAIClient.
-     * This test mocks a POST request to the /completions endpoint and verifies
-     * the response from the OpenAIClient completion method.
-     *
-     * @throws Exception in case of errors
-     */
+
     @Test
-    void embeddingAsync() throws Exception {
+    void editImageAsync() throws Exception {
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
-        final ClientResponse<TranscriptionRequest, AudioResponse> response = client.transcribe(transcriptionRequest);
+        final ClientResponse<CreateImageVariationRequest, ImageResponse> response = client.createImageVariationAsync(imageRequest).get();
 
         response.getException().ifPresent(throwable -> throwable.printStackTrace());
         assertFalse(response.getException().isPresent());
         assertEquals(200, response.getStatusCode().orElse(-666));
         assertTrue(response.getResponse().isPresent());
 
-        response.getResponse().ifPresent(textResponse -> {
-            assertEquals("Imagine the wildest idea", textResponse.getText());
+        response.getResponse().ifPresent(imageResponse -> {
+            assertNotNull(imageResponse.getData().get(0).getUrl().orElse(null));
         });
 
     }
@@ -72,15 +66,25 @@ public class TranscribeClientSyncTest {
     @BeforeEach
     void before() {
         // Create the response body
-        responseBody = Json.niceJson("{ 'text': 'Imagine the wildest idea', 'model':'whisper-1'}");
+        responseBody = Json.niceJson("{\n" +
+                "  \"created\": 1589478378,\n" +
+                "  \"data\": [\n" +
+                "    {\n" +
+                "      \"url\": \"https://foo.com/foo.png\"" +
+                "    },\n" +
+                "    {\n" +
+                "      \"url\": \"https://foo.com/foo2.png\"" +
+                "    }\n" +
+                "  ]\n" +
+                "}");
 
         // Create the request body
-        transcriptionRequest = TranscriptionRequest.builder()
-                .model("gpt-3.5-turbo").responseFormat(AudioResponseFormat.JSON)
-                .file(new File("test.m4a"))
+        imageRequest = CreateImageVariationRequest.builder()
+                .responseFormat(ImageResponseFormat.URL)
+                .imageFile(new File("super_hero.png"))
                 .build();
 
-        final MultipartEntityBuilder form = AudioRequestSerializer.buildForm(transcriptionRequest);
+        final MultipartEntityBuilder form = ImageRequestSerializer.buildVariationForm(imageRequest);
 
         contentType = getEncodingContentType(form);
 
@@ -181,7 +185,13 @@ public class TranscribeClientSyncTest {
 
             @Override
             public <T> CompletableFuture<HttpResponse<T>> sendAsync(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) {
-                return null;
+                try {
+                    return CompletableFuture.completedFuture(send(request, responseBodyHandler));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override

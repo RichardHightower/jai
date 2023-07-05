@@ -31,6 +31,10 @@ public class EmbeddingResponse implements Response {
         this.data = data;
     }
 
+    /**
+     * Builder
+     * @return builder
+     */
     public static Builder builder() {
         return new Builder();
     }

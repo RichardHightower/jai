@@ -32,6 +32,11 @@ public class TranscriptionRequest extends AudioRequest {
         this.language = language;
     }
 
+    /**
+     * Builder
+     *
+     * @return builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -49,6 +54,7 @@ public class TranscriptionRequest extends AudioRequest {
      * Builder class for constructing TranscriptionRequest objects.
      */
     public static class Builder {
+        private Builder(){}
         private byte[] file;
 
         private String fileName = "foo.m4a";
@@ -69,11 +75,23 @@ public class TranscriptionRequest extends AudioRequest {
             return this;
         }
 
+        /**
+         * fileName
+         *
+         * @param fileName fileName
+         * @return this
+         */
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;
         }
 
+        /**
+         * Creates binary and fileName from this File.
+         *
+         * @param file file
+         * @return this
+         */
         public Builder file(File file) {
             try {
                 this.file = Files.readAllBytes(file.toPath());

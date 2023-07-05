@@ -4,8 +4,18 @@ import com.cloudurable.jai.model.FinishReason;
 import com.cloudurable.jai.model.Usage;
 import io.nats.jparse.node.ObjectNode;
 
+/**
+ * Utility class for deserializing text-related data.
+ */
 public class DeserializerUtils {
+    private DeserializerUtils(){}
 
+    /**
+     * Deserialize the Usage information from the given JSON object node.
+     *
+     * @param usageNode The JSON object node containing the usage information.
+     * @return The deserialized Usage object.
+     */
     public static Usage deserializeUsage(final ObjectNode usageNode) {
         Usage.Builder builder = Usage.builder();
 
@@ -17,6 +27,12 @@ public class DeserializerUtils {
         return builder.build();
     }
 
+    /**
+     * Deserialize the FinishReason enum value from the given string.
+     *
+     * @param finishReason The string representation of the finish reason.
+     * @return The deserialized FinishReason enum value.
+     */
     public static FinishReason deserializeFinishReason(final String finishReason) {
         switch (finishReason) {
             case "stop":
