@@ -27,6 +27,11 @@ public class Main {
     public static void main(final String... args) {
         try {
 
+            getModelAsync("whisper-1");
+            //listModelsAsync();
+            //getModel("whisper-1");
+            //listModels();
+
             //           createVariationsImageAsync();
             //           editImageAsync();
             //           callCreateImageAsync();
@@ -49,6 +54,25 @@ public class Main {
 
     }
 
+    private static void getModelAsync(String s) throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.getModelAsync(s).get());
+    }
+
+    private static void listModelsAsync() throws Exception {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        client.listModelsAsync().get().getData().forEach(modelData -> System.out.println(modelData.getId()));
+    }
+
+    private static void getModel(String s) {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.getModel(s));
+    }
+
+    private static void listModels() throws Exception {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        client.listModels().getData().forEach(modelData -> System.out.println(modelData.getId()));
+    }
 
     private static void createVariationsImageAsync() throws ExecutionException, InterruptedException {
         // Create the client

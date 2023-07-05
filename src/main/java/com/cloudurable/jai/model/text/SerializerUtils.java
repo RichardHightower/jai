@@ -9,7 +9,8 @@ import java.util.List;
  * Utility class for serializing text-related requests.
  */
 public class SerializerUtils {
-    private SerializerUtils(){}
+    private SerializerUtils() {
+    }
 
     /**
      * Outputs the model property to the JSON body.

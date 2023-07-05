@@ -6,6 +6,10 @@ import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.image.CreateImageRequest;
+import com.cloudurable.jai.model.image.CreateImageVariationRequest;
+import com.cloudurable.jai.model.image.EditImageRequest;
+import com.cloudurable.jai.model.image.ImageResponse;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -13,6 +17,7 @@ import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
+import io.nats.jparse.Json;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +30,232 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
+import static com.cloudurable.jai.util.RequestResponseUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestResponseUtilsTest {
+
+    @Test
+    public void testGetCreateImageResponse_Success() {
+        CreateImageRequest imageRequest = CreateImageRequest.builder().build();
+        HttpResponse<String> response = createSuccessResponse();
+
+        ClientResponse<CreateImageRequest, ImageResponse> clientResponse =
+                getCreateImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+    }
+
+    @Test
+    public void testGetCreateImageResponse_Error() {
+        CreateImageRequest imageRequest = CreateImageRequest.builder().build();
+        HttpResponse<String> response = createErrorResponse();
+
+        ClientResponse<CreateImageRequest, ImageResponse> clientResponse =
+                getCreateImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertNotNull(clientResponse.getResponse());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+        assertEquals(response.body(), clientResponse.getStatusMessage().orElse(""));
+    }
+
+    @Test
+    public void testGetEditImageResponse_Success() {
+        EditImageRequest imageRequest = EditImageRequest.builder().build();
+        HttpResponse<String> response = createSuccessResponse();
+
+        ClientResponse<EditImageRequest, ImageResponse> clientResponse =
+                getEditImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+    }
+
+    @Test
+    public void testGetEditImageResponse_Error() {
+        EditImageRequest imageRequest = EditImageRequest.builder().build();
+        HttpResponse<String> response = createErrorResponse();
+
+        ClientResponse<EditImageRequest, ImageResponse> clientResponse =
+                getEditImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertNotNull(clientResponse.getResponse());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+        assertEquals(response.body(), clientResponse.getStatusMessage().orElse(""));
+    }
+
+    @Test
+    public void testGetCreateVariationImageResponse_Success() {
+        CreateImageVariationRequest imageRequest = CreateImageVariationRequest.builder().build();
+        HttpResponse<String> response = createSuccessResponse();
+
+        ClientResponse<CreateImageVariationRequest, ImageResponse> clientResponse =
+                getCreateVariationImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertEquals(ImageResponse.class, clientResponse.getResponse().orElse(null).getClass());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+    }
+
+    @Test
+    public void testGetCreateVariationImageResponse_Error() {
+        CreateImageVariationRequest imageRequest = CreateImageVariationRequest.builder().build();
+        HttpResponse<String> response = createErrorResponse();
+
+        ClientResponse<CreateImageVariationRequest, ImageResponse> clientResponse =
+                getCreateVariationImageResponse(imageRequest, response);
+
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertEquals(imageRequest, clientResponse.getRequest());
+        assertNotNull(clientResponse.getResponse());
+        assertEquals(response.statusCode(), clientResponse.getStatusCode().orElse(-666));
+        assertEquals(response.body(), clientResponse.getStatusMessage().orElse(""));
+    }
+
+    @Test
+    public void testGetErrorResponseForCreateImageRequest() {
+        Throwable e = new Throwable();
+        CreateImageRequest imageRequest = CreateImageRequest.builder().build();
+
+        ClientResponse<CreateImageRequest, ImageResponse> clientResponse =
+                getErrorResponseForCreateImageRequest(e, imageRequest);
+
+        assertTrue(clientResponse instanceof ClientErrorResponse);
+        assertEquals(e, clientResponse.getException().orElse(null));
+        assertEquals(imageRequest, clientResponse.getRequest());
+    }
+
+    @Test
+    public void testGetErrorResponseForEditImageRequest() {
+        Throwable e = new Throwable();
+        EditImageRequest imageRequest = EditImageRequest.builder().build();
+
+        ClientResponse<EditImageRequest, ImageResponse> clientResponse =
+                getErrorResponseForEditImageRequest(e, imageRequest);
+
+        assertTrue(clientResponse instanceof ClientErrorResponse);
+        assertEquals(e, clientResponse.getException().orElse(null));
+        assertEquals(imageRequest, clientResponse.getRequest());
+    }
+
+    @Test
+    public void testGetErrorResponseForCreateImageVariationRequest() {
+        Throwable e = new Throwable();
+        CreateImageVariationRequest imageRequest = CreateImageVariationRequest.builder().build();
+
+        ClientResponse<CreateImageVariationRequest, ImageResponse> clientResponse =
+                getErrorResponseForCreateImageVariationRequest(e, imageRequest);
+
+        assertTrue(clientResponse instanceof ClientErrorResponse);
+        assertEquals(e, clientResponse.getException().orElse(null));
+        assertEquals(imageRequest, clientResponse.getRequest());
+    }
+
+    private HttpResponse<String> createSuccessResponse() {
+        return new HttpResponse<String>() {
+            @Override
+            public int statusCode() {
+                return 200;
+            }
+
+            @Override
+            public HttpRequest request() {
+                return null;
+            }
+
+            @Override
+            public Optional<HttpResponse<String>> previousResponse() {
+                return Optional.empty();
+            }
+
+            @Override
+            public HttpHeaders headers() {
+                return null;
+            }
+
+            @Override
+            public String body() {
+                return Json.niceJson("{\n" +
+                        "  'created': 1589478378,                   \n" +
+                        "  'data': [                                \n" +
+                        "    {                                      \n" +
+                        "      'url': 'https://google.com/foo.png'          \n" +
+                        "    },                                     \n" +
+                        "    {                                      \n" +
+                        "      'url': 'https://google.com/foo.png'                 \n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}");
+            }
+
+            @Override
+            public Optional<SSLSession> sslSession() {
+                return Optional.empty();
+            }
+
+            @Override
+            public URI uri() {
+                return null;
+            }
+
+            @Override
+            public HttpClient.Version version() {
+                return null;
+            }
+        };
+    }
+
+    private HttpResponse<String> createErrorResponse() {
+        return new HttpResponse<String>() {
+            @Override
+            public int statusCode() {
+                return 500;
+            }
+
+            @Override
+            public HttpRequest request() {
+                return null;
+            }
+
+            @Override
+            public Optional<HttpResponse<String>> previousResponse() {
+                return Optional.empty();
+            }
+
+            @Override
+            public HttpHeaders headers() {
+                return null;
+            }
+
+            @Override
+            public String body() {
+                return "Error occurred";
+            }
+
+            @Override
+            public Optional<SSLSession> sslSession() {
+                return Optional.empty();
+            }
+
+            @Override
+            public URI uri() {
+                return null;
+            }
+
+            @Override
+            public HttpClient.Version version() {
+                return null;
+            }
+        };
+    }
 
     @Test
     public void testGetErrorResponseForChatRequest() {

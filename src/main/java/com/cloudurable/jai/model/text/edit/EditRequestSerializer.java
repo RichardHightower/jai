@@ -25,6 +25,7 @@ public class EditRequestSerializer {
 
     /**
      * Serialize Edit Request to JSON.
+     *
      * @param request Edit Request
      * @return json
      */

@@ -9,10 +9,14 @@ import java.util.List;
  * Represents a choice for text completion.
  */
 public class CompletionChoice extends Choice {
-    /** Text of the choice*/
+    /**
+     * Text of the choice
+     */
     private final String text;
 
-    /** The log probabilities associated with the choice. */
+    /**
+     * The log probabilities associated with the choice.
+     */
     private final List<Integer> logprobs;
 
     /**
@@ -31,6 +35,7 @@ public class CompletionChoice extends Choice {
 
     /**
      * builder
+     *
      * @return builder
      */
     public static Builder builder() {
@@ -69,11 +74,14 @@ public class CompletionChoice extends Choice {
      * Builder class for constructing CompletionChoice objects.
      */
     public static class Builder {
-        private Builder(){};
         private int index;
+
+        ;
         private FinishReason finishReason;
         private String text;
         private List<Integer> logprobs;
+        private Builder() {
+        }
 
         /**
          * Sets the index of the choice.

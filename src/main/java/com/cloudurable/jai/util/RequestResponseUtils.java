@@ -231,8 +231,9 @@ public class RequestResponseUtils {
 
     /**
      * getCreateImageResponse
+     *
      * @param imageRequest imageRequest
-     * @param response response
+     * @param response     response
      * @return cilent response
      */
     public static ClientResponse<CreateImageRequest, ImageResponse>
@@ -255,8 +256,9 @@ public class RequestResponseUtils {
 
     /**
      * getEditImageResponse
+     *
      * @param imageRequest imageRequest
-     * @param response response
+     * @param response     response
      * @return cilent response
      */
     public static ClientResponse<EditImageRequest, ImageResponse>
@@ -279,8 +281,9 @@ public class RequestResponseUtils {
 
     /**
      * getCreateVariationImageResponse
+     *
      * @param imageRequest imageRequest
-     * @param response response
+     * @param response     response
      * @return cilent response
      */
     public static ClientResponse<CreateImageVariationRequest, ImageResponse>
@@ -303,7 +306,8 @@ public class RequestResponseUtils {
 
     /**
      * getErrorResponseForCreateImageRequest
-     * @param e exception
+     *
+     * @param e                  exception
      * @param createImageRequest image request
      * @return cilent response
      */
@@ -316,7 +320,8 @@ public class RequestResponseUtils {
 
     /**
      * getErrorResponseForEditImageRequest
-     * @param e exception
+     *
+     * @param e            exception
      * @param imageRequest image request
      * @return cilent response
      */
@@ -329,7 +334,8 @@ public class RequestResponseUtils {
 
     /**
      * getErrorResponseForCreateImageVariationRequest
-     * @param e exception
+     *
+     * @param e            exception
      * @param imageRequest image request
      * @return cilent response
      */
@@ -343,9 +349,10 @@ public class RequestResponseUtils {
 
     /**
      * getEmbeddingResponseNotOk
+     *
      * @param embeddingRequest embedding Request
-     * @param statusCode status Code
-     * @param statusMessage status Message
+     * @param statusCode       status Code
+     * @param statusMessage    status Message
      * @return client response
      */
     private static ClientSuccessResponse<EmbeddingRequest, EmbeddingResponse> getEmbeddingResponseNotOk(EmbeddingRequest embeddingRequest, int statusCode, String statusMessage) {
@@ -358,8 +365,9 @@ public class RequestResponseUtils {
 
     /**
      * getEmbeddingResponseSuccess
-     * @param embeddingRequest embeddingRequest
-     * @param statusCode http status code
+     *
+     * @param embeddingRequest  embeddingRequest
+     * @param statusCode        http status code
      * @param embeddingResponse response
      * @return cilent response
      */
@@ -374,8 +382,9 @@ public class RequestResponseUtils {
 
     /**
      * getEditResponse
+     *
      * @param editRequest editRequest
-     * @param response http response
+     * @param response    http response
      * @return cilent response
      */
     public static ClientSuccessResponse<EditRequest, EditResponse>
@@ -390,8 +399,9 @@ public class RequestResponseUtils {
 
     /**
      * getEditResponseSuccess
-     * @param editRequest editRequest
-     * @param statusCode http status code
+     *
+     * @param editRequest  editRequest
+     * @param statusCode   http status code
      * @param editResponse edit repsonse
      * @return cilent response
      */
@@ -404,6 +414,7 @@ public class RequestResponseUtils {
                 .statusCode(statusCode)
                 .build();
     }
+
     /**
      * Retrieves an error response for an edit request that encountered an error.
      *
@@ -437,7 +448,7 @@ public class RequestResponseUtils {
     /**
      * Retrieves an error response for an embedding request that encountered an exception.
      *
-     * @param e               The exception encountered during the embedding request.
+     * @param e                The exception encountered during the embedding request.
      * @param embeddingRequest The embedding request.
      * @return The client response with the embedding request and error response.
      */
@@ -465,7 +476,7 @@ public class RequestResponseUtils {
     /**
      * Retrieves an error response for a transcription request that encountered an exception.
      *
-     * @param e                   The exception encountered during the transcription request.
+     * @param e                    The exception encountered during the transcription request.
      * @param transcriptionRequest The transcription request.
      * @return The client response with the transcription request and error response.
      */

@@ -19,7 +19,8 @@ import java.util.List;
  * with the deserialized values.
  */
 public class EditResponseDeserializer {
-    private EditResponseDeserializer(){}
+    private EditResponseDeserializer() {
+    }
 
     /**
      * Deserializes a JSON string representation into a EditResponse object.

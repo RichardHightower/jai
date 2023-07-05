@@ -23,6 +23,7 @@ public class CompletionRequestSerializer {
 
     /**
      * Serialize request into JSON.
+     *
      * @param request Completion Request
      * @return JSON
      */

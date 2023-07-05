@@ -29,6 +29,7 @@ public abstract class TextResponse implements Response {
      * The usage information related to the response.
      */
     protected final Usage usage;
+
     /**
      * Construct.
      *

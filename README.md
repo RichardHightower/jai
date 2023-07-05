@@ -131,17 +131,40 @@ response.getStatusMessage().ifPresent(
 
 ### Next steps
 
-1. Add support for completions      DONE
-2. Add support for edits            DONE
-3. Add support for updates          DONE
-7. Add support for audio to text    DONE
-8. Add support for images           DONE
-4. Add support for file uploads 
-5. Add support for fine tunings 
-6. Add support for listing models 
-7. Add support for creating moderation
-8. Create some examples with chat streaming
-9. Create some examples with chat functions and function callbacks
+| No. | Feature                             | Status | endPoint |
+|-----|-------------------------------------|--------|----------|
+| 0.  | Add support for chat                | DONE   | 1        |
+| 1.  | Add support for completions         | DONE   | 1        |
+| 2.  | Add support for edits               | DONE   | 1        |
+| 3.  | Add support for embedding           | DONE   | 1        | 
+| 4.  | Add support for audio to text       | DONE   | 2        | 
+| 4.1 | Transcribe                          | DONE   |          | 
+| 4.2 | Translate                           | DONE   |          | 
+| 5.  | Add support for images              | DONE   | 3        | 
+| 5.1 | Create image                        | DONE   |          | 
+| 5.2 | Edit image                          | DONE   |          | 
+| 5.3 | Variations image                    | DONE   |          | 
+| 6.  | Add support for listing models      | DONE   | 2        | 
+| 6.1 | Add support for get models          | DONE   |          | 
+| 6.2 | Add support for list models         | DONE   |          | 
+| 7.  | Add support for file uploads        |        | 5        | 
+| 7.1 | Create File                         |        |          | 
+| 7.2 | Delete File                         |        |          | 
+| 7.3 | List Files                          |        |          | 
+| 7.4 | Get File                            |        |          | 
+| 7.5 | Get File Content                    |        |          | 
+| 8.  | Add support for fine tunings        |        | 6        | 
+| 8.1 | Create Fine Tuning                  |        |          | 
+| 8.2 | Delete Fine Tuning                  |        |          | 
+| 8.3 | List Fine Tuning                    |        |          | 
+| 8.4 | Get Fine Tuning                     |        |          | 
+| 8.5 | Cancel Fine Tuning                  |        |          | 
+| 8.6 | List Fine Tuning Events             |        |          | 
+| 9.  | Add support for creating moderation |        | 1        | 
+| 10. | Create examples with chat streaming |        |          | 
+| 11. | Create examples with chat functions |        |          | 
+
+
 
 We are at the start of this journey.
 

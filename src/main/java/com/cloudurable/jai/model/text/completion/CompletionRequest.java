@@ -3,6 +3,7 @@ package com.cloudurable.jai.model.text.completion;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 /**
  * Represents a completion request for generating text completions based on a given prompt.
  * Extends the {@link CommonCompletionRequest} class.
@@ -36,6 +37,7 @@ public class CompletionRequest extends CommonCompletionRequest {
      * Default value is {@code false}.
      */
     private final boolean echo;
+
     /**
      * Constructs a CompletionRequest object.
      *
