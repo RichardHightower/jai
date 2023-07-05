@@ -3,15 +3,39 @@ package com.cloudurable.jai.model.text.completion;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+/**
+ * Represents a completion request for generating text completions based on a given prompt.
+ * Extends the {@link CommonCompletionRequest} class.
+ */
 public class CompletionRequest extends CommonCompletionRequest {
 
-    private final String prompt;
-    private final String suffix;
-    private final int bestOf;
-    private final Integer logprobs; // Log probabilities, defaulting to null
-    private final boolean echo; // Echo back the prompt in addition to the completion, defaulting to false
 
+    /**
+     * The prompt for completion.
+     */
+    private final String prompt;
+
+    /**
+     * The suffix for completion.
+     */
+    private final String suffix;
+
+    /**
+     * The number of completion results to return.
+     */
+    private final int bestOf;
+
+    /**
+     * The log probabilities associated with the completion.
+     * Default value is {@code null}.
+     */
+    private final Integer logprobs;
+
+    /**
+     * Indicates whether to echo back the prompt in addition to the completion.
+     * Default value is {@code false}.
+     */
+    private final boolean echo;
     /**
      * Constructs a CompletionRequest object.
      *

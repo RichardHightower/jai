@@ -21,6 +21,11 @@ public class CompletionRequestSerializer {
     private CompletionRequestSerializer() {
     }
 
+    /**
+     * Serialize request into JSON.
+     * @param request Completion Request
+     * @return JSON
+     */
     public static String serialize(CompletionRequest request) {
 
         final JsonSerializer jsonBodyBuilder = new JsonSerializer();

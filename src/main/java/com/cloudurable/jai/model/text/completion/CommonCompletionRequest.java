@@ -10,13 +10,41 @@ import java.util.Map;
  * Extends the TextRequest class.
  */
 public abstract class CommonCompletionRequest extends TextRequest {
+    /**
+     * Indicates if the request should be streamed.
+     */
     protected final boolean stream;
+
+    /**
+     * The list of stop tokens.
+     */
     protected final List<String> stop;
+
+    /**
+     * The maximum number of tokens to generate.
+     */
     protected final int maxTokens;
+
+    /**
+     * The presence penalty value.
+     */
     protected final float presencePenalty;
+
+    /**
+     * The frequency penalty value.
+     */
     protected final float frequencyPenalty;
+
+    /**
+     * The logit bias map.
+     */
     protected final Map<Integer, Float> logitBias;
+
+    /**
+     * The user associated with the request.
+     */
     protected final String user;
+
 
     /**
      * Constructs a CommonCompletionRequest object with the specified parameters.

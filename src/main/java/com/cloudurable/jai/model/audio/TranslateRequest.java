@@ -68,6 +68,12 @@ public class TranslateRequest extends AudioRequest {
             return this;
         }
 
+        /**
+         * Creates binary and fileName from this File.
+         *
+         * @param file file
+         * @return this
+         */
         public Builder file(File file) {
             try {
                 this.file = Files.readAllBytes(file.toPath());
