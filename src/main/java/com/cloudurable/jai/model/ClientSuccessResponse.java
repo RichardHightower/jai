@@ -112,7 +112,7 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
          * @param request The request associated with the client success response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setRequest(Q request) {
+        public Builder<Q, A> request(Q request) {
             this.request = request;
             return this;
         }
@@ -123,7 +123,7 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
          * @param response The response associated with the client success response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setResponse(A response) {
+        public Builder<Q, A> response(A response) {
             this.response = response;
             return this;
         }
@@ -134,7 +134,7 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
          * @param statusCode The status code associated with the client success response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setStatusCode(int statusCode) {
+        public Builder<Q, A> statusCode(int statusCode) {
             this.statusCode = statusCode;
             return this;
         }
@@ -145,7 +145,7 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
          * @param statusMessage The status message associated with the client success response.
          * @return The Builder instance.
          */
-        public Builder<Q, A> setStatusMessage(String statusMessage) {
+        public Builder<Q, A> statusMessage(String statusMessage) {
             this.statusMessage = statusMessage;
             return this;
         }

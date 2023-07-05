@@ -58,6 +58,7 @@ public class ChatResponse extends TextResponse {
                 ", created=" + getCreated() +
                 ", choices=" + choices +
                 ", usage=" + getUsage() +
+                ", super=" + super.toString() +
                 '}';
     }
 
