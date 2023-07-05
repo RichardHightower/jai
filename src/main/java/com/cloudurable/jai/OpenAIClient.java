@@ -10,6 +10,8 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.image.*;
+import com.cloudurable.jai.model.model.ModelData;
+import com.cloudurable.jai.model.model.ModelDataDeserializer;
 import com.cloudurable.jai.model.model.ModelListResponse;
 import com.cloudurable.jai.model.model.ModelListResponseDeserializer;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
@@ -113,6 +115,31 @@ public class OpenAIClient implements Client, ClientAsync {
                         getErrorResponseForCompletionRequest(e, completionRequest));
     }
 
+
+    @Override
+    public CompletableFuture<ModelListResponse> listModelsAsync() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                            .thenApply(r->ModelListResponseDeserializer.deserialize(r.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<ModelData> getModelAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models/" + id);
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(r->ModelDataDeserializer.deserialize(r.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
     @Override
     public ModelListResponse listModels() {
         final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models");
@@ -120,6 +147,18 @@ public class OpenAIClient implements Client, ClientAsync {
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return ModelListResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ModelData getModel(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models/" + id);
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return ModelDataDeserializer.deserialize(response.body());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

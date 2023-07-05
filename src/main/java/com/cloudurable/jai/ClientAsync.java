@@ -8,6 +8,8 @@ import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
 import com.cloudurable.jai.model.image.ImageResponse;
+import com.cloudurable.jai.model.model.ModelData;
+import com.cloudurable.jai.model.model.ModelListResponse;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -25,6 +27,11 @@ import java.util.concurrent.CompletableFuture;
  * and image manipulation asynchronously.
  */
 public interface ClientAsync {
+
+    CompletableFuture<ModelListResponse> listModelsAsync();
+
+    CompletableFuture<ModelData> getModelAsync(String id);
+
     /**
      * Asynchronously performs a chat request.
      *
