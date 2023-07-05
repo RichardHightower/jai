@@ -13,7 +13,6 @@ import com.cloudurable.jai.model.text.completion.chat.Message;
 import com.cloudurable.jai.model.text.completion.chat.Role;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditResponse;
-import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 
 import java.io.File;
@@ -26,8 +25,7 @@ public class Main {
     public static void main(final String... args) {
         try {
 
-            callTranslate();
-
+//           callTranslate();
 //            callTranscribe();
 //            callEmbeddingAsyncExample();
 //            callEmbeddingExample();
@@ -47,19 +45,15 @@ public class Main {
 
     private static void callTranslate() throws IOException {
         // Create the client
-        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
 
-        File file = new File("spanish.m4a");
-
-        byte[] bytes = Files.readAllBytes(file.toPath());
-        // Create the chat request
         final TranslateRequest request = TranslateRequest.builder()
-                .model("whisper-1").prompt("translate from Spanish to English").file(bytes).responseFormat(AudioResponseFormat.VTT)
+                .model("whisper-1").prompt("translate from Spanish to English").file(new File("spanish.m4a")).responseFormat(AudioResponseFormat.VTT)
                 .build();
 
         final ClientResponse<TranslateRequest, AudioResponse> response = client.translate(request);
 
-        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getText()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getText()));
 
         response.getException().ifPresent(Throwable::printStackTrace);
 
@@ -83,7 +77,7 @@ public class Main {
         // Call Open AI API with chat message
         final ClientResponse<TranscriptionRequest, AudioResponse> response = client.transcribe(request);
 
-        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getBody()));
+        response.getResponse().ifPresent(r -> System.out.println(r.getBody()));
 
         response.getException().ifPresent(Throwable::printStackTrace);
 
@@ -100,7 +94,7 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the request
-        final EmbeddingRequest request = EmbeddingRequest.builder()
+        final com.cloudurable.jai.model.text.embedding.EmbeddingRequest request = com.cloudurable.jai.model.text.embedding.EmbeddingRequest.builder()
                 .model("text-embedding-ada-002")
                 .input("What is AI?")
                 .build();
@@ -130,13 +124,13 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
         // Create the chat request
-        final EmbeddingRequest request = EmbeddingRequest.builder()
+        final com.cloudurable.jai.model.text.embedding.EmbeddingRequest request = com.cloudurable.jai.model.text.embedding.EmbeddingRequest.builder()
                 .model("text-embedding-ada-002")
                 .input("What is AI?")
                 .build();
 
         // Call Open AI API with chat message
-        final ClientResponse<EmbeddingRequest, EmbeddingResponse> response = client.embedding(request);
+        final ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> response = client.embedding(request);
 
         response.getResponse().ifPresent(completionResponse -> completionResponse.getData().forEach(System.out::println));
 

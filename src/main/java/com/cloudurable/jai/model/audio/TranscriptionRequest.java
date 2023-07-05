@@ -1,25 +1,34 @@
 package com.cloudurable.jai.model.audio;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 /**
  * Represents a transcription request for audio processing.
  */
 public class TranscriptionRequest extends AudioRequest {
 
+    /**
+     *  The language for the transcription.
+     */
     private final String language;
+
 
     /**
      * Constructs a new TranscriptionRequest object.
      *
      * @param file           The byte array representing the audio file.
+     * @param fileName       The file name of the audio file.
      * @param model          The model to use for transcription.
      * @param prompt         The prompt for the transcription.
      * @param responseFormat The format of the response.
      * @param temperature    The temperature for the transcription.
      * @param language       The language for the transcription.
      */
-    public TranscriptionRequest(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature, String language) {
-        super(file, model, prompt, responseFormat, temperature);
+    public TranscriptionRequest(byte[] file, String fileName, String model, String prompt, AudioResponseFormat responseFormat, float temperature, String language) {
+        super(file, fileName, model, prompt, responseFormat, temperature);
         this.language = language;
     }
 
@@ -41,6 +50,8 @@ public class TranscriptionRequest extends AudioRequest {
      */
     public static class Builder {
         private byte[] file;
+
+        private  String fileName = "foo.m4a";
         private String model;
         private String prompt;
         private AudioResponseFormat responseFormat;
@@ -55,6 +66,21 @@ public class TranscriptionRequest extends AudioRequest {
          */
         public Builder file(byte[] file) {
             this.file = file;
+            return this;
+        }
+
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public Builder file(File file) {
+            try {
+                this.file = Files.readAllBytes(file.toPath());
+                this.fileName = file.toString();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return this;
         }
 
@@ -119,7 +145,7 @@ public class TranscriptionRequest extends AudioRequest {
          * @return A new TranscriptionRequest object.
          */
         public TranscriptionRequest build() {
-            return new TranscriptionRequest(file, model, prompt, responseFormat, temperature, language);
+            return new TranscriptionRequest(file, fileName, model, prompt, responseFormat, temperature, language);
         }
     }
 }

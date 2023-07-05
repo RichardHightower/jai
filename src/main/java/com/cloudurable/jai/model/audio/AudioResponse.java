@@ -4,6 +4,7 @@ import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
 import io.nats.jparse.parser.JsonParserBuilder;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -14,19 +15,32 @@ public class AudioResponse {
 
     private ObjectNode objectNode = null;
 
-
     private final AudioResponseFormat responseFormat;
+
     /**
      * Constructs a new AudioResponse object.
      *
      * @param body           The body of the audio response.
-     * @param responseFormat  The response format.
+     * @param responseFormat The response format.
      */
     public AudioResponse(String body, AudioResponseFormat responseFormat) {
         this.body = body;
         this.responseFormat = responseFormat;
     }
 
+
+    /**
+     *  AudioResponseFormat
+     * @return AudioResponseFormat
+     */
+    public AudioResponseFormat getResponseFormat() {
+        return responseFormat;
+    }
+
+    /**
+     * Get builder for AudioResponse
+     * @return builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -40,17 +54,30 @@ public class AudioResponse {
         return body;
     }
 
+    /**
+     * Returns the text content of the audio response based on the response format.
+     * For JSON and VERBOSE_JSON formats, it retrieves the "text" field from the parsed JSON.
+     * For other formats, it returns the original response body.
+     *
+     * @return The text content of the audio response.
+     */
     public String getText() {
         switch (this.responseFormat) {
             case JSON:
             case VERBOSE_JSON:
-               return this.getObjectNode().isPresent() ? this.objectNode.getString("text") : "";
+                return this.getObjectNode().isPresent() ? this.objectNode.getString("text") : "";
             default:
                 return body;
         }
     }
 
-
+    /**
+     * Returns the parsed ObjectNode of the audio response, if available.
+     * For JSON and VERBOSE_JSON formats, it parses the response body using a JSON parser and retrieves the ObjectNode.
+     * For other formats, it returns an empty Optional.
+     *
+     * @return The parsed ObjectNode of the audio response, or an empty Optional.
+     */
     public Optional<ObjectNode> getObjectNode() {
         if (objectNode == null) {
             switch (this.responseFormat) {
@@ -64,6 +91,20 @@ public class AudioResponse {
             }
         }
         return Optional.ofNullable(objectNode);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AudioResponse)) return false;
+        AudioResponse that = (AudioResponse) o;
+        return Objects.equals(body, that.body) && Objects.equals(objectNode, that.objectNode) && responseFormat == that.responseFormat;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(body, objectNode, responseFormat);
     }
 
     /**
@@ -91,9 +132,10 @@ public class AudioResponse {
         }
 
         /**
-         * responseFormat
-         * @param responseFormat responseFormat
-         * @return responseFormat
+         * Sets the response format of the audio response.
+         *
+         * @param responseFormat The response format.
+         * @return The Builder instance.
          */
         public Builder responseFormat(AudioResponseFormat responseFormat) {
             this.responseFormat = responseFormat;
@@ -110,4 +152,3 @@ public class AudioResponse {
         }
     }
 }
-

@@ -5,9 +5,7 @@ package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientErrorResponse;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.SecretHolder;
-import com.cloudurable.jai.model.audio.AudioRequest;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
@@ -20,10 +18,10 @@ import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditRequestSerializer;
 import com.cloudurable.jai.model.text.edit.EditResponse;
-import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
+import com.cloudurable.jai.util.RequestResponseUtils;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -33,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import static com.cloudurable.jai.model.audio.AudioRequestEncoder.buildForm;
 import static com.cloudurable.jai.util.RequestResponseUtils.*;
 
 /**
@@ -66,25 +65,8 @@ public class OpenAIClient implements Client, ClientAsync {
         return new Builder();
     }
 
-    private static MultipartEntityBuilder buildForm(AudioRequest audioRequest) {
-        MultipartEntityBuilder form = MultipartEntityBuilder.create()
-                .addTextBody("model", audioRequest.getModel());
-
-
-        if (audioRequest.getPrompt() != null) {
-            form.addTextBody("prompt", audioRequest.getPrompt());
-        }
-
-        if (audioRequest.getResponseFormat() != null) {
-            form.addTextBody("response_format", audioRequest.getResponseFormat().toString().toLowerCase());
-        }
-
-        if (audioRequest.getTemperature() != 0.0) {
-            form.addTextBody("temperature", String.valueOf(audioRequest.getTemperature()));
-        }
-
-        form.addBinaryBody("file", audioRequest.getFile(), "application/binary", "transcribe.m4a");
-        return form;
+    private static String getEncodingContentType(MultipartEntityBuilder form) {
+        return "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
     }
 
     /**
@@ -205,7 +187,7 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     @Override
-    public ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest) {
+    public ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> embedding(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
@@ -229,22 +211,14 @@ public class OpenAIClient implements Client, ClientAsync {
         }
 
         try {
-
-            HttpRequest request = createRequestBuilderWithBody("/audio/transcriptions")
+            final String contentType = getEncodingContentType(form);
+            final HttpRequest request = createRequestBuilderWithBody("/audio/transcriptions")
                     // The Content-Type header is important, don't forget to set it.
-                    .header("Content-Type", "multipart/form-data; boundary")
+                    .header("Content-Type", contentType)
                     // Reads data from a pipeline stream.
                     .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
-
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
-            ClientSuccessResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientSuccessResponse.builder();
-            return builder.setRequest(transcriptionRequest)
-                    .setResponse(AudioResponse.builder().body(response.body()).responseFormat(transcriptionRequest.getResponseFormat())
-                            .build())
-                    .setStatusCode(response.statusCode())
-                    .build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            return RequestResponseUtils.getTranscriptionResponse(transcriptionRequest, response);
         } catch (Exception e) {
             ClientErrorResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientErrorResponse.builder();
             return builder.exception(e).request(transcriptionRequest)
@@ -254,27 +228,58 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     @Override
-    public ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest) {
-
-        MultipartEntityBuilder form = buildForm(translateRequest);
-
+    public CompletableFuture<ClientResponse<TranscriptionRequest, AudioResponse>> transcribeAsync(TranscriptionRequest transcriptionRequest) {
+        final MultipartEntityBuilder form = buildForm(transcriptionRequest);
+        final String contentType = getEncodingContentType(form);
+        if (transcriptionRequest.getLanguage() != null) {
+            form.addTextBody("language", transcriptionRequest.getLanguage());
+        }
         try {
-            final String contentType = "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
-            HttpRequest request = createRequestBuilderWithBody("/audio/translations")
+            final HttpRequest request = createRequestBuilderWithBody("/audio/translations")
                     // The Content-Type header is important, don't forget to set it.
                     .header("Content-Type", contentType)
                     // Reads data from a pipeline stream.
                     .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)).thenApply(response ->
+                    RequestResponseUtils.getTranscriptionResponse(transcriptionRequest, response)
+            ).exceptionally(e -> RequestResponseUtils.getErrorResponseForTranscriptionRequest(e, transcriptionRequest));
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Unable to build form data");
+        }
+    }
 
+    @Override
+    public CompletableFuture<ClientResponse<TranslateRequest, AudioResponse>> translateAsync(TranslateRequest translateRequest) {
+        MultipartEntityBuilder form = buildForm(translateRequest);
+        final String contentType = getEncodingContentType(form);
+        try {
+            final HttpRequest request = createRequestBuilderWithBody("/audio/translations")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", contentType)
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)).thenApply(response ->
+                    RequestResponseUtils.getTranslateResponse(translateRequest, response)
+            ).exceptionally(e -> RequestResponseUtils.getErrorResponseForTranslateRequest(e, translateRequest));
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Unable to build form data");
+        }
 
-            ClientSuccessResponse.Builder<TranslateRequest, AudioResponse> builder = ClientSuccessResponse.builder();
-            return builder.setRequest(translateRequest)
-                    .setResponse(AudioResponse.builder().body(response.body())
-                            .responseFormat(translateRequest.getResponseFormat()).build())
-                    .setStatusCode(response.statusCode())
-                    .build();
+    }
+
+    @Override
+    public ClientResponse<TranslateRequest, AudioResponse> translate(TranslateRequest translateRequest) {
+        MultipartEntityBuilder form = buildForm(translateRequest);
+        final String contentType = getEncodingContentType(form);
+        try {
+            final HttpRequest request = createRequestBuilderWithBody("/audio/translations")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", contentType)
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            return RequestResponseUtils.getTranslateResponse(translateRequest, response);
         } catch (Exception e) {
             ClientErrorResponse.Builder<TranslateRequest, AudioResponse> builder = ClientErrorResponse.builder();
             return builder.exception(e).request(translateRequest)
@@ -282,17 +287,18 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
-    public CompletableFuture<ClientResponse<EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final EmbeddingRequest embeddingRequest) {
+    public CompletableFuture<ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest) {
         final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
         // Build and send the HTTP request
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply((Function<HttpResponse<String>, ClientResponse<EmbeddingRequest, EmbeddingResponse>>) response ->
+                .thenApply((Function<HttpResponse<String>, ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse>>) response ->
                         getEmbeddingResponse(embeddingRequest, response)).exceptionally(e ->
                         getErrorResponseForEmbeddingRequest(e, embeddingRequest));
     }
+
 
     @Override
     public CompletableFuture<ClientResponse<EditRequest, EditResponse>> editAsync(EditRequest editRequest) {

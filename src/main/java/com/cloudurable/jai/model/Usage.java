@@ -115,7 +115,7 @@ public class Usage {
          * @param promptTokens The number of tokens in the prompt.
          * @return The Builder instance.
          */
-        public Builder setPromptTokens(int promptTokens) {
+        public Builder promptTokens(int promptTokens) {
             this.promptTokens = promptTokens;
             return this;
         }
@@ -126,7 +126,7 @@ public class Usage {
          * @param completionTokens The number of tokens in the completion.
          * @return The Builder instance.
          */
-        public Builder setCompletionTokens(int completionTokens) {
+        public Builder completionTokens(int completionTokens) {
             this.completionTokens = completionTokens;
             return this;
         }
@@ -137,7 +137,7 @@ public class Usage {
          * @param totalTokens The total number of tokens.
          * @return The Builder instance.
          */
-        public Builder setTotalTokens(int totalTokens) {
+        public Builder totalTokens(int totalTokens) {
             this.totalTokens = totalTokens;
             return this;
         }

@@ -7,6 +7,9 @@ import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
+import com.cloudurable.jai.model.text.edit.EditRequest;
+import com.cloudurable.jai.model.text.edit.EditResponse;
+import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +21,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestResponseUtilsTest {
 
@@ -28,7 +31,7 @@ public class RequestResponseUtilsTest {
         ChatRequest chatRequest = ChatRequest.builder().build();
         ClientResponse<ChatRequest, ChatResponse> response = RequestResponseUtils.getErrorResponseForChatRequest(error, chatRequest);
 
-        Assertions.assertTrue(response instanceof ClientErrorResponse);
+        assertTrue(response instanceof ClientErrorResponse);
         assertEquals(error, response.getException().get());
         assertEquals(chatRequest, response.getRequest());
     }
@@ -40,7 +43,7 @@ public class RequestResponseUtilsTest {
         ClientResponse<CompletionRequest, CompletionResponse> response = RequestResponseUtils.getErrorResponseForCompletionRequest(error, completionRequest);
 
         //TODO
-        Assertions.assertTrue(response instanceof ClientErrorResponse);
+        assertTrue(response instanceof ClientErrorResponse);
         //assertEquals(error, response.getException());
         assertEquals(completionRequest, response.getRequest());
     }
@@ -53,7 +56,7 @@ public class RequestResponseUtilsTest {
         ClientSuccessResponse<CompletionRequest, CompletionResponse> response = RequestResponseUtils.getCompletionResponseSuccess(completionRequest, statusCode, completionResponse);
 
         //TODO
-        Assertions.assertTrue(response != null);
+        assertTrue(response != null);
         assertEquals(completionRequest, response.getRequest());
         //assertEquals(completionResponse, response.getResponse());
         //assertEquals(statusCode, response.getStatusCode());
@@ -66,7 +69,7 @@ public class RequestResponseUtilsTest {
         String status = "Bad Request";
         ClientSuccessResponse<CompletionRequest, CompletionResponse> response = RequestResponseUtils.getCompletionResponseNotOk(completionRequest, statusCode, status);
 
-        Assertions.assertTrue(response instanceof ClientSuccessResponse);
+        assertTrue(response instanceof ClientSuccessResponse);
         assertEquals(completionRequest, response.getRequest());
         //assertEquals(statusCode, response.getStatusCode());
         //assertEquals(status, response.getStatusMessage());
@@ -88,8 +91,8 @@ public class RequestResponseUtilsTest {
 
     @Test
     public void testIsOk() {
-        Assertions.assertTrue(RequestResponseUtils.isOk(200));
-        Assertions.assertTrue(RequestResponseUtils.isOk(290));
+        assertTrue(RequestResponseUtils.isOk(200));
+        assertTrue(RequestResponseUtils.isOk(290));
         Assertions.assertFalse(RequestResponseUtils.isOk(400));
         Assertions.assertFalse(RequestResponseUtils.isOk(500));
     }
@@ -127,7 +130,7 @@ public class RequestResponseUtilsTest {
         HttpResponse<String> response = createMockResponse(200, "{}");
         ClientSuccessResponse<CompletionRequest, CompletionResponse> clientResponse = RequestResponseUtils.getCompletionResponse(completionRequest, response);
 
-        Assertions.assertTrue(clientResponse instanceof ClientSuccessResponse);
+        assertTrue(clientResponse instanceof ClientSuccessResponse);
         assertEquals(completionRequest, clientResponse.getRequest());
         assertEquals(200, clientResponse.getStatusCode());
     }
@@ -175,5 +178,94 @@ public class RequestResponseUtilsTest {
                 return null;
             }
         };
+    }
+
+    @Test
+    void testGetEmbeddingResponse() {
+        com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest = com.cloudurable.jai.model.text.embedding.EmbeddingRequest.builder().model("gpt-3.5-turbo").input("Hello").build();
+        HttpResponse<String> response =  createMockResponse(200, "{\"object\": \"embedding\", " +
+                "\"usage\": {\"prompt_tokens\": 10, \"total_tokens\": 20}, \"data\": []}");
+
+        ClientSuccessResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> successResponse =
+                RequestResponseUtils.getEmbeddingResponse(embeddingRequest, response);
+
+        assertNotNull(successResponse);
+        assertTrue(successResponse instanceof ClientSuccessResponse);
+        assertEquals(embeddingRequest, successResponse.getRequest());
+        assertNotNull(successResponse.getResponse());
+        assertEquals(200, successResponse.getStatusCode().orElse(-666));
+    }
+
+    @Test
+    void testGetEmbeddingResponseNotOk() {
+        com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest = com.cloudurable.jai.model.text.embedding.EmbeddingRequest.builder().model("gpt-3.5-turbo").input("Hello").build();
+        HttpResponse<String> response =  createMockResponse(400, "NOPE");
+
+        ClientSuccessResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> successResponse =
+                RequestResponseUtils.getEmbeddingResponse(embeddingRequest, response);
+
+        assertEquals(400, successResponse.getStatusCode().orElse(-666));
+    }
+
+
+    @Test
+    void testGetEditResponseNotOk() {
+        EditRequest edit = EditRequest.builder().model("gpt-3.5-turbo").input("Hello").build();
+        HttpResponse<String> response =  createMockResponse(400, "NOPE");
+
+        ClientSuccessResponse<EditRequest, EditResponse> successResponse =
+                RequestResponseUtils.getEditResponse(edit, response);
+
+        assertEquals(400, successResponse.getStatusCode().orElse(-666));
+    }
+    @Test
+    void testGetEditResponse() {
+        EditRequest editRequest = EditRequest.builder().model("davinci").input("input").instruction("instruction").build();
+
+        HttpResponse<String> response =  createMockResponse(200, "{\"id\": \"123\", \"object\": \"edit\", \"choices\": [], \"created\": 1589478378, \"usage\": {\n" +
+                "    \"prompt_tokens\": 25,\n" +
+                "    \"completion_tokens\": 32,\n" +
+                "    \"total_tokens\": 57\n" +
+                "  }}");
+
+
+        ClientSuccessResponse<EditRequest, EditResponse> successResponse =
+                RequestResponseUtils.getEditResponse(editRequest, response);
+
+        assertNotNull(successResponse);
+        assertTrue(successResponse instanceof ClientSuccessResponse);
+        assertEquals(editRequest, successResponse.getRequest());
+        assertNotNull(successResponse.getResponse());
+        assertEquals(200, successResponse.getStatusCode().orElse(-666));
+    }
+
+    @Test
+    void testGetErrorResponseForEditRequest() {
+        Throwable error = new RuntimeException("Error");
+        EditRequest editRequest = EditRequest.builder().model("davinci").input("Hello")
+                .instruction("instruction").build();
+
+
+        ClientResponse<EditRequest, EditResponse> response =
+                RequestResponseUtils.getErrorResponseForEditRequest(error, editRequest);
+
+        assertNotNull(response);
+        assertTrue(response instanceof ClientErrorResponse);
+        assertEquals(error, response.getException().orElse(null));
+        assertEquals(editRequest, response.getRequest());
+    }
+
+    @Test
+    void testGetErrorResponseForEmbeddingRequest() {
+        Throwable error = new RuntimeException("Error");
+        com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest = com.cloudurable.jai.model.text.embedding.EmbeddingRequest.builder().model("gpt-3.5-turbo").input("Hello").build();
+
+        ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse> response =
+                RequestResponseUtils.getErrorResponseForEmbeddingRequest(error, embeddingRequest);
+
+        assertNotNull(response);
+        assertTrue(response instanceof ClientErrorResponse);
+        assertEquals(error, response.getException().orElse(null));
+        assertEquals(embeddingRequest, response.getRequest());
     }
 }

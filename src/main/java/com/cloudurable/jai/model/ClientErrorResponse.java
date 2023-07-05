@@ -126,7 +126,7 @@ public class ClientErrorResponse<Q, A> implements ClientResponse<Q, A> {
          *
          * @return The constructed ClientErrorResponse object.
          */
-        public ClientResponse<Q, A> build() {
+        public ClientErrorResponse<Q, A> build() {
             return new ClientErrorResponse<>(request, exception);
         }
     }

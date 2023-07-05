@@ -28,4 +28,13 @@ public abstract class Choice {
     public FinishReason getFinishReason() {
         return finishReason;
     }
+
+
+    @Override
+    public String toString() {
+        return "Choice{" +
+                "index=" + index +
+                ", finishReason=" + finishReason +
+                '}';
+    }
 }

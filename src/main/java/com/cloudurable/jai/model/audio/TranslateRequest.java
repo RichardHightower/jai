@@ -1,5 +1,9 @@
 package com.cloudurable.jai.model.audio;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 /**
  * Represents a translate request for audio processing.
  */
@@ -9,13 +13,14 @@ public class TranslateRequest extends AudioRequest {
      * Constructs a new TranslateRequest object.
      *
      * @param file           The byte array representing the audio file.
+     * @param fileName       The file name of the audio file.
      * @param model          The model to use for translation.
      * @param prompt         The prompt for the translation.
      * @param responseFormat The format of the response.
      * @param temperature    The temperature for the translation.
      */
-    public TranslateRequest(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature) {
-        super(file, model, prompt, responseFormat, temperature);
+    public TranslateRequest(byte[] file, String fileName, String model, String prompt, AudioResponseFormat responseFormat, float temperature) {
+        super(file, fileName, model, prompt, responseFormat, temperature);
     }
 
     public static Builder builder() {
@@ -27,6 +32,7 @@ public class TranslateRequest extends AudioRequest {
      */
     public static class Builder {
         private byte[] file;
+        private String fileName = "foo.m4a";
         private String model = "whisper-1";
         private String prompt;
         private AudioResponseFormat responseFormat;
@@ -40,6 +46,21 @@ public class TranslateRequest extends AudioRequest {
          */
         public Builder file(byte[] file) {
             this.file = file;
+            return this;
+        }
+
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public Builder file(File file) {
+            try {
+                this.file = Files.readAllBytes(file.toPath());
+                this.fileName = file.toString();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return this;
         }
 
@@ -93,7 +114,7 @@ public class TranslateRequest extends AudioRequest {
          * @return A new TranslateRequest object.
          */
         public TranslateRequest build() {
-            return new TranslateRequest(file, model, prompt, responseFormat, temperature);
+            return new TranslateRequest(file, fileName, model, prompt, responseFormat, temperature);
         }
     }
 }

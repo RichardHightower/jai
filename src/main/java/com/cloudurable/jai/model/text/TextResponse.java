@@ -4,6 +4,7 @@ import com.cloudurable.jai.model.Response;
 import com.cloudurable.jai.model.Usage;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public abstract class TextResponse implements Response {
     protected final String id;
@@ -52,5 +53,29 @@ public abstract class TextResponse implements Response {
      */
     public Usage getUsage() {
         return usage;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TextResponse)) return false;
+        TextResponse that = (TextResponse) o;
+        return Objects.equals(id, that.id) && Objects.equals(object, that.object) && Objects.equals(created, that.created) && Objects.equals(usage, that.usage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, object, created, usage);
+    }
+
+    @Override
+    public String toString() {
+        return "TextResponse{" +
+                "id='" + id + '\'' +
+                ", object='" + object + '\'' +
+                ", created=" + created +
+                ", usage=" + usage +
+                '}';
     }
 }
