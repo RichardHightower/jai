@@ -10,6 +10,8 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.image.*;
+import com.cloudurable.jai.model.model.ModelListResponse;
+import com.cloudurable.jai.model.model.ModelListResponseDeserializer;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -25,6 +27,7 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
 import com.cloudurable.jai.util.RequestResponseUtils;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -108,6 +111,25 @@ public class OpenAIClient implements Client, ClientAsync {
                 .thenApply((Function<HttpResponse<String>, ClientResponse<CompletionRequest, CompletionResponse>>) response ->
                         getCompletionResponse(completionRequest, response)).exceptionally(e ->
                         getErrorResponseForCompletionRequest(e, completionRequest));
+    }
+
+    @Override
+    public ModelListResponse listModels() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return ModelListResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private HttpRequest.Builder createRequestBuilderGet(String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + apiKey.getSecret())
+                .header("Content-Type", "application/json")
+                .uri(URI.create(apiEndpoint + path)).GET();
     }
 
     /**
