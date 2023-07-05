@@ -2,10 +2,27 @@ package com.cloudurable.jai.model.text;
 
 import com.cloudurable.jai.model.FinishReason;
 
+/**
+ * Choice
+ */
 public abstract class Choice {
+
+    /**
+     * Choice index
+     */
     protected final int index;
+
+    /**
+     * Choice finish reason
+     */
     protected final FinishReason finishReason;
 
+    /**
+     * Construct.
+     *
+     * @param index        index
+     * @param finishReason finsish reason
+     */
     public Choice(int index, FinishReason finishReason) {
         this.index = index;
         this.finishReason = finishReason;

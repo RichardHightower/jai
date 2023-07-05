@@ -263,6 +263,7 @@ public class RequestResponseUtils {
                     .build();
         }
     }
+
     public static ClientResponse<CreateImageRequest, ImageResponse> getErrorResponseForCreateImageRequest(Throwable e, CreateImageRequest createImageRequest) {
         ClientErrorResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)

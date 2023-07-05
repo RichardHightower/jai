@@ -6,12 +6,23 @@ import com.cloudurable.jai.model.Usage;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Base Text Response.
+ */
 public abstract class TextResponse implements Response {
     protected final String id;
     protected final String object;
     protected final Instant created;
     protected final Usage usage;
 
+    /**
+     * Construct.
+     *
+     * @param id      id
+     * @param object  object
+     * @param created created
+     * @param usage   usage
+     */
     public TextResponse(String id, String object, Instant created, Usage usage) {
         this.id = id;
         this.object = object;

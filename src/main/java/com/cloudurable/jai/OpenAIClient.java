@@ -220,7 +220,7 @@ public class OpenAIClient implements Client, ClientAsync {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             return RequestResponseUtils.getTranscriptionResponse(transcriptionRequest, response);
         } catch (Exception e) {
-           return RequestResponseUtils.getErrorResponseForTranscriptionRequest(e, transcriptionRequest);
+            return RequestResponseUtils.getErrorResponseForTranscriptionRequest(e, transcriptionRequest);
         }
 
     }
@@ -352,11 +352,11 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public CompletableFuture<ClientResponse<EditImageRequest, ImageResponse>> editImageAsync(EditImageRequest imageRequest) {
         MultipartEntityBuilder form = ImageRequestSerializer.buildEditForm(imageRequest);
-            final String contentType = getEncodingContentType(form);
-            final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/edits")
-                    .header("Content-Type", contentType)
-                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
-            final HttpRequest request = requestBuilder.build();
+        final String contentType = getEncodingContentType(form);
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody("/images/edits")
+                .header("Content-Type", contentType)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(form.build()));
+        final HttpRequest request = requestBuilder.build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response ->

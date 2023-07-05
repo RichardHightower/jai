@@ -4,8 +4,6 @@ package com.cloudurable.jai.model.audio;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AudioRequestEncoderTest {

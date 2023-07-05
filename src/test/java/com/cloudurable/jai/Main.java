@@ -27,9 +27,9 @@ public class Main {
     public static void main(final String... args) {
         try {
 
- //           createVariationsImageAsync();
- //           editImageAsync();
- //           callCreateImageAsync();
+            //           createVariationsImageAsync();
+            //           editImageAsync();
+            //           callCreateImageAsync();
 //            createVariationsImage();
 //            editImage();
 //            callCreateImage();
@@ -48,7 +48,6 @@ public class Main {
 
 
     }
-
 
 
     private static void createVariationsImageAsync() throws ExecutionException, InterruptedException {
@@ -71,6 +70,7 @@ public class Main {
         response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
 
     }
+
     private static void editImageAsync() throws IOException, ExecutionException, InterruptedException {
         // Create the client
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
@@ -102,7 +102,7 @@ public class Main {
                 .build();
 
 
-        final ClientResponse<CreateImageRequest, ImageResponse> response  = client.createImageAsync(request).get();
+        final ClientResponse<CreateImageRequest, ImageResponse> response = client.createImageAsync(request).get();
 
         response.getResponse().ifPresent(r -> System.out.println(r.toString()));
         response.getResponse().ifPresent(r -> System.out.println(r.getCreated()));
@@ -133,6 +133,7 @@ public class Main {
         response.getStatusMessage().ifPresent(error -> System.out.printf("status message %s %d \n", error, response.getStatusCode().orElse(0)));
 
     }
+
     private static void editImage() throws IOException {
         // Create the client
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();

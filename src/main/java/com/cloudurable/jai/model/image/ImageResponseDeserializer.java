@@ -8,8 +8,17 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Deserializer class for parsing and deserializing JSON into an ImageResponse object.
+ */
 public class ImageResponseDeserializer {
 
+    /**
+     * Deserializes a JSON string into an ImageResponse object.
+     *
+     * @param json The JSON string to deserialize.
+     * @return The deserialized ImageResponse object.
+     */
     public static ImageResponse deserialize(final String json) {
         final ImageResponse.Builder builder = ImageResponse.builder();
         final JsonParser jsonParser = JsonParserBuilder.builder().build();

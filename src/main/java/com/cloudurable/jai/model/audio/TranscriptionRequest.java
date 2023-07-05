@@ -32,6 +32,11 @@ public class TranscriptionRequest extends AudioRequest {
         this.language = language;
     }
 
+    /**
+     * Builder
+     *
+     * @return builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -69,6 +74,12 @@ public class TranscriptionRequest extends AudioRequest {
             return this;
         }
 
+        /**
+         * fileName
+         *
+         * @param fileName fileName
+         * @return this
+         */
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;

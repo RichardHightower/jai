@@ -6,6 +6,8 @@ import com.cloudurable.jai.util.MultipartEntityBuilder;
  * Encoder class for building a multipart form for an audio transcription request.
  */
 public class AudioRequestSerializer {
+    private AudioRequestSerializer() {
+    }
 
     /**
      * Builds a multipart form for an audio transcription request.
@@ -39,6 +41,12 @@ public class AudioRequestSerializer {
     }
 
 
+    /**
+     * Content type
+     *
+     * @param form content type form here
+     * @return content type.
+     */
     public static String getEncodingContentType(MultipartEntityBuilder form) {
         return "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
     }

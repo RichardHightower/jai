@@ -23,6 +23,11 @@ public class TranslateRequest extends AudioRequest {
         super(file, fileName, model, prompt, responseFormat, temperature);
     }
 
+    /**
+     * Builder
+     *
+     * @return builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -31,12 +36,15 @@ public class TranslateRequest extends AudioRequest {
      * Builder class for constructing TranslateRequest objects.
      */
     public static class Builder {
+
         private byte[] file;
         private String fileName = "foo.m4a";
         private String model = "whisper-1";
         private String prompt;
         private AudioResponseFormat responseFormat;
         private float temperature;
+        private Builder() {
+        }
 
         /**
          * Sets the audio file for the translation.
@@ -49,6 +57,12 @@ public class TranslateRequest extends AudioRequest {
             return this;
         }
 
+        /**
+         * fileName
+         *
+         * @param fileName fileName
+         * @return this
+         */
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;

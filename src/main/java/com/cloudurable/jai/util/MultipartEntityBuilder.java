@@ -75,7 +75,6 @@ public class MultipartEntityBuilder {
      * Builds the multipart entity and returns it as a byte array.
      *
      * @return The byte array representation of the multipart entity.
-     * @throws IOException If an I/O error occurs while building the entity.
      */
     public byte[] build() {
         try {

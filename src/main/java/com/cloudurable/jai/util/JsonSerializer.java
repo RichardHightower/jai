@@ -151,6 +151,7 @@ public class JsonSerializer {
         }
     }
 
+
     /**
      * Adds a JSON attribute to the current object.
      *
@@ -163,6 +164,12 @@ public class JsonSerializer {
         builder.append(':').append(value);
     }
 
+    /**
+     * Adds a JSON attribute to the current object.
+     *
+     * @param name  The name of the attribute.
+     * @param value The value of the attribute.
+     */
     public void addAttribute(String name, boolean value) {
         trackAndAddCommaIfNeeded();
         addAttributeName(name);
@@ -189,6 +196,12 @@ public class JsonSerializer {
      * @param value The value of the attribute.
      */
 
+    /**
+     * Adds a JSON attribute to the current object.
+     *
+     * @param name  The name of the attribute.
+     * @param value The value of the attribute.
+     */
     public void addAttribute(String name, String value) {
         trackAndAddCommaIfNeeded();
         addAttributeName(name);
