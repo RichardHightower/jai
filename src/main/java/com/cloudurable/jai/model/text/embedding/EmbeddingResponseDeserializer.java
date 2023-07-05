@@ -13,7 +13,8 @@ import java.util.List;
  * Embedding Response Deserializer reads JSON form feed and creates a EmbeddingResponse.
  */
 public class EmbeddingResponseDeserializer {
-    private EmbeddingResponseDeserializer(){}
+    private EmbeddingResponseDeserializer() {
+    }
 
     /**
      * Deserializes a JSON string representation into a EditResponse object.

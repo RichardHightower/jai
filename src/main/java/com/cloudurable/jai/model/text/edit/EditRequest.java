@@ -37,6 +37,7 @@ public class EditRequest extends TextRequest {
 
     /**
      * Edit request builder
+     *
      * @return builder
      */
     public static Builder builder() {
@@ -45,6 +46,7 @@ public class EditRequest extends TextRequest {
 
     /**
      * get Input
+     *
      * @return input
      */
     public String getInput() {
@@ -53,6 +55,7 @@ public class EditRequest extends TextRequest {
 
     /**
      * get Instruction
+     *
      * @return instruction
      */
     public String getInstruction() {

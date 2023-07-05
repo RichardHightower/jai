@@ -5,10 +5,16 @@ package com.cloudurable.jai.model.image;
  */
 public enum ImageSize {
 
-    /** Small */
+    /**
+     * Small
+     */
     SIZE_256_BY_256,
-    /** Medium */
+    /**
+     * Medium
+     */
     SIZE_512_BY_512,
-    /** Large. */
+    /**
+     * Large.
+     */
     SIZE_1024_1024
 }

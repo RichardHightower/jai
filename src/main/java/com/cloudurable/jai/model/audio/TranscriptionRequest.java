@@ -54,15 +54,15 @@ public class TranscriptionRequest extends AudioRequest {
      * Builder class for constructing TranscriptionRequest objects.
      */
     public static class Builder {
-        private Builder(){}
         private byte[] file;
-
         private String fileName = "foo.m4a";
         private String model;
         private String prompt;
         private AudioResponseFormat responseFormat;
         private float temperature;
         private String language;
+        private Builder() {
+        }
 
         /**
          * Sets the audio file for the transcription.

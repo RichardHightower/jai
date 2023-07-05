@@ -33,6 +33,7 @@ public class EmbeddingResponse implements Response {
 
     /**
      * Builder
+     *
      * @return builder
      */
     public static Builder builder() {

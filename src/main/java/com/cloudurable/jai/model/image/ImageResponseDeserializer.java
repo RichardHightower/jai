@@ -12,7 +12,8 @@ import java.util.List;
  * Deserializer class for parsing and deserializing JSON into an ImageResponse object.
  */
 public class ImageResponseDeserializer {
-    private ImageResponseDeserializer(){}
+    private ImageResponseDeserializer() {
+    }
 
     /**
      * Deserializes a JSON string into an ImageResponse object.

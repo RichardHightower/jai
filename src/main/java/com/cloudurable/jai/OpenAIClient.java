@@ -29,7 +29,6 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
 import com.cloudurable.jai.util.RequestResponseUtils;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -122,7 +121,7 @@ public class OpenAIClient implements Client, ClientAsync {
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                            .thenApply(r->ModelListResponseDeserializer.deserialize(r.body()));
+                    .thenApply(r -> ModelListResponseDeserializer.deserialize(r.body()));
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
         }
@@ -134,7 +133,7 @@ public class OpenAIClient implements Client, ClientAsync {
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(r->ModelDataDeserializer.deserialize(r.body()));
+                    .thenApply(r -> ModelDataDeserializer.deserialize(r.body()));
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
         }

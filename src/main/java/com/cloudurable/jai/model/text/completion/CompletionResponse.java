@@ -51,13 +51,13 @@ public class CompletionResponse extends TextResponse {
      */
     public static class Builder {
 
-        private Builder(){}
-
         private String id;
         private String object;
         private Instant created;
         private Usage usage;
         private List<CompletionChoice> choices;
+        private Builder() {
+        }
 
         /**
          * Sets the ID of the response.

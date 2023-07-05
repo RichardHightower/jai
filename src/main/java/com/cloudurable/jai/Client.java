@@ -30,9 +30,10 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
  */
 public interface Client {
 
-   ModelListResponse listModels();
+    ModelListResponse listModels();
 
-   ModelData getModel(String id);
+    ModelData getModel(String id);
+
     /**
      * Sends a chat request and retrieves the corresponding chat response.
      *

@@ -6,7 +6,6 @@ import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.image.*;
-import com.cloudurable.jai.model.model.ModelData;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -23,13 +22,12 @@ import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
-            //getModelAsync("whisper-1");
+            getModelAsync("whisper-1");
             //listModelsAsync();
             //getModel("whisper-1");
             //listModels();

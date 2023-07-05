@@ -8,7 +8,8 @@ import io.nats.jparse.node.ObjectNode;
  * Utility class for deserializing text-related data.
  */
 public class DeserializerUtils {
-    private DeserializerUtils(){}
+    private DeserializerUtils() {
+    }
 
     /**
      * Deserialize the Usage information from the given JSON object node.

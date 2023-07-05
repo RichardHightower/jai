@@ -43,6 +43,7 @@ public class TranslateRequest extends AudioRequest {
         private String prompt;
         private AudioResponseFormat responseFormat;
         private float temperature;
+
         private Builder() {
         }
 
