@@ -2,6 +2,7 @@ package com.cloudurable.jai;
 
 import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
+import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
@@ -53,36 +54,12 @@ public class Main {
         byte[] bytes = Files.readAllBytes(file.toPath());
         // Create the chat request
         final TranslateRequest request = TranslateRequest.builder()
-                .model("whisper-1").prompt("translate from Spanish to English").file(bytes).responseFormat("json")
+                .model("whisper-1").prompt("translate from Spanish to English").file(bytes).responseFormat(AudioResponseFormat.VTT)
                 .build();
 
-
-        /*
-         *  verbose json
-         * {"task":"translate","language":"english","duration":4.73,
-         * "segments":[{"id":0,"seek":0,"start":0.0,"end":4.0,
-         * "text":" I am hungry.","tokens":[50414,286,669,8067,13,50564],"temperature":0.0,"avg_logprob":-0.5544586522238595,"compression_ratio":0.6,"no_speech_prob":0.03266291320323944,"transient":false}],
-         * "text":"I am hungry."}
-         * srt
-            1
-            00:00:00,000 --> 00:00:04,000
-            I am hungry.
-            *
-          vtt
-            WEBVTT
-            00:00:00.000 --> 00:00:04.000
-            I am hungry.
-          text
-          I am hungry.
-          Json
-          {"text":"I am hungry."}
-         *
-         *
-         * */
-        // Call Open AI API with chat message
         final ClientResponse<TranslateRequest, AudioResponse> response = client.translate(request);
 
-        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getBody()));
+        response.getResponse().ifPresent(completionResponse -> System.out.println(completionResponse.getText()));
 
         response.getException().ifPresent(Throwable::printStackTrace);
 

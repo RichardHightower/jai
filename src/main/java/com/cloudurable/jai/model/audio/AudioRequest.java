@@ -20,7 +20,7 @@ public abstract class AudioRequest implements Request {
      * An optional format.that defaults to json
      * The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
      */
-    private final String responseFormat;
+    private final AudioResponseFormat responseFormat;
 
     /**
      * Optional value and it defaults to 0
@@ -30,7 +30,7 @@ public abstract class AudioRequest implements Request {
      */
     private final float temperature;
 
-    public AudioRequest(byte[] file, String model, String prompt, String responseFormat, float temperature) {
+    public AudioRequest(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature) {
         this.file = file;
         this.model = model;
         this.prompt = prompt;
@@ -50,7 +50,7 @@ public abstract class AudioRequest implements Request {
         return prompt;
     }
 
-    public String getResponseFormat() {
+    public AudioResponseFormat getResponseFormat() {
         return responseFormat;
     }
 

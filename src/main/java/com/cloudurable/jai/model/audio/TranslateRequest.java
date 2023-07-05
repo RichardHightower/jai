@@ -14,7 +14,7 @@ public class TranslateRequest extends AudioRequest {
      * @param responseFormat The format of the response.
      * @param temperature    The temperature for the translation.
      */
-    public TranslateRequest(byte[] file, String model, String prompt, String responseFormat, float temperature) {
+    public TranslateRequest(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature) {
         super(file, model, prompt, responseFormat, temperature);
     }
 
@@ -29,7 +29,7 @@ public class TranslateRequest extends AudioRequest {
         private byte[] file;
         private String model = "whisper-1";
         private String prompt;
-        private String responseFormat;
+        private AudioResponseFormat responseFormat;
         private float temperature;
 
         /**
@@ -71,7 +71,7 @@ public class TranslateRequest extends AudioRequest {
          * @param responseFormat The format of the response.
          * @return The Builder instance.
          */
-        public Builder responseFormat(String responseFormat) {
+        public Builder responseFormat(AudioResponseFormat responseFormat) {
             this.responseFormat = responseFormat;
             return this;
         }

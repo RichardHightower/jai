@@ -76,7 +76,7 @@ public class OpenAIClient implements Client, ClientAsync {
         }
 
         if (audioRequest.getResponseFormat() != null) {
-            form.addTextBody("response_format", audioRequest.getResponseFormat());
+            form.addTextBody("response_format", audioRequest.getResponseFormat().toString().toLowerCase());
         }
 
         if (audioRequest.getTemperature() != 0.0) {
@@ -241,7 +241,8 @@ public class OpenAIClient implements Client, ClientAsync {
 
             ClientSuccessResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientSuccessResponse.builder();
             return builder.setRequest(transcriptionRequest)
-                    .setResponse(AudioResponse.builder().body(response.body()).build())
+                    .setResponse(AudioResponse.builder().body(response.body()).responseFormat(transcriptionRequest.getResponseFormat())
+                            .build())
                     .setStatusCode(response.statusCode())
                     .build();
         } catch (Exception e) {
@@ -270,7 +271,8 @@ public class OpenAIClient implements Client, ClientAsync {
 
             ClientSuccessResponse.Builder<TranslateRequest, AudioResponse> builder = ClientSuccessResponse.builder();
             return builder.setRequest(translateRequest)
-                    .setResponse(AudioResponse.builder().body(response.body()).build())
+                    .setResponse(AudioResponse.builder().body(response.body())
+                            .responseFormat(translateRequest.getResponseFormat()).build())
                     .setStatusCode(response.statusCode())
                     .build();
         } catch (Exception e) {

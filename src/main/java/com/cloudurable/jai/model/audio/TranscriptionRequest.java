@@ -18,7 +18,7 @@ public class TranscriptionRequest extends AudioRequest {
      * @param temperature    The temperature for the transcription.
      * @param language       The language for the transcription.
      */
-    public TranscriptionRequest(byte[] file, String model, String prompt, String responseFormat, float temperature, String language) {
+    public TranscriptionRequest(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature, String language) {
         super(file, model, prompt, responseFormat, temperature);
         this.language = language;
     }
@@ -43,7 +43,7 @@ public class TranscriptionRequest extends AudioRequest {
         private byte[] file;
         private String model;
         private String prompt;
-        private String responseFormat;
+        private AudioResponseFormat responseFormat;
         private float temperature;
         private String language;
 
@@ -86,7 +86,7 @@ public class TranscriptionRequest extends AudioRequest {
          * @param responseFormat The format of the response.
          * @return The Builder instance.
          */
-        public Builder responseFormat(String responseFormat) {
+        public Builder responseFormat(AudioResponseFormat responseFormat) {
             this.responseFormat = responseFormat;
             return this;
         }
