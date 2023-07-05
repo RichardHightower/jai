@@ -16,10 +16,14 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ClientAsync {
     CompletableFuture<ClientResponse<ChatRequest, ChatResponse>> chatAsync(ChatRequest chatRequest);
+
     CompletableFuture<ClientResponse<CompletionRequest, CompletionResponse>> completionAsync(CompletionRequest completionRequest);
+
     CompletableFuture<ClientResponse<EditRequest, EditResponse>> editAsync(EditRequest editRequest);
+
     CompletableFuture<ClientResponse<com.cloudurable.jai.model.text.embedding.EmbeddingRequest, EmbeddingResponse>> embeddingAsync(com.cloudurable.jai.model.text.embedding.EmbeddingRequest embeddingRequest);
 
     CompletableFuture<ClientResponse<TranscriptionRequest, AudioResponse>> transcribeAsync(TranscriptionRequest transcriptionRequest);
+
     CompletableFuture<ClientResponse<TranslateRequest, AudioResponse>> translateAsync(TranslateRequest translateRequest);
 }

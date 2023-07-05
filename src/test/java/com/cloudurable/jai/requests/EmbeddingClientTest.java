@@ -1,8 +1,8 @@
-package com.cloudurable.jai;
+package com.cloudurable.jai.requests;
 
 
+import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.text.edit.EditRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class EmbeddingClientAsyncTest {
+public class EmbeddingClientTest {
 
 
     HttpClientMock httpClientMock;
@@ -36,14 +36,14 @@ public class EmbeddingClientAsyncTest {
      * @throws Exception in case of errors
      */
     @Test
-    void embeddingAsync() throws Exception {
+    void embedding() throws Exception {
         httpClientMock = new HttpClientMock();
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Mock the response
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePostAsync("/embeddings", requestBody, responseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePost("/embeddings", requestBody, responseBody);
 
-        final ClientResponse<EmbeddingRequest, EmbeddingResponse> response = client.embeddingAsync(embeddingRequest).get();
+        final ClientResponse<EmbeddingRequest, EmbeddingResponse> response = client.embedding(embeddingRequest);
 
         response.getException().ifPresent(throwable -> throwable.printStackTrace());
         assertFalse(response.getException().isPresent());
@@ -55,7 +55,7 @@ public class EmbeddingClientAsyncTest {
         });
 
         HttpClient mock = httpClientMock.getMock();
-        verify(mock, times(1)).sendAsync(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
+        verify(mock, times(1)).send(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
     }
 
     /**

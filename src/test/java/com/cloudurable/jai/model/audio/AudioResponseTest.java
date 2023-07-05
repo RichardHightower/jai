@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AudioResponseTest {
 
@@ -16,11 +14,11 @@ class AudioResponseTest {
         // Create a sample AudioResponse object
         String body = "Sample response body";
         AudioResponseFormat responseFormat = AudioResponseFormat.TEXT;
-        AudioResponse audioResponse1 =  AudioResponse.builder().body(body)
+        AudioResponse audioResponse1 = AudioResponse.builder().body(body)
                 .responseFormat(responseFormat)
                 .build();
 
-        AudioResponse audioResponse2 =  AudioResponse.builder().body(body)
+        AudioResponse audioResponse2 = AudioResponse.builder().body(body)
                 .responseFormat(responseFormat)
                 .build();
 

@@ -71,6 +71,7 @@ public class EditRequest extends TextRequest {
         private float temperature;
         private float topP;
         private int completionCount;
+
         private Builder() {
         }
 

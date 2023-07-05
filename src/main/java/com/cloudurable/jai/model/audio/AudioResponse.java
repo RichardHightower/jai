@@ -12,10 +12,8 @@ import java.util.Optional;
  */
 public class AudioResponse {
     private final String body;
-
-    private ObjectNode objectNode = null;
-
     private final AudioResponseFormat responseFormat;
+    private ObjectNode objectNode = null;
 
     /**
      * Constructs a new AudioResponse object.
@@ -28,21 +26,22 @@ public class AudioResponse {
         this.responseFormat = responseFormat;
     }
 
-
-    /**
-     *  AudioResponseFormat
-     * @return AudioResponseFormat
-     */
-    public AudioResponseFormat getResponseFormat() {
-        return responseFormat;
-    }
-
     /**
      * Get builder for AudioResponse
+     *
      * @return builder
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * AudioResponseFormat
+     *
+     * @return AudioResponseFormat
+     */
+    public AudioResponseFormat getResponseFormat() {
+        return responseFormat;
     }
 
     /**

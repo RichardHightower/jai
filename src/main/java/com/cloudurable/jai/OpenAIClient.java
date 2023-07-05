@@ -32,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static com.cloudurable.jai.model.audio.AudioRequestEncoder.buildForm;
+import static com.cloudurable.jai.model.audio.AudioRequestEncoder.getEncodingContentType;
 import static com.cloudurable.jai.util.RequestResponseUtils.*;
 
 /**
@@ -65,9 +66,6 @@ public class OpenAIClient implements Client, ClientAsync {
         return new Builder();
     }
 
-    private static String getEncodingContentType(MultipartEntityBuilder form) {
-        return "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
-    }
 
     /**
      * Sends a chat request to the OpenAI API and returns the client response.
@@ -244,7 +242,7 @@ public class OpenAIClient implements Client, ClientAsync {
                     RequestResponseUtils.getTranscriptionResponse(transcriptionRequest, response)
             ).exceptionally(e -> RequestResponseUtils.getErrorResponseForTranscriptionRequest(e, transcriptionRequest));
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Unable to build form data");
+            return CompletableFuture.failedFuture(ex);
         }
     }
 
@@ -263,7 +261,7 @@ public class OpenAIClient implements Client, ClientAsync {
             ).exceptionally(e -> RequestResponseUtils.getErrorResponseForTranslateRequest(e, translateRequest));
 
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Unable to build form data");
+            return CompletableFuture.failedFuture(ex);
         }
 
     }

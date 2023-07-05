@@ -25,6 +25,7 @@ public class EditChoice extends Choice {
 
     /**
      * Builder
+     *
      * @return builder
      */
     public static Builder builder() {

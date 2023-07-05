@@ -42,7 +42,6 @@ public class Main {
     }
 
 
-
     private static void callTranslate() throws IOException {
         // Create the client
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
@@ -119,6 +118,7 @@ public class Main {
         latch.await(10, TimeUnit.SECONDS);
 
     }
+
     private static void callEmbeddingExample() {
         // Create the client
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();

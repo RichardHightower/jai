@@ -37,4 +37,9 @@ public class AudioRequestEncoder {
 
         return form;
     }
+
+
+    public static String getEncodingContentType(MultipartEntityBuilder form) {
+        return "multipart/form-data;boundary=\"" + form.getBoundary() + "\"";
+    }
 }

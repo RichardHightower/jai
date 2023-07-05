@@ -1,7 +1,6 @@
 package com.cloudurable.jai.model.text.edit;
 
 
-
 import com.cloudurable.jai.model.Usage;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,6 @@ class EditResponseTest {
                 .usage(Usage.builder().completionTokens(1).promptTokens(1).build())
                 .choices(choices)
                 .build();
-
 
 
         EditResponse response2 = EditResponse.builder()

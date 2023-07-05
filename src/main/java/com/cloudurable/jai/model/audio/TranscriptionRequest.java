@@ -11,7 +11,7 @@ import java.nio.file.Files;
 public class TranscriptionRequest extends AudioRequest {
 
     /**
-     *  The language for the transcription.
+     * The language for the transcription.
      */
     private final String language;
 
@@ -51,7 +51,7 @@ public class TranscriptionRequest extends AudioRequest {
     public static class Builder {
         private byte[] file;
 
-        private  String fileName = "foo.m4a";
+        private String fileName = "foo.m4a";
         private String model;
         private String prompt;
         private AudioResponseFormat responseFormat;

@@ -1,6 +1,7 @@
-package com.cloudurable.jai;
+package com.cloudurable.jai.requests;
 
 
+import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.text.completion.chat.*;
 import com.cloudurable.jai.test.mock.HttpClientMock;

@@ -1,6 +1,5 @@
 package com.cloudurable.jai.model.text.edit;
 
-import com.cloudurable.jai.model.text.Choice;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

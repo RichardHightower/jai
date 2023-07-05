@@ -15,14 +15,14 @@ class EditResponseDeserializerTest {
         // Create a sample JSON response
         String jsonBody = Json.niceJson(
                 "{" +
-                "'object': 'object', " +
-                "'created': 1628097025, " +
-                "'usage': {'prompt_tokens':5, 'total_tokens':5}, " +
-                "'choices': [" +
-                "   {'index': 1, 'text': 'Choice 1'}, " +
-                "   {'index': 2, 'text': 'Choice 2'} " +
-                "  ] "+
-                "}");
+                        "'object': 'object', " +
+                        "'created': 1628097025, " +
+                        "'usage': {'prompt_tokens':5, 'total_tokens':5}, " +
+                        "'choices': [" +
+                        "   {'index': 1, 'text': 'Choice 1'}, " +
+                        "   {'index': 2, 'text': 'Choice 2'} " +
+                        "  ] " +
+                        "}");
 
         // Deserialize the JSON response
         EditResponse response = EditResponseDeserializer.deserialize(jsonBody);

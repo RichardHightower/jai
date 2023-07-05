@@ -184,9 +184,8 @@ public class RequestResponseUtils {
         } else {
             ClientSuccessResponse.Builder<TranslateRequest, AudioResponse> builder = ClientSuccessResponse.builder();
             return builder.request(translateRequest)
-                    .response(AudioResponse.builder().body(response.body())
-                            .responseFormat(translateRequest.getResponseFormat()).build())
                     .statusCode(response.statusCode())
+                    .statusMessage(response.body())
                     .build();
         }
     }
@@ -204,9 +203,8 @@ public class RequestResponseUtils {
         } else {
             ClientSuccessResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientSuccessResponse.builder();
             return builder.request(transcriptionRequest)
-                    .response(AudioResponse.builder().body(response.body())
-                            .responseFormat(transcriptionRequest.getResponseFormat()).build())
                     .statusCode(response.statusCode())
+                    .statusMessage(response.body())
                     .build();
         }
     }
@@ -239,8 +237,8 @@ public class RequestResponseUtils {
     }
 
     public static ClientSuccessResponse<EditRequest, EditResponse> getEditResponseSuccess(EditRequest editRequest,
-                                                                                               int statusCode,
-                                                                                               EditResponse editResponse) {
+                                                                                          int statusCode,
+                                                                                          EditResponse editResponse) {
         ClientSuccessResponse.Builder<EditRequest, EditResponse> builder = ClientSuccessResponse.builder();
         return builder.request(editRequest)
                 .response(editResponse)

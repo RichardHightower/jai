@@ -29,6 +29,15 @@ public class EditResponse extends TextResponse {
     }
 
     /**
+     * Returns a builder instance to construct EditResponse objects.
+     *
+     * @return A new instance of the Builder.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Returns the list of edit choices in the response.
      *
      * @return The list of edit choices.
@@ -78,15 +87,6 @@ public class EditResponse extends TextResponse {
                 ", usage=" + usage +
                 ", super=" + super.toString() +
                 '}';
-    }
-
-    /**
-     * Returns a builder instance to construct EditResponse objects.
-     *
-     * @return A new instance of the Builder.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

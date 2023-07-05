@@ -43,7 +43,7 @@ class AudioRequestEncoderTest {
 
     private static class AudioRequestImpl extends AudioRequest {
         public AudioRequestImpl(byte[] file, String model, String prompt, AudioResponseFormat responseFormat, float temperature) {
-            super(file, "foo.mpa",  model, prompt, AudioResponseFormat.JSON, temperature);
+            super(file, "foo.mpa", model, prompt, AudioResponseFormat.JSON, temperature);
         }
     }
 }

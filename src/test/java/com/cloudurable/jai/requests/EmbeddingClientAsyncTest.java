@@ -1,6 +1,7 @@
-package com.cloudurable.jai;
+package com.cloudurable.jai.requests;
 
 
+import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequest;
 import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class EmbeddingClientTest {
+public class EmbeddingClientAsyncTest {
 
 
     HttpClientMock httpClientMock;
@@ -35,14 +36,14 @@ public class EmbeddingClientTest {
      * @throws Exception in case of errors
      */
     @Test
-    void embedding() throws Exception {
+    void embeddingAsync() throws Exception {
         httpClientMock = new HttpClientMock();
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Mock the response
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePost("/embeddings", requestBody, responseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponsePostAsync("/embeddings", requestBody, responseBody);
 
-        final ClientResponse<EmbeddingRequest, EmbeddingResponse> response = client.embedding(embeddingRequest);
+        final ClientResponse<EmbeddingRequest, EmbeddingResponse> response = client.embeddingAsync(embeddingRequest).get();
 
         response.getException().ifPresent(throwable -> throwable.printStackTrace());
         assertFalse(response.getException().isPresent());
@@ -54,7 +55,7 @@ public class EmbeddingClientTest {
         });
 
         HttpClient mock = httpClientMock.getMock();
-        verify(mock, times(1)).send(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
+        verify(mock, times(1)).sendAsync(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
     }
 
     /**

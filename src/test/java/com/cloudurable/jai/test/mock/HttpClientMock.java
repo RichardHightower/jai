@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +66,17 @@ public class HttpClientMock extends HttpClient {
         return new RequestResponse(request, response);
     }
 
+    public RequestResponse setResponsePost(String path, byte[] requestBody, String contentType, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path, contentType);
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(requestBody));
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.send(any(), eq(HttpResponse.BodyHandlers.ofString())
+
+        )).thenReturn(response);
+        return new RequestResponse(request, response);
+    }
+
     /**
      * Set up a mocked response for a asynchronous POST request.
      *
@@ -83,6 +96,16 @@ public class HttpClientMock extends HttpClient {
         return new RequestResponse(request, response);
     }
 
+    public RequestResponse setResponsePostAsync(String path, byte[] requestBody, String contentType, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path, contentType);
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(requestBody));
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
+        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(future);
+        return new RequestResponse(request, response);
+    }
+
     /**
      * Helper method to create a request builder with default headers and given path.
      *
@@ -93,6 +116,13 @@ public class HttpClientMock extends HttpClient {
         return HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + "pk-123456789")
                 .header("Content-Type", "application/json")
+                .uri(URI.create(apiEndpoint + path));
+    }
+
+    private HttpRequest.Builder createRequestBuilder(final String path, final String contentType) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + "pk-123456789")
+                .header("Content-Type", contentType)
                 .uri(URI.create(apiEndpoint + path));
     }
 

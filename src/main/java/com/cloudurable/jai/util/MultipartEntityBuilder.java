@@ -16,7 +16,7 @@ import java.util.UUID;
 public class MultipartEntityBuilder {
 
     // Constants
-    private static final String BOUNDARY_PREFIX = "boundary";
+    private static final String BOUNDARY_PREFIX = "boundary-" + UUID.randomUUID();
     private static final String LINE_BREAK = "\r\n";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String CONTENT_DISPOSITION = "Content-Disposition";
@@ -33,7 +33,7 @@ public class MultipartEntityBuilder {
      */
     private MultipartEntityBuilder() {
         this.parts = new ArrayList<>();
-        this.boundary = BOUNDARY_PREFIX + UUID.randomUUID().toString();
+        this.boundary = BOUNDARY_PREFIX;
     }
 
     /**

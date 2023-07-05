@@ -21,7 +21,7 @@ class EmbeddingResponseTest {
                 Embedding.builder().index(1).embedding(new float[]{3.0f, 4.0f}).build()
         );
 
-        EmbeddingResponse response1 =  EmbeddingResponse.builder().object(object)
+        EmbeddingResponse response1 = EmbeddingResponse.builder().object(object)
                 .model(model).usage(usage).data(data).build();
         EmbeddingResponse response2 = new EmbeddingResponse(object, model, usage, data);
 

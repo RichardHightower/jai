@@ -105,6 +105,7 @@ public class EmbeddingResponse implements Response {
         private String model;
         private Usage usage;
         private List<Embedding> data;
+
         /**
          * Constructs a new Builder object.
          */
