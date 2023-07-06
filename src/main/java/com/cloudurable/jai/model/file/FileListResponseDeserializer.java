@@ -30,7 +30,7 @@ public class FileListResponseDeserializer {
 
         final List<FileData> data = objectNode.getArrayNode("data")
                 .mapObjectNode(node -> FileData.builder().id(node.getString("id"))
-                        .createAt(Instant.ofEpochSecond(node.getInt("created_at")))
+                        .createdAt(Instant.ofEpochSecond(node.getInt("created_at")))
                         .bytes(node.getInt("bytes"))
                         .object(node.getString("object"))
                         .purpose(node.getString("purpose")).build());

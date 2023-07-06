@@ -10,29 +10,28 @@ public class FileData {
     private final String id;
     private final String object;
     private final String purpose;
-    private final Instant createAt;
+    private final Instant createdAt;
     private final int bytes;
-
 
     /**
      * Constructs a new instance of FileData.
      *
-     * @param id       the ID of the model
-     * @param object   the object of the model
-     * @param purpose
-     * @param createAt
-     * @param bytes
+     * @param id        the ID of the file
+     * @param object    the object type of the file
+     * @param purpose   the intended purpose of the file
+     * @param createdAt the creation timestamp of the file
+     * @param bytes     the size of the file in bytes
      */
-    private FileData(String id, String object, String purpose, Instant createAt, int bytes) {
+    private FileData(String id, String object, String purpose, Instant createdAt, int bytes) {
         this.id = id;
         this.object = object;
         this.purpose = purpose;
-        this.createAt = createAt;
+        this.createdAt = createdAt;
         this.bytes = bytes;
     }
 
     /**
-     * Creates a new instance of the Builder
+     * Creates a new instance of the Builder for constructing FileData instances.
      *
      * @return a new instance of the Builder
      */
@@ -41,35 +40,61 @@ public class FileData {
     }
 
     /**
-     * Gets the ID of the model.
+     * Gets the ID of the file.
      *
-     * @return the ID of the model
+     * @return the ID of the file
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Gets the object of the model.
+     * Gets the object type of the file.
      *
-     * @return the object of the model
+     * @return the object type of the file
      */
     public String getObject() {
         return object;
     }
 
+    /**
+     * Gets the intended purpose of the file.
+     *
+     * @return the intended purpose of the file
+     */
+    public String getPurpose() {
+        return purpose;
+    }
+
+    /**
+     * Gets the creation timestamp of the file.
+     *
+     * @return the creation timestamp of the file
+     */
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * Gets the size of the file in bytes.
+     *
+     * @return the size of the file in bytes
+     */
+    public int getBytes() {
+        return bytes;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FileData)) return false;
         FileData fileData = (FileData) o;
-        return bytes == fileData.bytes && Objects.equals(id, fileData.id) && Objects.equals(object, fileData.object) && Objects.equals(purpose, fileData.purpose) && Objects.equals(createAt, fileData.createAt);
+        return bytes == fileData.bytes && Objects.equals(id, fileData.id) && Objects.equals(object, fileData.object) && Objects.equals(purpose, fileData.purpose) && Objects.equals(createdAt, fileData.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, object, purpose, createAt, bytes);
+        return Objects.hash(id, object, purpose, createdAt, bytes);
     }
 
     @Override
@@ -78,7 +103,7 @@ public class FileData {
                 "id='" + id + '\'' +
                 ", object='" + object + '\'' +
                 ", purpose='" + purpose + '\'' +
-                ", createAt=" + createAt +
+                ", createdAt=" + createdAt +
                 ", bytes=" + bytes +
                 '}';
     }
@@ -89,34 +114,50 @@ public class FileData {
     public static class Builder {
         private String id;
         private String object;
-
-        private  String purpose;
-        private  Instant createAt;
-        private  int bytes;
-
+        private String purpose;
+        private Instant createdAt;
+        private int bytes;
 
         private Builder() {
         }
 
+        /**
+         * Sets the intended purpose of the file.
+         *
+         * @param purpose the intended purpose of the file
+         * @return the builder instance
+         */
         public Builder purpose(String purpose) {
             this.purpose = purpose;
             return this;
         }
 
-        public Builder createAt(Instant createAt) {
-            this.createAt = createAt;
+        /**
+         * Sets the creation timestamp of the file.
+         *
+         * @param createdAt createdAt
+         * @return the builder instance
+         */
+        public Builder createdAt(Instant createdAt) {
+            this.createdAt = createdAt;
             return this;
         }
 
+        /**
+         * Sets the size of the file in bytes.
+         *
+         * @param bytes the size of the file in bytes
+         * @return the builder instance
+         */
         public Builder bytes(int bytes) {
             this.bytes = bytes;
             return this;
         }
 
         /**
-         * Sets the ID of the model.
+         * Sets the ID of the file.
          *
-         * @param id the ID of the model
+         * @param id the ID of the file
          * @return the builder instance
          */
         public Builder id(String id) {
@@ -125,9 +166,9 @@ public class FileData {
         }
 
         /**
-         * Sets the object of the model.
+         * Sets the object type of the file.
          *
-         * @param object the object of the model
+         * @param object the object type of the file
          * @return the builder instance
          */
         public Builder object(String object) {
@@ -136,12 +177,12 @@ public class FileData {
         }
 
         /**
-         * Builds a new instance of ModelData.
+         * Builds a new instance of FileData using the configured values.
          *
-         * @return a new instance of ModelData
+         * @return a new instance of FileData
          */
         public FileData build() {
-            return new FileData(id, object, purpose, createAt, bytes);
+            return new FileData(id, object, purpose, createdAt, bytes);
         }
     }
 }

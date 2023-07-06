@@ -66,6 +66,24 @@ public class HttpClientMock extends HttpClient {
         return new RequestResponse(request, response);
     }
 
+    public RequestResponse setResponseDelete(String path, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
+        requestBuilder.DELETE();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.send(request, HttpResponse.BodyHandlers.ofString())).thenReturn(response);
+        return new RequestResponse(request, response);
+    }
+
+    public RequestResponse setResponseDeleteAsync(String path, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
+        requestBuilder.DELETE();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(CompletableFuture.completedFuture(response));
+        return new RequestResponse(request, response);
+    }
+
     public RequestResponse setResponseGet(String path, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.GET();

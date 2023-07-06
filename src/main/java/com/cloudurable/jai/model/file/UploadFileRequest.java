@@ -9,48 +9,50 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Upload file
- * POST
- *
- * https://api.openai.com/v1/files
- *
- * Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact us if you need to increase the storage limit.
- *
- * Request body
- * file
- * string
- * Required
- * Name of the JSON Lines file to be uploaded.
- *
- * If the purpose is set to "fine-tune", each line is a JSON record with "prompt" and "completion" fields representing your training examples.
- *
- * purpose
- * string
- * Required
- * The intended purpose of the uploaded documents.
- *
- * Use "fine-tune" for Fine-tuning. This allows us to validate the format of the uploaded file.
+ * Represents a request to upload a file.
+ * Implements the Request interface.
  */
 public class UploadFileRequest implements Request {
     private final String fileName;
     private final byte[] fileContents;
-
     private final String purpose;
 
+    /**
+     * Constructs a new UploadFileRequest with the specified file name, file contents, and purpose.
+     *
+     * @param fileName     the name of the file to be uploaded
+     * @param fileContents the contents of the file to be uploaded
+     * @param purpose      the intended purpose of the uploaded file
+     */
     public UploadFileRequest(String fileName, byte[] fileContents, String purpose) {
         this.fileName = fileName;
         this.fileContents = fileContents;
         this.purpose = purpose;
     }
 
+    /**
+     * Returns the name of the file.
+     *
+     * @return the name of the file
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     * Returns the contents of the file.
+     *
+     * @return the contents of the file
+     */
     public byte[] getFileContents() {
         return fileContents;
     }
 
+    /**
+     * Returns the purpose of the uploaded file.
+     *
+     * @return the purpose of the uploaded file
+     */
     public String getPurpose() {
         return purpose;
     }
@@ -79,26 +81,51 @@ public class UploadFileRequest implements Request {
                 '}';
     }
 
+    /**
+     * Returns a new instance of the Builder for constructing UploadFileRequest objects.
+     *
+     * @return a new instance of the Builder
+     */
     public static Builder builder() {
         return new Builder();
     }
+
+    /**
+     * Builder for constructing UploadFileRequest instances.
+     */
     public static class Builder {
+        private String fileName;
+        private byte[] fileContents;
+        private String purpose;
 
-        private  String fileName;
-        private  byte[] fileContents;
-
-        private  String purpose;
-
+        /**
+         * Sets the name of the file to be uploaded.
+         *
+         * @param fileName the name of the file
+         * @return the builder instance
+         */
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;
         }
 
+        /**
+         * Sets the contents of the file to be uploaded.
+         *
+         * @param fileContents the contents of the file
+         * @return the builder instance
+         */
         public Builder file(byte[] fileContents) {
             this.fileContents = fileContents;
             return this;
         }
 
+        /**
+         * Sets the contents of the file to be uploaded from a File object.
+         *
+         * @param file the File object representing the file to be uploaded
+         * @return the builder instance
+         */
         public Builder file(File file) {
             try {
                 this.fileContents = Files.readAllBytes(file.toPath());
@@ -109,11 +136,22 @@ public class UploadFileRequest implements Request {
             return this;
         }
 
+        /**
+         * Sets the purpose of the uploaded file.
+         *
+         * @param purpose the purpose of the uploaded file
+         * @return the builder instance
+         */
         public Builder purpose(String purpose) {
             this.purpose = purpose;
             return this;
         }
 
+        /**
+         * Builds a new instance of UploadFileRequest using the configured values.
+         *
+         * @return a new instance of UploadFileRequest
+         */
         public UploadFileRequest build() {
             return new UploadFileRequest(fileName, fileContents, purpose);
         }

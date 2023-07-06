@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The FileListResponse class represents a response containing a list of files.
- * It implements the Response interface.
+ * Represents a response containing a list of files.
+ * Implements the Response interface.
  */
 public class FileListResponse implements Response {
 
@@ -19,7 +19,7 @@ public class FileListResponse implements Response {
      * Constructs a new FileListResponse with the specified object and data.
      *
      * @param object the object associated with the response
-     * @param data   the list of model data
+     * @param data   the list of file data
      */
     public FileListResponse(String object, List<FileData> data) {
         this.object = object;
@@ -27,7 +27,7 @@ public class FileListResponse implements Response {
     }
 
     /**
-     * Returns a new instance of the Builder for constructing ModelListResponse objects.
+     * Returns a new instance of the Builder for constructing FileListResponse objects.
      *
      * @return a new instance of the Builder
      */
@@ -45,9 +45,9 @@ public class FileListResponse implements Response {
     }
 
     /**
-     * Returns the list of model data.
+     * Returns the list of file data.
      *
-     * @return the list of model data
+     * @return the list of file data
      */
     public List<FileData> getData() {
         return data;
@@ -55,7 +55,7 @@ public class FileListResponse implements Response {
 
     @Override
     public String toString() {
-        return "ModelListResponse{" +
+        return "FileListResponse{" +
                 "object='" + object + '\'' +
                 ", data=" + data +
                 '}';
@@ -75,7 +75,7 @@ public class FileListResponse implements Response {
     }
 
     /**
-     * The Builder class provides methods for constructing ModelListResponse objects.
+     * The Builder class provides methods for constructing FileListResponse objects.
      */
     public static class Builder {
 
@@ -94,9 +94,9 @@ public class FileListResponse implements Response {
         }
 
         /**
-         * Sets the list of model data.
+         * Sets the list of file data.
          *
-         * @param data the list of model data
+         * @param data the list of file data
          * @return the builder instance
          */
         public Builder data(List<FileData> data) {
@@ -105,9 +105,9 @@ public class FileListResponse implements Response {
         }
 
         /**
-         * Returns the list of model data. If the data is null, it creates a new empty list.
+         * Returns the list of file data. If the data is null, it creates a new empty list.
          *
-         * @return the list of model data
+         * @return the list of file data
          */
         public List<FileData> getData() {
             if (data == null) {
@@ -117,9 +117,9 @@ public class FileListResponse implements Response {
         }
 
         /**
-         * Adds the specified model data to the list of model data.
+         * Adds the specified file data to the list of file data.
          *
-         * @param data the model data to add
+         * @param data the file data to add
          * @return the builder instance
          */
         public Builder addData(FileData data) {
@@ -128,9 +128,9 @@ public class FileListResponse implements Response {
         }
 
         /**
-         * Builds a new instance of ModelListResponse using the configured values.
+         * Builds a new instance of FileListResponse using the configured values.
          *
-         * @return a new instance of ModelListResponse
+         * @return a new instance of FileListResponse
          */
         public FileListResponse build() {
             return new FileListResponse(object, getData());

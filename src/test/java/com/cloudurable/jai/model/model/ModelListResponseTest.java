@@ -33,7 +33,8 @@ public class ModelListResponseTest {
 
         ModelListResponse response1 = ModelListResponse.builder()
                 .object(object)
-                .data(data)
+                .addData(modelData1)
+                .addData(modelData2)
                 .build();
 
         ModelListResponse response2 = ModelListResponse.builder()
@@ -44,6 +45,8 @@ public class ModelListResponseTest {
         assertEquals(response1, response2);
         assertEquals(response1.toString(), response2.toString());
         assertEquals(response1.hashCode(), response2.hashCode());
+        assertEquals(response1.getData(), response2.getData());
+        assertEquals(response1.getObject(), response2.getObject());
     }
 
 }

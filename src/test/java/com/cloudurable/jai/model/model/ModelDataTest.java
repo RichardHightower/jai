@@ -32,6 +32,8 @@ public class ModelDataTest {
         assertEquals(modelData1, modelData2);
         assertEquals(modelData1.hashCode(), modelData2.hashCode());
         assertEquals(modelData1.toString(), modelData2.toString());
+        assertEquals(modelData1.getOwnedBy(), modelData2.getOwnedBy());
+        assertEquals(modelData1.getPermission(), modelData2.getPermission());
     }
 
 
