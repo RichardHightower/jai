@@ -9,6 +9,7 @@ import com.cloudurable.jai.model.SecretHolder;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.*;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.model.ModelData;
 import com.cloudurable.jai.model.model.ModelDataDeserializer;
@@ -140,6 +141,32 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     @Override
+    public CompletableFuture<FileData> getFileDataAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id);
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(r -> FileDataDeserializer.deserialize(r.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+
+
+    @Override
+    public CompletableFuture<FileListResponse> listFilesAsync() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(r -> FileListResponseDeserializer.deserialize(r.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
     public ModelListResponse listModels() {
         final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models");
         final HttpRequest request = requestBuilder.build();
@@ -150,6 +177,142 @@ public class OpenAIClient implements Client, ClientAsync {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public FileListResponse listFiles() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return FileListResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public FileData getFileData(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id);
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return FileDataDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ClientResponse<UploadFileRequest, FileData> uploadFile(UploadFileRequest uploadFileRequest) {
+        MultipartEntityBuilder form = UploadFileRequestSerializer.buildForm(uploadFileRequest);
+        try {
+            final String contentType = getEncodingContentType(form);
+            final HttpRequest request = createRequestBuilderWithBody("/files")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", contentType)
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            return RequestResponseUtils.getFileUploadResponse(uploadFileRequest, response);
+        } catch (Exception e) {
+            return RequestResponseUtils.getErrorResponseForUploadFileRequest(e, uploadFileRequest);
+        }
+    }
+
+    @Override
+    public CompletableFuture<ClientResponse<UploadFileRequest, FileData>> uploadFileAsync(UploadFileRequest uploadFileRequest) {
+        MultipartEntityBuilder form = UploadFileRequestSerializer.buildForm(uploadFileRequest);
+        try {
+            final String contentType = getEncodingContentType(form);
+            final HttpRequest request = createRequestBuilderWithBody("/files")
+                    // The Content-Type header is important, don't forget to set it.
+                    .header("Content-Type", contentType)
+                    // Reads data from a pipeline stream.
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(form.build())).build();
+
+
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+                    .thenApply(r->RequestResponseUtils.getFileUploadResponse(uploadFileRequest, r))
+                    .exceptionally(e -> RequestResponseUtils.getErrorResponseForUploadFileRequest(e, uploadFileRequest));
+
+        } catch (Exception ex) {
+            return CompletableFuture.failedFuture(ex);
+        }
+    }
+
+    @Override
+    public byte[] getFileContentBinary(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            return response.body();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String getFileContentString(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public CompletableFuture<byte[]> getFileContentBinaryAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).thenApply(HttpResponse::body);
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<String> getFileContentStringAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body);
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+
+
+    @Override
+    public FileDeleteResponse deleteFile(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/files/" + id).DELETE();
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return FileDeleteResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<FileDeleteResponse> deleteFileAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/files/" + id).DELETE();
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(r -> FileDeleteResponseDeserializer.deserialize(r.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
 
     @Override
     public ModelData getModel(String id) {
@@ -168,6 +331,13 @@ public class OpenAIClient implements Client, ClientAsync {
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .header("Content-Type", "application/json")
                 .uri(URI.create(apiEndpoint + path)).GET();
+    }
+
+    private HttpRequest.Builder createRequestBuilder(String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + apiKey.getSecret())
+                .header("Content-Type", "application/json")
+                .uri(URI.create(apiEndpoint + path));
     }
 
     /**

@@ -4,6 +4,10 @@ import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.FileData;
+import com.cloudurable.jai.model.file.FileDeleteResponse;
+import com.cloudurable.jai.model.file.FileListResponse;
+import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -33,6 +37,19 @@ public interface Client {
     ModelListResponse listModels();
 
     ModelData getModel(String id);
+
+
+    FileListResponse listFiles();
+
+    FileData getFileData(String id);
+
+    ClientResponse<UploadFileRequest, FileData> uploadFile(UploadFileRequest uploadFileRequest);
+
+    byte[] getFileContentBinary(String id);
+
+    String getFileContentString(String id);
+
+    FileDeleteResponse deleteFile(String id);
 
     /**
      * Sends a chat request and retrieves the corresponding chat response.

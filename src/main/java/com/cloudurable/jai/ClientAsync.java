@@ -4,6 +4,10 @@ import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.FileData;
+import com.cloudurable.jai.model.file.FileDeleteResponse;
+import com.cloudurable.jai.model.file.FileListResponse;
+import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -31,6 +35,19 @@ public interface ClientAsync {
     CompletableFuture<ModelListResponse> listModelsAsync();
 
     CompletableFuture<ModelData> getModelAsync(String id);
+
+    CompletableFuture<FileListResponse> listFilesAsync();
+
+    CompletableFuture<FileData> getFileDataAsync(String id);
+
+    CompletableFuture<FileDeleteResponse> deleteFileAsync(String id);
+
+
+    CompletableFuture<byte[]> getFileContentBinaryAsync(String id);
+
+    CompletableFuture<String> getFileContentStringAsync(String id);
+
+    CompletableFuture<ClientResponse<UploadFileRequest, FileData>> uploadFileAsync(UploadFileRequest uploadFileRequest);
 
     /**
      * Asynchronously performs a chat request.
