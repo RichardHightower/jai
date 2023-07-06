@@ -131,38 +131,38 @@ response.getStatusMessage().ifPresent(
 
 ### Next steps
 
-| No. | Feature                             | Status  | endPoint |
-|-----|-------------------------------------|---------|----------|
-| 0.  | Add support for chat                | DONE    | 1        |
-| 1.  | Add support for completions         | DONE    | 1        |
-| 2.  | Add support for edits               | DONE    | 1        |
-| 3.  | Add support for embedding           | DONE    | 1        | 
-| 4.  | Add support for audio to text       | DONE    | 2        | 
-| 4.1 | Transcribe                          | DONE    |          | 
-| 4.2 | Translate                           | DONE    |          | 
-| 5.  | Add support for images              | DONE    | 3        | 
-| 5.1 | Create image                        | DONE    |          | 
-| 5.2 | Edit image                          | DONE    |          | 
-| 5.3 | Variations image                    | DONE    |          | 
-| 6.  | Add support for listing models      | DONE    | 2        | 
-| 6.1 | Add support for get models          | DONE    |          | 
-| 6.2 | Add support for list models         | DONE    |          | 
-| 7.  | Add support for file uploads        | IN PROG | 5        | 
-| 7.1 | Create File                         | DONE    |          | 
-| 7.2 | Delete File                         | DONE    |          | 
-| 7.3 | List Files                          | DONE    |          | 
-| 7.4 | Get File                            | DONE    |          | 
-| 7.5 | Get File Content                    | DONE    |          | 
-| 8.  | Add support for fine tunings        |         | 6        | 
-| 8.1 | Create Fine Tuning                  |         |          | 
-| 8.2 | Delete Fine Tuning                  |         |          | 
-| 8.3 | List Fine Tuning                    |         |          | 
-| 8.4 | Get Fine Tuning                     |         |          | 
-| 8.5 | Cancel Fine Tuning                  |         |          | 
-| 8.6 | List Fine Tuning Events             |         |          | 
-| 9.  | Add support for creating moderation |         | 1        | 
-| 10. | Create examples with chat streaming |         |          | 
-| 11. | Create examples with chat functions |         |          | 
+| No. | Feature                             | Status | endPoint |
+|-----|-------------------------------------|--------|----------|
+| 0.  | Add support for chat                | DONE   | 1        |
+| 1.  | Add support for completions         | DONE   | 1        |
+| 2.  | Add support for edits               | DONE   | 1        |
+| 3.  | Add support for embedding           | DONE   | 1        | 
+| 4.  | Add support for audio to text       | DONE   | 2        | 
+| 4.1 | Transcribe                          | DONE   |          | 
+| 4.2 | Translate                           | DONE   |          | 
+| 5.  | Add support for images              | DONE   | 3        | 
+| 5.1 | Create image                        | DONE   |          | 
+| 5.2 | Edit image                          | DONE   |          | 
+| 5.3 | Variations image                    | DONE   |          | 
+| 6.  | Add support for listing models      | DONE   | 2        | 
+| 6.1 | Add support for get models          | DONE   |          | 
+| 6.2 | Add support for list models         | DONE   |          | 
+| 7.  | Add support for file uploads        | DONE   | 5        | 
+| 7.1 | Create File                         | DONE   |          | 
+| 7.2 | Delete File                         | DONE   |          | 
+| 7.3 | List Files                          | DONE   |          | 
+| 7.4 | Get File                            | DONE   |          | 
+| 7.5 | Get File Content                    | DONE   |          | 
+| 8.  | Add support for fine tunings        |        | 6        | 
+| 8.1 | Create Fine Tuning                  |        |          | 
+| 8.2 | Delete Fine Tuning                  |        |          | 
+| 8.3 | List Fine Tuning                    |        |          | 
+| 8.4 | Get Fine Tuning                     |        |          | 
+| 8.5 | Cancel Fine Tuning                  |        |          | 
+| 8.6 | List Fine Tuning Events             |        |          | 
+| 9.  | Add support for creating moderation |        | 1        | 
+| 10. | Create examples with chat streaming |        |          | 
+| 11. | Create examples with chat functions |        |          | 
 
 
 
