@@ -5,6 +5,8 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.FileData;
+import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -22,12 +24,39 @@ import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
-            getModelAsync("whisper-1");
+            listFiles();
+            final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+            uploadFile(new File("prompts.jsonl"));
+
+            Thread.sleep(1000);
+            listFiles();
+            FileData fileData = client.listFiles().getData().get(0);
+            getFileDataAsync(fileData.getId());
+
+            final String contents = getFileContents(fileData.getId());
+            System.out.println(contents);
+
+
+             client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
+            listFiles();
+
+
+
+//            listFilesAsync();
+//            deleteFile("file-oGS5LrLOSrGosbREBfZahbWt");
+//            deleteFileAsync("file-I0sbD442zLMWkGZAlCiLGdHW");
+//            listFiles();
+            //listFilesAsync();
+            //getFileData("file-HBNdOLJK7rKf9jbP1DsBc7b8");
+            //getFileDataAsync("file-HBNdOLJK7rKf9jbP1DsBc7b8");
+            //getModelAsync("whisper-1");
             //listModelsAsync();
             //getModel("whisper-1");
             //listModels();
@@ -54,9 +83,23 @@ public class Main {
 
     }
 
+    private static void uploadFile(File file) throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.uploadFile(UploadFileRequest.builder().file(file).purpose("fine-tune").build()));
+    }
     private static void getModelAsync(String s) throws ExecutionException, InterruptedException {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         System.out.println(client.getModelAsync(s).get());
+    }
+
+    private static void getFileDataAsync(String s) throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.getFileDataAsync(s).get());
+    }
+
+    private static String  getFileContents(String s) throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        return client.getFileContentString(s);
     }
 
     private static void listModelsAsync() throws Exception {
@@ -69,9 +112,34 @@ public class Main {
         System.out.println(client.getModel(s));
     }
 
+    private static void deleteFile(String s) {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.deleteFile(s));
+    }
+
+
+    private static void deleteFileAsync(String s) throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.deleteFileAsync(s).get());
+    }
+
+    private static void getFileData(String s) {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        System.out.println(client.getFileData(s));
+    }
     private static void listModels() throws Exception {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         client.listModels().getData().forEach(modelData -> System.out.println(modelData.getId()));
+    }
+
+    private static void listFiles() throws Exception {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        client.listFiles().getData().forEach(modelData -> System.out.println(modelData.getId()));
+    }
+
+    private static void listFilesAsync() throws Exception {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+        client.listFilesAsync().get().getData().forEach(modelData -> System.out.println(modelData.getId()));
     }
 
     private static void createVariationsImageAsync() throws ExecutionException, InterruptedException {

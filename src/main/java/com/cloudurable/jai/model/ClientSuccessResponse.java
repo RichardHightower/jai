@@ -91,6 +91,17 @@ public class ClientSuccessResponse<Q, A> implements ClientResponse<Q, A> {
         return Optional.empty();
     }
 
+
+    @Override
+    public String toString() {
+        return "ClientSuccessResponse{" +
+                "request=" + request +
+                ", response=" + response +
+                ", statusCode=" + statusCode +
+                ", statusMessage='" + statusMessage + '\'' +
+                '}';
+    }
+
     /**
      * Builder pattern for constructing ClientSuccessResponse objects.
      *

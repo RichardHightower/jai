@@ -147,12 +147,12 @@ response.getStatusMessage().ifPresent(
 | 6.  | Add support for listing models      | DONE   | 2        | 
 | 6.1 | Add support for get models          | DONE   |          | 
 | 6.2 | Add support for list models         | DONE   |          | 
-| 7.  | Add support for file uploads        |        | 5        | 
-| 7.1 | Create File                         |        |          | 
-| 7.2 | Delete File                         |        |          | 
-| 7.3 | List Files                          |        |          | 
-| 7.4 | Get File                            |        |          | 
-| 7.5 | Get File Content                    |        |          | 
+| 7.  | Add support for file uploads        | DONE   | 5        | 
+| 7.1 | Create File                         | DONE   |          | 
+| 7.2 | Delete File                         | DONE   |          | 
+| 7.3 | List Files                          | DONE   |          | 
+| 7.4 | Get File                            | DONE   |          | 
+| 7.5 | Get File Content                    | DONE   |          | 
 | 8.  | Add support for fine tunings        |        | 6        | 
 | 8.1 | Create Fine Tuning                  |        |          | 
 | 8.2 | Delete Fine Tuning                  |        |          | 

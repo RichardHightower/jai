@@ -6,6 +6,9 @@ import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.FileData;
+import com.cloudurable.jai.model.file.FileDataDeserializer;
+import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -222,6 +225,22 @@ public class RequestResponseUtils {
                     .build();
         } else {
             ClientSuccessResponse.Builder<TranscriptionRequest, AudioResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(transcriptionRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
+    public static ClientResponse<UploadFileRequest, FileData>
+    getFileUploadResponse(UploadFileRequest transcriptionRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<UploadFileRequest, FileData> builder = ClientSuccessResponse.builder();
+            return builder.request(transcriptionRequest).statusCode(response.statusCode())
+                    .response(FileDataDeserializer.deserialize(response.body())).build();
+
+        } else {
+            ClientSuccessResponse.Builder<UploadFileRequest, FileData> builder = ClientSuccessResponse.builder();
             return builder.request(transcriptionRequest)
                     .statusCode(response.statusCode())
                     .statusMessage(response.body())
@@ -487,4 +506,10 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    public static ClientResponse<UploadFileRequest, FileData> getErrorResponseForUploadFileRequest(Throwable e, UploadFileRequest uploadFileRequest) {
+        ClientErrorResponse.Builder<UploadFileRequest, FileData> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(uploadFileRequest)
+                .build();
+    }
 }
