@@ -3,7 +3,6 @@ package com.cloudurable.jai.requests;
 
 import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.file.FileListResponse;
-import com.cloudurable.jai.model.model.ModelListResponse;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;

@@ -2,12 +2,7 @@ package com.cloudurable.jai.requests;
 
 
 import com.cloudurable.jai.OpenAIClient;
-import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDeleteResponse;
-import com.cloudurable.jai.model.image.CreateImageRequest;
-import com.cloudurable.jai.model.image.ImageRequestSerializer;
-import com.cloudurable.jai.model.image.ImageResponse;
 import com.cloudurable.jai.test.mock.HttpClientMock;
 import io.nats.jparse.Json;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -42,12 +37,12 @@ public class FileDeleteClientSyncTest {
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Mock the response
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponseDelete("/files/foo",  responseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponseDelete("/files/foo", responseBody);
 
         final FileDeleteResponse response = client.deleteFile("foo");
 
 
-        assertEquals("file-XjGxS3KTG0uNmNOK362iJua3",response.getId());
+        assertEquals("file-XjGxS3KTG0uNmNOK362iJua3", response.getId());
 
         HttpClient mock = httpClientMock.getMock();
         verify(mock, times(1)).send(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
@@ -65,7 +60,6 @@ public class FileDeleteClientSyncTest {
                 "  \"object\": \"file\",\n" +
                 "  \"deleted\": true\n" +
                 "}");
-
 
 
     }

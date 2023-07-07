@@ -20,16 +20,21 @@ public class FileDataDeserializer {
      * @return the deserialized FileData public static  object
      */
     public static FileData deserialize(final String json) {
-        final FileData.Builder builder = FileData.builder();
+
         final JsonParser jsonParser = JsonParserBuilder.builder().build();
         final ObjectNode node = jsonParser.parse(json).getObjectNode();
 
-        builder.object(node.getString("object"));
-        builder.id(node.getString("id"))
-                .createdAt(Instant.ofEpochSecond(node.getInt("created_at")))
-                .bytes(node.getInt("bytes"))
-                .purpose(node.getString("purpose"));
+        return getFileData(node);
+    }
 
+    public static FileData getFileData(ObjectNode objectNode) {
+        final FileData.Builder builder = FileData.builder();
+        builder.object(objectNode.getString("object"));
+        builder.id(objectNode.getString("id"))
+                .createdAt(Instant.ofEpochSecond(objectNode.getInt("created_at")))
+                .bytes(objectNode.getInt("bytes"))
+                .purpose(objectNode.getString("purpose"))
+                .fileName(objectNode.getString("filename"));
         return builder.build();
     }
 }

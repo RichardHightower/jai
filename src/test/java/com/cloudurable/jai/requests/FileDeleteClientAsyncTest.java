@@ -37,12 +37,12 @@ public class FileDeleteClientAsyncTest {
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
         // Mock the response
-        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponseDeleteAsync("/files/foo",  responseBody);
+        final HttpClientMock.RequestResponse requestResponse = httpClientMock.setResponseDeleteAsync("/files/foo", responseBody);
 
         final FileDeleteResponse response = client.deleteFileAsync("foo").get();
 
 
-        assertEquals("file-XjGxS3KTG0uNmNOK362iJua3",response.getId());
+        assertEquals("file-XjGxS3KTG0uNmNOK362iJua3", response.getId());
 
         HttpClient mock = httpClientMock.getMock();
         verify(mock, times(1)).sendAsync(requestResponse.getRequest(), HttpResponse.BodyHandlers.ofString());
@@ -60,7 +60,6 @@ public class FileDeleteClientAsyncTest {
                 "  \"object\": \"file\",\n" +
                 "  \"deleted\": true\n" +
                 "}");
-
 
 
     }

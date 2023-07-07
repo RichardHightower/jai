@@ -52,7 +52,7 @@ public class FileUploadSyncTest {
     void uploadFileRequest() throws Exception {
         client = OpenAIClient.builder().setApiKey("pk-123456789").setHttpClient(httpClientMock).build();
 
-        ClientResponse<UploadFileRequest, FileData> response  = client.uploadFile(uploadFileRequest);
+        ClientResponse<UploadFileRequest, FileData> response = client.uploadFile(uploadFileRequest);
 
 
         response.getException().ifPresent(throwable -> throwable.printStackTrace());

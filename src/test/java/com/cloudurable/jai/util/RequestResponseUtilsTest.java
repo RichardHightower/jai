@@ -480,7 +480,7 @@ public class RequestResponseUtilsTest {
 
 
         ClientResponse<EditRequest, EditResponse> response =
-                RequestResponseUtils.getErrorResponseForEditRequest(error, editRequest);
+                RequestResponseUtils.getErrorResponseForCreateFineTuneRequest(error, editRequest);
 
         assertNotNull(response);
         assertTrue(response instanceof ClientErrorResponse);

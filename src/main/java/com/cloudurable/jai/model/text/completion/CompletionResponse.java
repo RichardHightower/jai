@@ -56,6 +56,7 @@ public class CompletionResponse extends TextResponse {
         private Instant created;
         private Usage usage;
         private List<CompletionChoice> choices;
+
         private Builder() {
         }
 

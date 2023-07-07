@@ -8,6 +8,7 @@ import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDeleteResponse;
 import com.cloudurable.jai.model.file.FileListResponse;
 import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.*;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -38,7 +39,6 @@ public interface Client {
 
     ModelData getModel(String id);
 
-
     FileListResponse listFiles();
 
     FileData getFileData(String id);
@@ -50,6 +50,19 @@ public interface Client {
     String getFileContentString(String id);
 
     FileDeleteResponse deleteFile(String id);
+
+
+    ListFineTuneResponse listFineTunes();
+
+    ListFineTuneEventResponse listFineTuneEvents(String id);
+
+    FineTuneData getFineTuneData(String id);
+
+    ClientResponse<CreateFineTuneRequest, FineTuneData> createFineTune(CreateFineTuneRequest createFineTuneRequest);
+
+    DeleteFineTuneResponse deleteFineTune(String id);
+
+    FineTuneData cancelFineTune(String id);
 
     /**
      * Sends a chat request and retrieves the corresponding chat response.

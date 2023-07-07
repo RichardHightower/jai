@@ -61,6 +61,7 @@ public class TranscriptionRequest extends AudioRequest {
         private AudioResponseFormat responseFormat;
         private float temperature;
         private String language;
+
         private Builder() {
         }
 

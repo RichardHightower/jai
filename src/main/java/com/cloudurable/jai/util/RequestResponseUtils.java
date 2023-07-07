@@ -9,6 +9,9 @@ import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDataDeserializer;
 import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.CreateFineTuneRequest;
+import com.cloudurable.jai.model.finetune.FineTuneData;
+import com.cloudurable.jai.model.finetune.FineTuneDataDeserializer;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -416,6 +419,16 @@ public class RequestResponseUtils {
         }
     }
 
+    public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData>
+    getCreateFineTuneResponse(CreateFineTuneRequest request, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            final FineTuneData fineTuneResponse = FineTuneDataDeserializer.deserialize(response.body());
+            return getCreateFineTuneResponseSuccess(request, response.statusCode(), fineTuneResponse);
+        } else {
+            return getCreateFineTuneNotOk(request, response.statusCode(), response.body());
+        }
+    }
+
     /**
      * getEditResponseSuccess
      *
@@ -430,6 +443,16 @@ public class RequestResponseUtils {
         ClientSuccessResponse.Builder<EditRequest, EditResponse> builder = ClientSuccessResponse.builder();
         return builder.request(editRequest)
                 .response(editResponse)
+                .statusCode(statusCode)
+                .build();
+    }
+
+    public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData> getCreateFineTuneResponseSuccess(CreateFineTuneRequest request,
+                                                                                          int statusCode,
+                                                                                                              FineTuneData response) {
+        ClientSuccessResponse.Builder<CreateFineTuneRequest, FineTuneData> builder = ClientSuccessResponse.builder();
+        return builder.request(request)
+                .response(response)
                 .statusCode(statusCode)
                 .build();
     }
@@ -450,6 +473,14 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData> getCreateFineTuneNotOk(CreateFineTuneRequest request, int statusCode, String status) {
+        ClientSuccessResponse.Builder<CreateFineTuneRequest, FineTuneData> builder = ClientSuccessResponse.builder();
+        return builder.request(request)
+                .statusCode(statusCode)
+                .statusMessage(status)
+                .build();
+    }
+
     /**
      * Retrieves an error response for an edit request that encountered an exception.
      *
@@ -457,10 +488,17 @@ public class RequestResponseUtils {
      * @param editRequest The edit request.
      * @return The client response with the edit request and error response.
      */
-    public static ClientResponse<EditRequest, EditResponse> getErrorResponseForEditRequest(Throwable e, EditRequest editRequest) {
+    public static ClientResponse<EditRequest, EditResponse> getErrorResponseForCreateFineTuneRequest(Throwable e, EditRequest editRequest) {
         ClientErrorResponse.Builder<EditRequest, EditResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
                 .request(editRequest)
+                .build();
+    }
+
+    public static ClientResponse<CreateFineTuneRequest, FineTuneData> getErrorResponseForCreateFineTuneRequest(Throwable e, CreateFineTuneRequest req) {
+        ClientErrorResponse.Builder<CreateFineTuneRequest, FineTuneData> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(req)
                 .build();
     }
 

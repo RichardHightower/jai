@@ -1,4 +1,4 @@
-package com.cloudurable.jai.model.file;
+package com.cloudurable.jai.model.finetune;
 
 import com.cloudurable.jai.model.Response;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
  * "deleted": true
  * }
  */
-public class FileDeleteResponse implements Response {
+public class DeleteFineTuneResponse implements Response {
     private final String id;
     private final String object;
     private final boolean deleted;
@@ -25,7 +25,7 @@ public class FileDeleteResponse implements Response {
      * @param object  the object type of the file
      * @param deleted whether the file is deleted or not
      */
-    private FileDeleteResponse(String id, String object, boolean deleted) {
+    private DeleteFineTuneResponse(String id, String object, boolean deleted) {
         this.id = id;
         this.object = object;
         this.deleted = deleted;
@@ -68,8 +68,8 @@ public class FileDeleteResponse implements Response {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FileDeleteResponse)) return false;
-        FileDeleteResponse that = (FileDeleteResponse) o;
+        if (!(o instanceof DeleteFineTuneResponse)) return false;
+        DeleteFineTuneResponse that = (DeleteFineTuneResponse) o;
         return deleted == that.deleted && Objects.equals(id, that.id) && Objects.equals(object, that.object);
     }
 
@@ -136,8 +136,8 @@ public class FileDeleteResponse implements Response {
          *
          * @return a new instance of FileDeleteResponse
          */
-        public FileDeleteResponse build() {
-            return new FileDeleteResponse(id, object, deleted);
+        public DeleteFineTuneResponse build() {
+            return new DeleteFineTuneResponse(id, object, deleted);
         }
     }
 }

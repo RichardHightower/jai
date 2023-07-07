@@ -3,10 +3,6 @@ package com.cloudurable.jai.requests;
 
 import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
-import com.cloudurable.jai.model.audio.AudioRequestSerializer;
-import com.cloudurable.jai.model.audio.AudioResponse;
-import com.cloudurable.jai.model.audio.AudioResponseFormat;
-import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.file.UploadFileRequestSerializer;

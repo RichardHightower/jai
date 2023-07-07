@@ -90,12 +90,12 @@ public class SerializerUtils {
         final List<String> stop = chatRequest.getStop();
 
         if (stop != null && !stop.isEmpty()) {
-            jsonBodyBuilder.startNestedListAttribute("stop");
+            jsonBodyBuilder.startNestedArrayAttribute("stop");
             for (String str : stop) {
                 jsonBodyBuilder.addElement(str);
             }
             // remove trailing comma
-            jsonBodyBuilder.endList();
+            jsonBodyBuilder.endArray();
         }
     }
 }

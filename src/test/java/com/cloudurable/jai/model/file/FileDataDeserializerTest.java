@@ -11,7 +11,7 @@ class FileDataDeserializerTest {
     @Test
     void deserialize_ValidJson_ReturnsFileDataObject() {
         // Arrange
-        String json = "{\"object\":\"file\",\"id\":\"123\",\"created_at\":1625577600,\"bytes\":1024,\"purpose\":\"test\"}";
+        String json = "{\"object\":\"file\",\"id\":\"123\",\"created_at\":1625577600,\"bytes\":1024,\"purpose\":\"test\", \"filename\":\"foo.bar\"}";
 
         // Act
         FileData result = FileDataDeserializer.deserialize(json);

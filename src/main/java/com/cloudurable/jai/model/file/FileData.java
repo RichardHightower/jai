@@ -13,6 +13,8 @@ public class FileData {
     private final Instant createdAt;
     private final int bytes;
 
+    private final String fileName;
+
     /**
      * Constructs a new instance of FileData.
      *
@@ -21,13 +23,15 @@ public class FileData {
      * @param purpose   the intended purpose of the file
      * @param createdAt the creation timestamp of the file
      * @param bytes     the size of the file in bytes
+     * @param fileName  name of file
      */
-    private FileData(String id, String object, String purpose, Instant createdAt, int bytes) {
+    private FileData(String id, String object, String purpose, Instant createdAt, int bytes, String fileName) {
         this.id = id;
         this.object = object;
         this.purpose = purpose;
         this.createdAt = createdAt;
         this.bytes = bytes;
+        this.fileName = fileName;
     }
 
     /**
@@ -117,8 +121,14 @@ public class FileData {
         private String purpose;
         private Instant createdAt;
         private int bytes;
+        private String fileName;
 
         private Builder() {
+        }
+
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
+            return this;
         }
 
         /**
@@ -182,7 +192,7 @@ public class FileData {
          * @return a new instance of FileData
          */
         public FileData build() {
-            return new FileData(id, object, purpose, createdAt, bytes);
+            return new FileData(id, object, purpose, createdAt, bytes, fileName);
         }
     }
 }

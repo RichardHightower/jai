@@ -58,14 +58,14 @@ public class ChatRequestSerializer {
         final List<Message> messages = chatRequest.getMessages();
 
         // start JSON list body for messages
-        jsonBodyBuilder.startNestedListAttribute("messages");
+        jsonBodyBuilder.startNestedArrayAttribute("messages");
         for (Message message : messages) {
             jsonBodyBuilder.startNestedObjectElement();
             jsonBodyBuilder.addAttribute("role", message.getRole().toString().toLowerCase());
             jsonBodyBuilder.addAttribute("content", message.getContent());
             jsonBodyBuilder.endObject();
         }
-        jsonBodyBuilder.endList();
+        jsonBodyBuilder.endArray();
 
 
         SerializerUtils.outputTextParams(chatRequest, jsonBodyBuilder);
@@ -73,21 +73,21 @@ public class ChatRequestSerializer {
 
         final List<Function> functions = chatRequest.getFunctions();
         if (functions != null && !functions.isEmpty()) {
-            jsonBodyBuilder.startNestedListAttribute("functions");
+            jsonBodyBuilder.startNestedArrayAttribute("functions");
             for (Function function : functions) {
                 jsonBodyBuilder.startNestedObjectElement();
                 jsonBodyBuilder.addAttribute("name", function.getName());
-                jsonBodyBuilder.startNestedListAttribute("parameters");
+                jsonBodyBuilder.startNestedArrayAttribute("parameters");
                 List<Parameter> parameters = function.getParameters();
                 for (Parameter parameter : parameters) {
                     jsonBodyBuilder.startNestedObjectElement();
                     jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
                     jsonBodyBuilder.endObject();
                 }
-                jsonBodyBuilder.endList();
+                jsonBodyBuilder.endArray();
                 jsonBodyBuilder.endObject();
             }
-            jsonBodyBuilder.endList();
+            jsonBodyBuilder.endArray();
         }
 
 

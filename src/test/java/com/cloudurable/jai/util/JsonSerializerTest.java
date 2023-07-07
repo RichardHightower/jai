@@ -25,10 +25,10 @@ class JsonSerializerTest {
     @Test
     void writeList() {
         JsonSerializer serializer = new JsonSerializer();
-        serializer.startList();
+        serializer.startArray();
         serializer.addElement("b");
         serializer.addElement(11);
-        serializer.endList();
+        serializer.endArray();
 
         String json = serializer.toString();
         System.out.println(json);
@@ -61,14 +61,14 @@ class JsonSerializerTest {
     @Test
     void writeListWithNestedObject() {
         JsonSerializer serializer = new JsonSerializer();
-        serializer.startList();
+        serializer.startArray();
         serializer.addElement("b");
         serializer.addElement(11);
         serializer.startNestedObjectElement();
         serializer.addAttribute("a", "b1");
         serializer.addAttribute("c", 111);
         serializer.endObject();
-        serializer.endList();
+        serializer.endArray();
         String json = serializer.toString();
         System.out.println(json);
         ArrayNode arrayNode = Json.toArrayNode(json);
@@ -84,13 +84,13 @@ class JsonSerializerTest {
         serializer.startObject();
         serializer.addAttribute("a", "b");
         serializer.addAttribute("c", 11);
-        serializer.startNestedListAttribute("b");
+        serializer.startNestedArrayAttribute("b");
         serializer.addElement("b1");
         serializer.addElement(111);
         serializer.startNestedListElement();
         serializer.addElement("abcd");
-        serializer.endList();
-        serializer.endList();
+        serializer.endArray();
+        serializer.endArray();
         serializer.endObject();
         String json = serializer.toString();
         ObjectNode objectNode = Json.toObjectNode(json);

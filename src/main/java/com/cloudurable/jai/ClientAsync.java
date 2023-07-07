@@ -8,6 +8,7 @@ import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDeleteResponse;
 import com.cloudurable.jai.model.file.FileListResponse;
 import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.*;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -48,6 +49,21 @@ public interface ClientAsync {
     CompletableFuture<String> getFileContentStringAsync(String id);
 
     CompletableFuture<ClientResponse<UploadFileRequest, FileData>> uploadFileAsync(UploadFileRequest uploadFileRequest);
+
+
+
+
+    CompletableFuture<ListFineTuneResponse> listFineTunesAsync();
+
+    CompletableFuture<ListFineTuneEventResponse> listFineTuneEventsAsync(String id);
+
+    CompletableFuture<FineTuneData> getFineTuneDataAsync(String id);
+
+    CompletableFuture<ClientResponse<CreateFineTuneRequest, FineTuneData>> createFineTuneAsync(CreateFineTuneRequest createFineTuneRequest);
+
+    CompletableFuture<DeleteFineTuneResponse> deleteFineTuneAsync(String id);
+
+    CompletableFuture<FineTuneData> cancelFineTuneAsync(String id);
 
     /**
      * Asynchronously performs a chat request.
