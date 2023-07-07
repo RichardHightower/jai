@@ -2,11 +2,20 @@ package com.cloudurable.jai.model.finetune;
 
 import com.cloudurable.jai.util.JsonSerializer;
 
+/**
+ * The CreateFineTuneRequestSerializer class provides methods to serialize a CreateFineTuneRequest object to JSON.
+ */
 public class CreateFineTuneRequestSerializer {
     private CreateFineTuneRequestSerializer() {
     }
 
 
+    /**
+     * Serializes a CreateFineTuneRequest object to JSON.
+     *
+     * @param request The CreateFineTuneRequest object to be serialized.
+     * @return The JSON representation of the CreateFineTuneRequest object.
+     */
     public static String serialize(CreateFineTuneRequest request) {
         final JsonSerializer jsonSerializer = new JsonSerializer();
 

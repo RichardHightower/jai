@@ -27,6 +27,13 @@ public class FineTuneDataDeserializer {
         return getFineTuneData(objectNode);
     }
 
+
+    /**
+     * Deserializes the given JSON string into a FileData object.
+     *
+     * @param objectNode the JSON object to deserialize from
+     * @return the deserialized FileData public static  object
+     */
     public static FineTuneData getFineTuneData(ObjectNode objectNode) {
         final FineTuneData.Builder builder = FineTuneData.builder();
         builder.object(objectNode.getString("object"));

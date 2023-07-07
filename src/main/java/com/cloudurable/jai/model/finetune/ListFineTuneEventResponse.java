@@ -6,15 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 /**
- * Represents a response containing a list of fine tune events.
- * Implements the Response interface.
+ The ListFineTuneEventResponse class represents a response containing a list of fine tune events.
+ It implements the Response interface.
  */
 public class ListFineTuneEventResponse implements Response {
 
     private final String object;
     private final List<FineTuneEvent> data;
 
+    /**
+     * Constructs a new instance of ListFineTuneEventResponse with the specified parameters.
+     *
+     * @param object The object associated with the response.
+     * @param data   The list of fine tune events.
+     */
     private ListFineTuneEventResponse(String object, List<FineTuneEvent> data) {
         this.object = object;
         this.data = data;
@@ -23,25 +30,25 @@ public class ListFineTuneEventResponse implements Response {
     /**
      * Returns a new instance of the Builder for constructing ListFineTuneEventResponse objects.
      *
-     * @return a new instance of the Builder
+     * @return A new instance of the Builder.
      */
     public static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Returns the object associated with the response.
+     * Gets the object associated with the response.
      *
-     * @return the object associated with the response
+     * @return The object associated with the response.
      */
     public String getObject() {
         return object;
     }
 
     /**
-     * Returns the list of file data.
+     * Gets the list of fine tune events.
      *
-     * @return the list of file data
+     * @return The list of fine tune events.
      */
     public List<FineTuneEvent> getData() {
         return data;
@@ -49,7 +56,7 @@ public class ListFineTuneEventResponse implements Response {
 
     @Override
     public String toString() {
-        return "FileListResponse{" +
+        return "ListFineTuneEventResponse{" +
                 "object='" + object + '\'' +
                 ", data=" + data +
                 '}';
@@ -69,7 +76,7 @@ public class ListFineTuneEventResponse implements Response {
     }
 
     /**
-     * The Builder class provides methods for constructing FileListResponse objects.
+     * The Builder class provides methods for constructing ListFineTuneEventResponse objects.
      */
     public static class Builder {
 
@@ -79,8 +86,8 @@ public class ListFineTuneEventResponse implements Response {
         /**
          * Sets the object associated with the response.
          *
-         * @param object the object associated with the response
-         * @return the builder instance
+         * @param object The object associated with the response.
+         * @return The builder instance.
          */
         public Builder object(String object) {
             this.object = object;
@@ -88,10 +95,10 @@ public class ListFineTuneEventResponse implements Response {
         }
 
         /**
-         * Sets the list of file data.
+         * Sets the list of fine tune events.
          *
-         * @param data the list of file data
-         * @return the builder instance
+         * @param data The list of fine tune events.
+         * @return The builder instance.
          */
         public Builder data(List<FineTuneEvent> data) {
             this.data = data;
@@ -99,9 +106,9 @@ public class ListFineTuneEventResponse implements Response {
         }
 
         /**
-         * Returns the list of file data. If the data is null, it creates a new empty list.
+         * Returns the list of fine tune events. If the data is null, it creates a new empty list.
          *
-         * @return the list of file data
+         * @return The list of fine tune events.
          */
         public List<FineTuneEvent> getData() {
             if (data == null) {
@@ -111,20 +118,20 @@ public class ListFineTuneEventResponse implements Response {
         }
 
         /**
-         * Adds the specified file data to the list of file data.
+         * Adds the specified fine tune event to the list of fine tune events.
          *
-         * @param data the file data to add
-         * @return the builder instance
+         * @param event The fine tune event to add.
+         * @return The builder instance.
          */
-        public Builder addData(FineTuneEvent data) {
-            this.getData().add(data);
+        public Builder addData(FineTuneEvent event) {
+            this.getData().add(event);
             return this;
         }
 
         /**
          * Builds a new instance of ListFineTuneEventResponse using the configured values.
          *
-         * @return a new instance of ListFineTuneEventResponse
+         * @return A new instance of ListFineTuneEventResponse.
          */
         public ListFineTuneEventResponse build() {
             return new ListFineTuneEventResponse(object, getData());

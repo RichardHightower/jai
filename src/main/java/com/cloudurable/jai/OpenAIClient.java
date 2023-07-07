@@ -243,7 +243,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public byte[] getFileContentBinary(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
@@ -255,7 +255,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public String getFileContentString(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -268,7 +268,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<byte[]> getFileContentBinaryAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).thenApply(HttpResponse::body);
@@ -279,7 +279,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<String> getFileContentStringAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body);
@@ -380,7 +380,7 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public DeleteFineTuneResponse deleteFineTune(String id) {
 
-        final HttpRequest.Builder requestBuilder = createRequestBuilder("/fine-tunes/" + id).DELETE();
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/models/" + id).DELETE();
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -392,7 +392,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<DeleteFineTuneResponse> deleteFineTuneAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilder("/fine-tunes/" + id).DELETE();
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/models/" + id).DELETE();
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -489,6 +489,12 @@ public class OpenAIClient implements Client, ClientAsync {
         return HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .header("Content-Type", "application/json")
+                .uri(URI.create(apiEndpoint + path)).GET();
+    }
+
+    private HttpRequest.Builder createRequestBuilderGetNoContent(String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + apiKey.getSecret())
                 .uri(URI.create(apiEndpoint + path)).GET();
     }
 

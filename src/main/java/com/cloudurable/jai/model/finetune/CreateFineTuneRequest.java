@@ -143,6 +143,22 @@ public class CreateFineTuneRequest implements Request {
      */
     private final String suffix;
 
+    /**
+     * Constructs a CreateFineTuneRequest object.
+     *
+     * @param model                        The name of the base model to fine-tune.
+     * @param trainingFile                 The ID of an uploaded file that contains training data.
+     * @param validationFile               The ID of an uploaded file that contains validation data.
+     * @param nEpochs                      The number of epochs to train the model for.
+     * @param batchSize                    The batch size to use for training.
+     * @param learningRateMultiplier       The learning rate multiplier to use for training.
+     * @param promptLossWeight             The weight to use for loss on the prompt tokens.
+     * @param computeClassificationMetrics Whether to calculate classification-specific metrics.
+     * @param classificationNClasses       The number of classes in a classification task.
+     * @param classificationPositiveClass  The positive class in binary classification.
+     * @param classificationBetas          The beta values for calculating F-beta scores.
+     * @param suffix                       A string to be added to the fine-tuned model name.
+     */
     public CreateFineTuneRequest(String model, String trainingFile, String validationFile, int nEpochs, int batchSize,
                                  float learningRateMultiplier, float promptLossWeight,
                                  boolean computeClassificationMetrics, int classificationNClasses,
@@ -162,7 +178,7 @@ public class CreateFineTuneRequest implements Request {
     }
 
     /**
-     * Returns a new instance of the Builder for constructing UploadFileRequest objects.
+     * Returns a new instance of the Builder for constructing CreateFineTuneRequest objects.
      *
      * @return a new instance of the Builder
      */
@@ -252,6 +268,9 @@ public class CreateFineTuneRequest implements Request {
     }
 
     /**
+     * Builder for constructing CreateFineTuneRequest instances.
+     * <p>
+     * /**
      * Builder for constructing UploadFileRequest instances.
      */
     public static class Builder {
@@ -391,70 +410,143 @@ public class CreateFineTuneRequest implements Request {
          */
         private String suffix;
 
+
+        /**
+         * Sets the base model to fine-tune.
+         *
+         * @param model The name of the base model.
+         * @return the Builder instance
+         */
         public Builder model(String model) {
             this.model = model;
             return this;
         }
 
+        /**
+         * Sets the training data file.
+         *
+         * @param trainingFile The ID of the uploaded file containing training data.
+         * @return the Builder instance
+         */
         public Builder trainingFile(String trainingFile) {
             this.trainingFile = trainingFile;
             return this;
         }
 
+        /**
+         * Sets the validation data file.
+         *
+         * @param validationFile The ID of the uploaded file containing validation data.
+         * @return the Builder instance
+         */
         public Builder validationFile(String validationFile) {
             this.validationFile = validationFile;
             return this;
         }
 
+        /**
+         * Sets the number of epochs to train the model for.
+         *
+         * @param nEpochs The number of epochs.
+         * @return the Builder instance
+         */
         public Builder nEpochs(int nEpochs) {
             this.nEpochs = nEpochs;
             return this;
         }
 
+        /**
+         * Sets the batch size to use for training.
+         *
+         * @param batchSize The batch size.
+         * @return the Builder instance
+         */
         public Builder batchSize(int batchSize) {
             this.batchSize = batchSize;
             return this;
         }
 
+        /**
+         * Sets the learning rate multiplier to use for training.
+         *
+         * @param learningRateMultiplier The learning rate multiplier.
+         * @return the Builder instance
+         */
         public Builder learningRateMultiplier(float learningRateMultiplier) {
             this.learningRateMultiplier = learningRateMultiplier;
             return this;
         }
 
+        /**
+         * Sets the weight to use for loss on the prompt tokens.
+         *
+         * @param promptLossWeight The prompt loss weight.
+         * @return the Builder instance
+         */
         public Builder promptLossWeight(float promptLossWeight) {
             this.promptLossWeight = promptLossWeight;
             return this;
         }
 
+        /**
+         * Sets whether to calculate classification-specific metrics.
+         *
+         * @param computeClassificationMetrics Whether to compute classification metrics.
+         * @return the Builder instance
+         */
         public Builder computeClassificationMetrics(boolean computeClassificationMetrics) {
             this.computeClassificationMetrics = computeClassificationMetrics;
             return this;
         }
 
+        /**
+         * Sets the number of classes in a classification task.
+         *
+         * @param classificationNClasses The number of classes.
+         * @return the Builder instance
+         */
         public Builder classificationNClasses(int classificationNClasses) {
             this.classificationNClasses = classificationNClasses;
             return this;
         }
 
+        /**
+         * Sets the positive class in binary classification.
+         *
+         * @param classificationPositiveClass The positive class.
+         * @return the Builder instance
+         */
         public Builder classificationPositiveClass(String classificationPositiveClass) {
             this.classificationPositiveClass = classificationPositiveClass;
             return this;
         }
 
+        /**
+         * Sets the beta values for calculating F-beta scores.
+         *
+         * @param classificationBetas The beta values.
+         * @return the Builder instance
+         */
         public Builder classificationBetas(float[] classificationBetas) {
             this.classificationBetas = classificationBetas;
             return this;
         }
 
+        /**
+         * Sets the suffix to be added to the fine-tuned model name.
+         *
+         * @param suffix The suffix.
+         * @return the Builder instance
+         */
         public Builder suffix(String suffix) {
             this.suffix = suffix;
             return this;
         }
 
         /**
-         * Builds a new instance of UploadFileRequest using the configured values.
+         * Builds a new instance of CreateFineTuneRequest using the configured values.
          *
-         * @return a new instance of UploadFileRequest
+         * @return a new instance of CreateFineTuneRequest
          */
         public CreateFineTuneRequest build() {
             return new CreateFineTuneRequest(model, trainingFile, validationFile, nEpochs, batchSize, learningRateMultiplier, promptLossWeight,

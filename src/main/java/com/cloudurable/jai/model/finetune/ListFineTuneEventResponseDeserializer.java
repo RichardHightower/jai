@@ -34,6 +34,13 @@ public class ListFineTuneEventResponseDeserializer {
         return builder.build();
     }
 
+    /**
+     * Deserializes a JSON array into a List<FineTuneEvent> list object.
+     *
+     * @param arrayNode The JSON string to deserialize.
+     * @return The deserialized ListFineTuneEventResponse object.
+     */
+
     public static List<FineTuneEvent> getEventData(ArrayNode arrayNode) {
         return arrayNode.mapObjectNode(on -> FineTuneEvent.builder()
                 .object(on.getString("object"))

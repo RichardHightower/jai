@@ -6,6 +6,10 @@ import com.cloudurable.jai.model.ClientSuccessResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
+import com.cloudurable.jai.model.file.FileData;
+import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.CreateFineTuneRequest;
+import com.cloudurable.jai.model.finetune.FineTuneData;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -34,6 +38,57 @@ import static com.cloudurable.jai.util.RequestResponseUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestResponseUtilsTest {
+
+
+
+    @Test
+    public void testGetErrorResponseForUploadFileRequest() {
+        // Create the exception and request objects
+        Throwable exception = new RuntimeException("Something went wrong");
+        UploadFileRequest uploadFileRequest = UploadFileRequest.builder().build();
+
+        // Call the method to get the response
+        ClientResponse<UploadFileRequest, FileData> response = RequestResponseUtils.getErrorResponseForUploadFileRequest(exception, uploadFileRequest);
+
+        // Assert the response
+        assertNotNull(response);
+        assertEquals(exception, response.getException().orElse(null));
+        assertEquals(uploadFileRequest, response.getRequest());
+    }
+
+    @Test
+    public void testGetErrorResponseForCreateFineTuneRequest() {
+        // Create the exception and request objects
+        Throwable exception = new RuntimeException("Something went wrong");
+        CreateFineTuneRequest request =  CreateFineTuneRequest.builder().build();
+
+        // Call the method to get the response
+        ClientResponse<CreateFineTuneRequest, FineTuneData> response = RequestResponseUtils.getErrorResponseForCreateFineTuneRequest(exception, request);
+
+        // Assert the response
+        assertNotNull(response);
+        assertEquals(exception, response.getException().orElse(null));
+        assertEquals(request, response.getRequest());
+    }
+
+    @Test
+    public void testGetCreateFineTuneNotOk() {
+        // Create the request object
+        CreateFineTuneRequest request = CreateFineTuneRequest.builder().build();
+
+        // Set the expected values
+        int statusCode = 404;
+        String status = "Not Found";
+
+        // Call the method to get the response
+        ClientSuccessResponse<CreateFineTuneRequest, FineTuneData> response = RequestResponseUtils.getCreateFineTuneNotOk(request, statusCode, status);
+
+        // Assert the response
+        assertNotNull(response);
+        assertEquals(request, response.getRequest());
+        assertEquals(statusCode, response.getStatusCode().orElse(-666));
+        assertEquals(status, response.getStatusMessage().orElse(""));
+    }
 
     @Test
     public void testGetCreateImageResponse_Success() {

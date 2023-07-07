@@ -4,7 +4,10 @@ import com.cloudurable.jai.model.Response;
 
 import java.util.Objects;
 
+
 /**
+ * The DeleteFineTuneResponse class represents a file delete response.
+ * It implements the Response interface.
  * Represents a file delete response.
  * <p>
  * {
@@ -19,11 +22,11 @@ public class DeleteFineTuneResponse implements Response {
     private final boolean deleted;
 
     /**
-     * Constructs a new instance of FileDeleteResponse with the specified parameters.
+     * Constructs a new instance of DeleteFineTuneResponse with the specified parameters.
      *
-     * @param id      the ID of the file to be deleted
-     * @param object  the object type of the file
-     * @param deleted whether the file is deleted or not
+     * @param id      The ID of the file to be deleted.
+     * @param object  The object type of the file.
+     * @param deleted Whether the file is deleted or not.
      */
     private DeleteFineTuneResponse(String id, String object, boolean deleted) {
         this.id = id;
@@ -32,7 +35,9 @@ public class DeleteFineTuneResponse implements Response {
     }
 
     /**
-     * Builder for constructing FileDeleteResponse instances.
+     * Returns a new instance of the Builder for constructing DeleteFineTuneResponse objects.
+     *
+     * @return A new instance of the Builder.
      */
     public static Builder builder() {
         return new Builder();
@@ -41,7 +46,7 @@ public class DeleteFineTuneResponse implements Response {
     /**
      * Gets the ID of the file.
      *
-     * @return the ID of the file
+     * @return The ID of the file.
      */
     public String getId() {
         return id;
@@ -50,7 +55,7 @@ public class DeleteFineTuneResponse implements Response {
     /**
      * Gets the object type of the file.
      *
-     * @return the object type of the file
+     * @return The object type of the file.
      */
     public String getObject() {
         return object;
@@ -59,7 +64,7 @@ public class DeleteFineTuneResponse implements Response {
     /**
      * Checks if the file is deleted.
      *
-     * @return true if the file is deleted, false otherwise
+     * @return True if the file is deleted, false otherwise.
      */
     public boolean isDeleted() {
         return deleted;
@@ -80,7 +85,7 @@ public class DeleteFineTuneResponse implements Response {
 
     @Override
     public String toString() {
-        return "FileDeleteResponse{" +
+        return "DeleteFineTuneResponse{" +
                 "id='" + id + '\'' +
                 ", object='" + object + '\'' +
                 ", deleted=" + deleted +
@@ -88,7 +93,7 @@ public class DeleteFineTuneResponse implements Response {
     }
 
     /**
-     * Builder for constructing FileDeleteResponse instances.
+     * The Builder class for constructing DeleteFineTuneResponse instances.
      */
     public static class Builder {
         private String id;
@@ -96,13 +101,14 @@ public class DeleteFineTuneResponse implements Response {
         private boolean deleted;
 
         private Builder() {
+            // Private constructor to prevent instantiation
         }
 
         /**
          * Sets the ID of the file.
          *
-         * @param id the ID of the file
-         * @return the builder instance
+         * @param id The ID of the file.
+         * @return The builder instance.
          */
         public Builder id(String id) {
             this.id = id;
@@ -112,8 +118,8 @@ public class DeleteFineTuneResponse implements Response {
         /**
          * Sets the object type of the file.
          *
-         * @param object the object type of the file
-         * @return the builder instance
+         * @param object The object type of the file.
+         * @return The builder instance.
          */
         public Builder object(String object) {
             this.object = object;
@@ -123,8 +129,8 @@ public class DeleteFineTuneResponse implements Response {
         /**
          * Sets whether the file is deleted or not.
          *
-         * @param deleted true if the file is deleted, false otherwise
-         * @return the builder instance
+         * @param deleted True if the file is deleted, false otherwise.
+         * @return The builder instance.
          */
         public Builder deleted(boolean deleted) {
             this.deleted = deleted;
@@ -132,9 +138,9 @@ public class DeleteFineTuneResponse implements Response {
         }
 
         /**
-         * Builds a new instance of FileDeleteResponse using the configured values.
+         * Builds a new instance of DeleteFineTuneResponse using the configured values.
          *
-         * @return a new instance of FileDeleteResponse
+         * @return A new instance of DeleteFineTuneResponse.
          */
         public DeleteFineTuneResponse build() {
             return new DeleteFineTuneResponse(id, object, deleted);

@@ -153,13 +153,13 @@ response.getStatusMessage().ifPresent(
 | 7.3 | List Files                          | DONE   |          | 
 | 7.4 | Get File                            | DONE   |          | 
 | 7.5 | Get File Content                    | DONE   |          | 
-| 8.  | Add support for fine tunings        |        | 6        | 
-| 8.1 | Create Fine Tuning                  |        |          | 
-| 8.2 | Delete Fine Tuning                  |        |          | 
-| 8.3 | List Fine Tuning                    |        |          | 
-| 8.4 | Get Fine Tuning                     |        |          | 
-| 8.5 | Cancel Fine Tuning                  |        |          | 
-| 8.6 | List Fine Tuning Events             |        |          | 
+| 8.  | Add support for fine tunings        | DONE   | 6        | 
+| 8.1 | Create Fine Tuning                  | DONE   |          | 
+| 8.2 | Delete Fine Tuning                  | DONE   |          | 
+| 8.3 | List Fine Tuning                    | DONE   |          | 
+| 8.4 | Get Fine Tuning                     | DONE   |          | 
+| 8.5 | Cancel Fine Tuning                  | DONE   |          | 
+| 8.6 | List Fine Tuning Events             | DONE   |          | 
 | 9.  | Add support for creating moderation |        | 1        | 
 | 10. | Create examples with chat streaming |        |          | 
 | 11. | Create examples with chat functions |        |          | 

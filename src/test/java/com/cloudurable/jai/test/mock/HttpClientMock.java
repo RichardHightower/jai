@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -66,6 +67,16 @@ public class HttpClientMock extends HttpClient {
         return new RequestResponse(request, response);
     }
 
+    public RequestResponse setResponsePost(String path,  String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(""));
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.send(request, HttpResponse.BodyHandlers.ofString())).thenReturn(response);
+        return new RequestResponse(request, response);
+    }
+
+
     public RequestResponse setResponseDelete(String path, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.DELETE();
@@ -93,12 +104,50 @@ public class HttpClientMock extends HttpClient {
         return new RequestResponse(request, response);
     }
 
+    public RequestResponse setResponseGetNoContentType(String path, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path);
+        requestBuilder.GET();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.send(request, HttpResponse.BodyHandlers.ofString())).thenReturn(response);
+        return new RequestResponse(request, response);
+    }
+
     public RequestResponse setResponseGetAsync(String path, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.GET();
         final HttpRequest request = requestBuilder.build();
         final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
         when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(CompletableFuture.completedFuture(response));
+        return new RequestResponse(request, response);
+    }
+
+    public RequestResponse setResponseGetAsyncNoContentTypeAsync(String path, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path);
+        requestBuilder.GET();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(CompletableFuture.completedFuture(response));
+        return new RequestResponse(request, response);
+    }
+
+    public RequestResponse setResponseGetAsync(String path, byte[] responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path);
+        requestBuilder.GET();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<byte[]> response = httpResponseBuilder()
+                .setBody(responseBody).build2();
+        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())).thenReturn(CompletableFuture.completedFuture(response));
+        return new RequestResponse(request, response);
+    }
+
+    public RequestResponse setResponseGet(String path, byte[] responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder(path);
+        requestBuilder.GET();
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<byte[]> response = httpResponseBuilder()
+                .setBody(responseBody).build2();
+        when(mockClient.send(request, HttpResponse.BodyHandlers.ofByteArray())).thenReturn(response);
         return new RequestResponse(request, response);
     }
 
@@ -125,6 +174,16 @@ public class HttpClientMock extends HttpClient {
     public RequestResponse setResponsePostAsync(String path, String requestBody, String responseBody) throws Exception {
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
+        final HttpRequest request = requestBuilder.build();
+        final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
+        final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
+        when(mockClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())).thenReturn(future);
+        return new RequestResponse(request, response);
+    }
+
+    public RequestResponse setResponsePostAsync(String path, String responseBody) throws Exception {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithBody(path);
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(""));
         final HttpRequest request = requestBuilder.build();
         final HttpResponse<String> response = httpResponseBuilder().setBody(responseBody).build();
         final CompletableFuture<HttpResponse<String>> future = CompletableFuture.supplyAsync(() -> response);
@@ -159,6 +218,12 @@ public class HttpClientMock extends HttpClient {
         return HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + "pk-123456789")
                 .header("Content-Type", contentType)
+                .uri(URI.create(apiEndpoint + path));
+    }
+
+    private HttpRequest.Builder createRequestBuilder(final String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + "pk-123456789")
                 .uri(URI.create(apiEndpoint + path));
     }
 
@@ -224,15 +289,15 @@ public class HttpClientMock extends HttpClient {
     }
 
     public static class RequestResponse {
-        private final HttpResponse<String> response;
+        private final HttpResponse<?> response;
         private final HttpRequest request;
 
-        public RequestResponse(HttpRequest request, HttpResponse<String> response) {
+        public RequestResponse(HttpRequest request, HttpResponse<?> response) {
             this.response = response;
             this.request = request;
         }
 
-        public HttpResponse<String> getResponse() {
+        public HttpResponse<?> getResponse() {
             return response;
         }
 
@@ -249,6 +314,8 @@ public class HttpClientMock extends HttpClient {
         private int statusCode = 200;
         private String body = "null";
 
+        private byte[] bodyContent;
+
         private HttpResponseBuilder() {
         }
 
@@ -258,6 +325,11 @@ public class HttpClientMock extends HttpClient {
 
         public HttpResponseBuilder setBody(String body) {
             this.body = body;
+            return this;
+        }
+
+        public HttpResponseBuilder setBody(byte[] body) {
+            this.bodyContent = body;
             return this;
         }
 
@@ -280,10 +352,17 @@ public class HttpClientMock extends HttpClient {
         }
 
         public HttpResponse<String> build() {
-
             final HttpResponse<String> mockResponse = mock(HttpResponse.class);
             when(mockResponse.statusCode()).thenReturn(this.getStatusCode());
             when(mockResponse.body()).thenReturn(this.getBody());
+            return mockResponse;
+        }
+
+        public HttpResponse<byte[]> build2() {
+            final HttpResponse<byte[]> mockResponse = mock(HttpResponse.class);
+            when(mockResponse.statusCode()).thenReturn(this.getStatusCode());
+            when(mockResponse.body()).thenReturn(this.bodyContent);
+
             return mockResponse;
         }
     }
