@@ -33,6 +33,7 @@ public class FileDeleteResponse implements Response {
 
     /**
      * Builder for constructing FileDeleteResponse instances.
+     * @return builder
      */
     public static Builder builder() {
         return new Builder();

@@ -78,6 +78,7 @@ public class ModelListResponse implements Response {
      * The Builder class provides methods for constructing ModelListResponse objects.
      */
     public static class Builder {
+        private Builder(){}
 
         private String object;
         private List<ModelData> data;

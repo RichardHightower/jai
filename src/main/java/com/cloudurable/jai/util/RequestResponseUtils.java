@@ -235,6 +235,12 @@ public class RequestResponseUtils {
         }
     }
 
+    /**
+     * getFileUploadResponse
+     * @param transcriptionRequest transcriptionRequest
+     * @param response response
+     * @return ClientResponse
+     */
     public static ClientResponse<UploadFileRequest, FileData>
     getFileUploadResponse(UploadFileRequest transcriptionRequest, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -419,6 +425,12 @@ public class RequestResponseUtils {
         }
     }
 
+    /**
+     * getCreateFineTuneResponse
+     * @param request request
+     * @param response response
+     * @return ClientSuccessResponse
+     */
     public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData>
     getCreateFineTuneResponse(CreateFineTuneRequest request, HttpResponse<String> response) {
         if (isOk(response.statusCode())) {
@@ -447,6 +459,13 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * getCreateFineTuneResponseSuccess
+     * @param request request
+     * @param statusCode status code
+     * @param response response
+     * @return ClientSuccessResponse
+     */
     public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData> getCreateFineTuneResponseSuccess(CreateFineTuneRequest request,
                                                                                           int statusCode,
                                                                                                               FineTuneData response) {
@@ -473,6 +492,13 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * getCreateFineTuneNotOk
+     * @param request request
+     * @param statusCode status code
+     * @param status status message
+     * @return ClientSuccessResponse
+     */
     public static ClientSuccessResponse<CreateFineTuneRequest, FineTuneData> getCreateFineTuneNotOk(CreateFineTuneRequest request, int statusCode, String status) {
         ClientSuccessResponse.Builder<CreateFineTuneRequest, FineTuneData> builder = ClientSuccessResponse.builder();
         return builder.request(request)
@@ -495,6 +521,12 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * getErrorResponseForCreateFineTuneRequest
+     * @param e exception
+     * @param req request
+     * @return ClientResponse
+     */
     public static ClientResponse<CreateFineTuneRequest, FineTuneData> getErrorResponseForCreateFineTuneRequest(Throwable e, CreateFineTuneRequest req) {
         ClientErrorResponse.Builder<CreateFineTuneRequest, FineTuneData> builder = ClientErrorResponse.builder();
         return builder.exception(e)
@@ -544,6 +576,12 @@ public class RequestResponseUtils {
                 .build();
     }
 
+    /**
+     * getErrorResponseForUploadFileRequest
+     * @param e exception
+     * @param uploadFileRequest reqeust
+     * @return ClientResponse
+     */
     public static ClientResponse<UploadFileRequest, FileData> getErrorResponseForUploadFileRequest(Throwable e, UploadFileRequest uploadFileRequest) {
         ClientErrorResponse.Builder<UploadFileRequest, FileData> builder = ClientErrorResponse.builder();
         return builder.exception(e)

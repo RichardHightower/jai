@@ -79,6 +79,8 @@ public class FileListResponse implements Response {
      */
     public static class Builder {
 
+        private Builder(){}
+
         private String object;
         private List<FileData> data;
 

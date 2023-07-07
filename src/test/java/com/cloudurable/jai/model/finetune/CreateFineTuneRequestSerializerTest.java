@@ -23,7 +23,7 @@ public class CreateFineTuneRequestSerializerTest {
         float[] classificationBetas = {0.5f, 1.0f};
         String suffix = "custom-model";
 
-        CreateFineTuneRequest request = new CreateFineTuneRequest.Builder()
+        CreateFineTuneRequest request = CreateFineTuneRequest.builder()
                 .model(model)
                 .trainingFile(trainingFile)
                 .validationFile(validationFile)

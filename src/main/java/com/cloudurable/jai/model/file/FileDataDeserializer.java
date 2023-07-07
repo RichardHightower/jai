@@ -27,6 +27,11 @@ public class FileDataDeserializer {
         return getFileData(node);
     }
 
+    /**
+     * Create file data from objectNode
+     * @param objectNode objectNode
+     * @return FileData
+     */
     public static FileData getFileData(ObjectNode objectNode) {
         final FileData.Builder builder = FileData.builder();
         builder.object(objectNode.getString("object"));

@@ -35,7 +35,7 @@ public class ListFineTuneEventResponseDeserializer {
     }
 
     /**
-     * Deserializes a JSON array into a List<FineTuneEvent> list object.
+     * Deserializes a JSON array into a List&lt;FineTuneEvent&gt; list object.
      *
      * @param arrayNode The JSON string to deserialize.
      * @return The deserialized ListFineTuneEventResponse object.

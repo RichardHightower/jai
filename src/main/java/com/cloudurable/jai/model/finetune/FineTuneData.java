@@ -17,6 +17,9 @@ import java.util.Objects;
 
 import static com.cloudurable.jai.model.finetune.ListFineTuneEventResponseDeserializer.getEventData;
 
+/**
+ * Fine Tune Data.
+ */
 public class FineTuneData {
     private final String id;
     private final String object;

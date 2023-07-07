@@ -7,6 +7,9 @@ package com.cloudurable.jai.model.finetune;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * FineTuneEvent
+ */
 public class FineTuneEvent {
 
     private final String object;

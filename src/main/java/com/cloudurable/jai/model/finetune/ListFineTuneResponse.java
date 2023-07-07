@@ -78,7 +78,7 @@ public class ListFineTuneResponse implements Response {
      * The Builder class provides methods for constructing FileListResponse objects.
      */
     public static class Builder {
-
+        private Builder(){}
         private String object;
         private List<FineTuneData> data;
 

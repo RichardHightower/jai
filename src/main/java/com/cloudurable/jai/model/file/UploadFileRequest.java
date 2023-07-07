@@ -94,6 +94,8 @@ public class UploadFileRequest implements Request {
      * Builder for constructing UploadFileRequest instances.
      */
     public static class Builder {
+
+        private Builder(){}
         private String fileName;
         private byte[] fileContents;
         private String purpose;

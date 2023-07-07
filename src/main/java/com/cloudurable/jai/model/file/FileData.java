@@ -126,6 +126,11 @@ public class FileData {
         private Builder() {
         }
 
+        /**
+         * File name
+         * @param fileName file name
+         * @return builder
+         */
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;

@@ -79,6 +79,7 @@ public class ListFineTuneEventResponse implements Response {
      * The Builder class provides methods for constructing ListFineTuneEventResponse objects.
      */
     public static class Builder {
+        private Builder(){}
 
         private String object;
         private List<FineTuneEvent> data;

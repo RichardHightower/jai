@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
+/**
+ * CreateFineTuneRequest object.
+ */
 public class CreateFineTuneRequest implements Request {
 
     /**
@@ -186,50 +189,110 @@ public class CreateFineTuneRequest implements Request {
         return new Builder();
     }
 
+    /**
+     * Retrieves the model.
+     *
+     * @return The model.
+     */
     public String getModel() {
         return model;
     }
 
+    /**
+     * Retrieves the training file.
+     *
+     * @return The training file.
+     */
     public String getTrainingFile() {
         return trainingFile;
     }
 
+    /**
+     * Retrieves the validation file.
+     *
+     * @return The validation file.
+     */
     public String getValidationFile() {
         return validationFile;
     }
 
+    /**
+     * Retrieves the number of epochs.
+     *
+     * @return The number of epochs.
+     */
     public int getNEpochs() {
         return nEpochs;
     }
 
+    /**
+     * Retrieves the batch size.
+     *
+     * @return The batch size.
+     */
     public int getBatchSize() {
         return batchSize;
     }
 
+    /**
+     * Retrieves the learning rate multiplier.
+     *
+     * @return The learning rate multiplier.
+     */
     public float getLearningRateMultiplier() {
         return learningRateMultiplier;
     }
 
+    /**
+     * Retrieves the prompt loss weight.
+     *
+     * @return The prompt loss weight.
+     */
     public float getPromptLossWeight() {
         return promptLossWeight;
     }
 
+    /**
+     * Checks whether to compute classification metrics.
+     *
+     * @return True if classification metrics should be computed, false otherwise.
+     */
     public boolean isComputeClassificationMetrics() {
         return computeClassificationMetrics;
     }
 
+    /**
+     * Retrieves the number of classes for classification.
+     *
+     * @return The number of classes for classification.
+     */
     public int getClassificationNClasses() {
         return classificationNClasses;
     }
 
+    /**
+     * Retrieves the positive class for classification.
+     *
+     * @return The positive class for classification.
+     */
     public String getClassificationPositiveClass() {
         return classificationPositiveClass;
     }
 
+    /**
+     * Retrieves the betas for classification.
+     *
+     * @return The betas for classification.
+     */
     public float[] getClassificationBetas() {
         return classificationBetas;
     }
 
+    /**
+     * Retrieves the suffix.
+     *
+     * @return The suffix.
+     */
     public String getSuffix() {
         return suffix;
     }
@@ -274,6 +337,7 @@ public class CreateFineTuneRequest implements Request {
      * Builder for constructing UploadFileRequest instances.
      */
     public static class Builder {
+        private Builder(){}
 
         /**
          * model
