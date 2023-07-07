@@ -160,7 +160,7 @@ response.getStatusMessage().ifPresent(
 | 8.4 | Get Fine Tuning                     | DONE   |          | 
 | 8.5 | Cancel Fine Tuning                  | DONE   |          | 
 | 8.6 | List Fine Tuning Events             | DONE   |          | 
-| 9.  | Add support for creating moderation |        | 1        | 
+| 9.  | Add support for creating moderation | DONE   | 1        | 
 | 10. | Create examples with chat streaming |        |          | 
 | 11. | Create examples with chat functions |        |          | 
 
