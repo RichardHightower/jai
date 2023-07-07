@@ -101,7 +101,7 @@ public class Parameter {
          * @param name the name of the parameter
          * @return the Builder instance
          */
-        public Builder setName(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
@@ -112,7 +112,7 @@ public class Parameter {
          * @param type the type of the parameter
          * @return the Builder instance
          */
-        public Builder setType(ParameterType type) {
+        public Builder type(ParameterType type) {
             this.type = type;
             return this;
         }

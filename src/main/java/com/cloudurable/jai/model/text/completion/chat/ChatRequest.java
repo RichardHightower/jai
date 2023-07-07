@@ -54,6 +54,9 @@ import java.util.*;
  * logitBias (map, optional): Modifies the likelihood of specific tokens appearing in the completion. It accepts a JSON object
  */
 public class ChatRequest extends CommonCompletionRequest {
+
+    public static FunctionalCall AUTO = FunctionalCall.builder().setName("AUTO").build();
+
     private final List<Message> messages;
     private final List<Function> functions;
     private final FunctionalCall functionalCall;
@@ -183,6 +186,8 @@ public class ChatRequest extends CommonCompletionRequest {
         return Objects.hash(getModel(), messages, functions, functionalCall, getTemperature(), getTopP(),
                 isStream(), getStop(), getMaxTokens(), getPresencePenalty(), getFrequencyPenalty(), getLogitBias(), getUser());
     }
+
+
 
     /**
      * Builder class for constructing ChatRequest objects.

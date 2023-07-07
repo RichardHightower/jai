@@ -1,5 +1,8 @@
 package com.cloudurable.jai.model.text.completion.chat.function;
 
+import com.cloudurable.jai.model.file.FileData;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,7 +73,7 @@ public class ObjectParameter extends Parameter {
      */
     public static class ObjectParameterBuilder {
         private String name;
-        private ParameterType type;
+        private ParameterType type = ParameterType.OBJECT;
         private List<Parameter> parameters;
 
         private ObjectParameterBuilder() {
@@ -82,7 +85,7 @@ public class ObjectParameter extends Parameter {
          * @param name the name of the object parameter
          * @return the Builder instance
          */
-        public ObjectParameterBuilder setName(String name) {
+        public ObjectParameterBuilder name(String name) {
             this.name = name;
             return this;
         }
@@ -93,7 +96,7 @@ public class ObjectParameter extends Parameter {
          * @param type the type of the object parameter
          * @return the Builder instance
          */
-        public ObjectParameterBuilder setType(ParameterType type) {
+        public ObjectParameterBuilder type(ParameterType type) {
             this.type = type;
             return this;
         }
@@ -104,9 +107,21 @@ public class ObjectParameter extends Parameter {
          * @param parameters the list of parameters for the object parameter
          * @return the Builder instance
          */
-        public ObjectParameterBuilder setParameters(List<Parameter> parameters) {
+        public ObjectParameterBuilder parameters(List<Parameter> parameters) {
             this.parameters = parameters;
             return this;
+        }
+
+        public List<Parameter> getParameters() {
+            if (parameters == null) {
+                parameters = new ArrayList<>();
+            }
+            return parameters;
+        }
+
+        public ObjectParameterBuilder addParameter(Parameter parameter) {
+             getParameters().add(parameter);
+             return this;
         }
 
         /**
@@ -117,5 +132,7 @@ public class ObjectParameter extends Parameter {
         public ObjectParameter build() {
             return new ObjectParameter(this.name, this.type, this.parameters);
         }
+
+
     }
 }

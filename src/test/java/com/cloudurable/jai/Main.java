@@ -5,7 +5,6 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
-import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
@@ -14,6 +13,7 @@ import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.completion.chat.Message;
 import com.cloudurable.jai.model.text.completion.chat.Role;
+import com.cloudurable.jai.model.text.completion.chat.function.*;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
@@ -24,27 +24,31 @@ import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
-            listFiles();
-            final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
-
-            uploadFile(new File("prompts.jsonl"));
-
-            Thread.sleep(1000);
-            listFiles();
-            FileData fileData = client.listFiles().getData().get(0);
-            getFileDataAsync(fileData.getId());
-
-            final String contents = getFileContents(fileData.getId());
-            System.out.println(contents);
+            chatWithFunctions();
 
 
-            client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
-            listFiles();
+//            listFiles();
+//            final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+//
+//            uploadFile(new File("prompts.jsonl"));
+//
+//            Thread.sleep(1000);
+//            listFiles();
+//            FileData fileData = client.listFiles().getData().get(0);
+//            getFileDataAsync(fileData.getId());
+//
+//            final String contents = getFileContents(fileData.getId());
+//            System.out.println(contents);
+//
+//
+//            client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
+//            listFiles();
 
 
 //            listFilesAsync();
@@ -79,6 +83,50 @@ public class Main {
         }
 
 
+    }
+
+
+    private static void chatWithFunctions() throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        Function getCurrentWeatherFunc = Function.builder().name("get_current_weather").setParameters(
+                ObjectParameter.objectParamBuilder()
+                        .addParameter(Parameter.builder().type(ParameterType.STRING).name("location").build())
+                        .addParameter(Parameter.builder().type(ParameterType.STRING).name("unit").build())
+                        //.setParameters()
+                        .build()
+
+        ).build();
+
+
+
+        // messages = [{"role": "user", "content": "What's the weather like in Boston?"}]
+
+        ChatRequest chatRequest = ChatRequest.builder().model("gpt-3.5-turbo-0613")
+                .addMessage(Message.builder().role(Role.USER).content("What's the weather like in Boston?").build())
+                .addFunction(getCurrentWeatherFunc)
+                .functionalCall(ChatRequest.AUTO)
+                .build();
+
+        ClientResponse<ChatRequest, ChatResponse> chat = client.chat(chatRequest);
+
+        chat.getResponse().ifPresent(new Consumer<ChatResponse>() {
+            @Override
+            public void accept(ChatResponse chatResponse) {
+
+                // response_message = response["choices"][0]["message"]
+                var responseMessage = chatResponse.getChoices().get(0).getMessage();
+                var functionCall = responseMessage.getFunctionCall();
+                if (functionCall!=null) {
+                    if ("get_current_weather".equals(functionCall.getName())) {
+                        System.out.println("GOT IT " + functionCall);
+                    }
+                }
+            }
+        });
+
+        System.out.println(chat.getStatusCode().orElse(666));
+        System.out.println(chat.getStatusMessage().orElse(""));
     }
 
     private static void uploadFile(File file) throws ExecutionException, InterruptedException {

@@ -78,12 +78,12 @@ public class ChatRequestSerializer {
                 jsonBodyBuilder.startNestedObjectElement();
                 jsonBodyBuilder.addAttribute("name", function.getName());
                 jsonBodyBuilder.startNestedArrayAttribute("parameters");
-                List<Parameter> parameters = function.getParameters();
-                for (Parameter parameter : parameters) {
-                    jsonBodyBuilder.startNestedObjectElement();
-                    jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
-                    jsonBodyBuilder.endObject();
-                }
+//                List<Parameter> parameters = function.getParameters();
+//                for (Parameter parameter : parameters) {
+//                    jsonBodyBuilder.startNestedObjectElement();
+//                    jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
+//                    jsonBodyBuilder.endObject();
+//                }
                 jsonBodyBuilder.endArray();
                 jsonBodyBuilder.endObject();
             }

@@ -13,15 +13,15 @@ class ObjectParameterTest {
     void testObjectParameterBuilder() {
         // Create a list of parameters
         List<Parameter> parameters = Arrays.asList(
-                Parameter.builder().setName("param1").setType(ParameterType.STRING).build(),
-                Parameter.builder().setName("param2").setType(ParameterType.NUMBER).build()
+                Parameter.builder().name("param1").type(ParameterType.STRING).build(),
+                Parameter.builder().name("param2").type(ParameterType.NUMBER).build()
         );
 
         // Create an ObjectParameter using the builder
         ObjectParameter objectParameter = ObjectParameter.objectParamBuilder()
-                .setName("objectParam")
-                .setType(ParameterType.OBJECT)
-                .setParameters(parameters)
+                .name("objectParam")
+                .type(ParameterType.OBJECT)
+                .parameters(parameters)
                 .build();
 
         // Verify the values of the ObjectParameter
@@ -34,23 +34,23 @@ class ObjectParameterTest {
     void testObjectParameterEquality() {
         // Create two ObjectParameters with the same values
         List<Parameter> parameters1 = Arrays.asList(
-                Parameter.builder().setName("param1").setType(ParameterType.STRING).build(),
-                Parameter.builder().setName("param2").setType(ParameterType.NUMBER).build()
+                Parameter.builder().name("param1").type(ParameterType.STRING).build(),
+                Parameter.builder().name("param2").type(ParameterType.NUMBER).build()
         );
         List<Parameter> parameters2 = Arrays.asList(
-                Parameter.builder().setName("param1").setType(ParameterType.STRING).build(),
-                Parameter.builder().setName("param2").setType(ParameterType.NUMBER).build()
+                Parameter.builder().name("param1").type(ParameterType.STRING).build(),
+                Parameter.builder().name("param2").type(ParameterType.NUMBER).build()
         );
 
         ObjectParameter objectParameter1 = ObjectParameter.objectParamBuilder()
-                .setName("objectParam")
-                .setType(ParameterType.OBJECT)
-                .setParameters(parameters1)
+                .name("objectParam")
+                .type(ParameterType.OBJECT)
+                .parameters(parameters1)
                 .build();
         ObjectParameter objectParameter2 = ObjectParameter.objectParamBuilder()
-                .setName("objectParam")
-                .setType(ParameterType.OBJECT)
-                .setParameters(parameters2)
+                .name("objectParam")
+                .type(ParameterType.OBJECT)
+                .parameters(parameters2)
                 .build();
 
         // Verify that the two ObjectParameters are equal
