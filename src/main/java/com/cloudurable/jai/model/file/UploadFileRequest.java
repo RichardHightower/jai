@@ -31,6 +31,15 @@ public class UploadFileRequest implements Request {
     }
 
     /**
+     * Returns a new instance of the Builder for constructing UploadFileRequest objects.
+     *
+     * @return a new instance of the Builder
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Returns the name of the file.
      *
      * @return the name of the file
@@ -82,18 +91,11 @@ public class UploadFileRequest implements Request {
     }
 
     /**
-     * Returns a new instance of the Builder for constructing UploadFileRequest objects.
-     *
-     * @return a new instance of the Builder
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder for constructing UploadFileRequest instances.
      */
     public static class Builder {
+
+        private Builder(){}
         private String fileName;
         private byte[] fileContents;
         private String purpose;

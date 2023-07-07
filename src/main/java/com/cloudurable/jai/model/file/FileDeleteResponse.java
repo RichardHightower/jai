@@ -1,15 +1,16 @@
 package com.cloudurable.jai.model.file;
 
 import com.cloudurable.jai.model.Response;
+
 import java.util.Objects;
 
 /**
  * Represents a file delete response.
- *
+ * <p>
  * {
- *   "id": "file-XjGxS3KTG0uNmNOK362iJua3",
- *   "object": "file",
- *   "deleted": true
+ * "id": "file-XjGxS3KTG0uNmNOK362iJua3",
+ * "object": "file",
+ * "deleted": true
  * }
  */
 public class FileDeleteResponse implements Response {
@@ -28,6 +29,14 @@ public class FileDeleteResponse implements Response {
         this.id = id;
         this.object = object;
         this.deleted = deleted;
+    }
+
+    /**
+     * Builder for constructing FileDeleteResponse instances.
+     * @return builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -82,17 +91,13 @@ public class FileDeleteResponse implements Response {
     /**
      * Builder for constructing FileDeleteResponse instances.
      */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Builder for constructing FileDeleteResponse instances.
-     */
     public static class Builder {
         private String id;
         private String object;
         private boolean deleted;
+
+        private Builder() {
+        }
 
         /**
          * Sets the ID of the file.
@@ -126,8 +131,6 @@ public class FileDeleteResponse implements Response {
             this.deleted = deleted;
             return this;
         }
-
-        private Builder() {}
 
         /**
          * Builds a new instance of FileDeleteResponse using the configured values.

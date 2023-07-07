@@ -70,7 +70,7 @@ public class JsonSerializer {
     /**
      * Starts a new JSON list.
      */
-    public void startList() {
+    public void startArray() {
         stack.push(0);
         builder.append('[');
     }
@@ -78,7 +78,7 @@ public class JsonSerializer {
     /**
      * Ends the current JSON list.
      */
-    public void endList() {
+    public void endArray() {
         stack.pop();
         builder.append(']');
     }
@@ -101,7 +101,7 @@ public class JsonSerializer {
      *
      * @param name The name of the attribute.
      */
-    public void startNestedListAttribute(String name) {
+    public void startNestedArrayAttribute(String name) {
         trackAndAddCommaIfNeeded();
         addAttributeName(name);
         builder.append(':');
@@ -208,6 +208,34 @@ public class JsonSerializer {
         if (value == null) {
             builder.append(':').append("null");
         } else {
+            builder.append(":\"").append(value).append('"');
+        }
+    }
+
+    /**
+     * Adds a JSON attribute to the current object.
+     *
+     * @param name  The name of the attribute.
+     * @param value The value of the attribute.
+     */
+    public void addAttributeIf(String name, String value) {
+        if (value != null && !value.isBlank()) {
+            trackAndAddCommaIfNeeded();
+            addAttributeName(name);
+            builder.append(":\"").append(value).append('"');
+        }
+    }
+
+    /**
+     * Adds a JSON attribute to the current object.
+     *
+     * @param name  The name of the attribute.
+     * @param value The value of the attribute.
+     */
+    public void addAttributeIf(String name, Number value) {
+        if (value != null) {
+            trackAndAddCommaIfNeeded();
+            addAttributeName(name);
             builder.append(":\"").append(value).append('"');
         }
     }

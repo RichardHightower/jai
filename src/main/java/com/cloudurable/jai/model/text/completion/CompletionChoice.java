@@ -80,6 +80,7 @@ public class CompletionChoice extends Choice {
         private FinishReason finishReason;
         private String text;
         private List<Integer> logprobs;
+
         private Builder() {
         }
 

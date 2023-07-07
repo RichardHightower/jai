@@ -1,9 +1,10 @@
 package com.cloudurable.jai.model.file;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDataTest {
 

@@ -8,6 +8,7 @@ import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDeleteResponse;
 import com.cloudurable.jai.model.file.FileListResponse;
 import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.*;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -33,23 +34,114 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
  * <p>Note that these methods are synchronous, meaning they will block until a response is received from the client.</p>
  */
 public interface Client {
-
+    /**
+     * Retrieves a list of models.
+     *
+     * @return The response containing the list of models.
+     */
     ModelListResponse listModels();
 
+    /**
+     * Retrieves information about a specific model.
+     *
+     * @param id The ID of the model.
+     * @return The response containing the model data.
+     */
     ModelData getModel(String id);
 
-
+    /**
+     * Retrieves a list of files.
+     *
+     * @return The response containing the list of files.
+     */
     FileListResponse listFiles();
 
+    /**
+     * Retrieves data about a specific file.
+     *
+     * @param id The ID of the file.
+     * @return The response containing the file data.
+     */
     FileData getFileData(String id);
 
+    /**
+     * Uploads a file to the JAI system.
+     *
+     * @param uploadFileRequest The request containing the file to upload.
+     * @return The response containing the uploaded file data.
+     */
     ClientResponse<UploadFileRequest, FileData> uploadFile(UploadFileRequest uploadFileRequest);
 
+    /**
+     * Retrieves the binary content of a file.
+     *
+     * @param id The ID of the file.
+     * @return The binary content of the file.
+     */
     byte[] getFileContentBinary(String id);
 
+    /**
+     * Retrieves the string content of a file.
+     *
+     * @param id The ID of the file.
+     * @return The string content of the file.
+     */
     String getFileContentString(String id);
 
+    /**
+     * Deletes a file.
+     *
+     * @param id The ID of the file to delete.
+     * @return The response containing the file delete status.
+     */
     FileDeleteResponse deleteFile(String id);
+
+    /**
+     * Retrieves a list of fine tunes.
+     *
+     * @return The response containing the list of fine tunes.
+     */
+    ListFineTuneResponse listFineTunes();
+
+    /**
+     * Retrieves a list of fine tune events for a specific fine tune.
+     *
+     * @param id The ID of the fine tune.
+     * @return The response containing the list of fine tune events.
+     */
+    ListFineTuneEventResponse listFineTuneEvents(String id);
+
+    /**
+     * Retrieves data about a specific fine tune.
+     *
+     * @param id The ID of the fine tune.
+     * @return The response containing the fine tune data.
+     */
+    FineTuneData getFineTuneData(String id);
+
+    /**
+     * Creates a new fine tune.
+     *
+     * @param createFineTuneRequest The request containing the fine tune parameters.
+     * @return The response containing the created fine tune data.
+     */
+    ClientResponse<CreateFineTuneRequest, FineTuneData> createFineTune(CreateFineTuneRequest createFineTuneRequest);
+
+    /**
+     * Deletes a fine tune.
+     *
+     * @param id The ID of the fine tune to delete.
+     * @return The response containing the fine tune delete status.
+     */
+    DeleteFineTuneResponse deleteFineTune(String id);
+
+    /**
+     * Cancels a fine tune in progress.
+     *
+     * @param id The ID of the fine tune to cancel.
+     * @return The fine tune data with the updated status.
+     */
+    FineTuneData cancelFineTune(String id);
 
     /**
      * Sends a chat request and retrieves the corresponding chat response.

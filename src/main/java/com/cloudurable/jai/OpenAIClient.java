@@ -10,6 +10,7 @@ import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
 import com.cloudurable.jai.model.file.*;
+import com.cloudurable.jai.model.finetune.*;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.model.ModelData;
 import com.cloudurable.jai.model.model.ModelDataDeserializer;
@@ -153,7 +154,6 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
 
-
     @Override
     public CompletableFuture<FileListResponse> listFilesAsync() {
         final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files");
@@ -232,7 +232,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
 
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
-                    .thenApply(r->RequestResponseUtils.getFileUploadResponse(uploadFileRequest, r))
+                    .thenApply(r -> RequestResponseUtils.getFileUploadResponse(uploadFileRequest, r))
                     .exceptionally(e -> RequestResponseUtils.getErrorResponseForUploadFileRequest(e, uploadFileRequest));
 
         } catch (Exception ex) {
@@ -240,9 +240,10 @@ public class OpenAIClient implements Client, ClientAsync {
         }
     }
 
+
     @Override
     public byte[] getFileContentBinary(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
@@ -254,7 +255,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public String getFileContentString(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -267,7 +268,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<byte[]> getFileContentBinaryAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).thenApply(HttpResponse::body);
@@ -278,7 +279,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<String> getFileContentStringAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/files/" + id + "/content");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGetNoContent("/files/" + id + "/content");
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body);
@@ -286,7 +287,6 @@ public class OpenAIClient implements Client, ClientAsync {
             return CompletableFuture.failedFuture(e);
         }
     }
-
 
 
     @Override
@@ -300,6 +300,165 @@ public class OpenAIClient implements Client, ClientAsync {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public ListFineTuneResponse listFineTunes() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return ListFineTuneResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public CompletableFuture<ListFineTuneResponse> listFineTunesAsync() {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> ListFineTuneResponseDeserializer.deserialize(response.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<ListFineTuneEventResponse> listFineTuneEventsAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id + "/events");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> ListFineTuneEventResponseDeserializer.deserialize(response.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+
+    @Override
+    public ListFineTuneEventResponse listFineTuneEvents(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id + "/events");
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return ListFineTuneEventResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<FineTuneData> getFineTuneDataAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id );
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> FineTuneDataDeserializer.deserialize(response.body()));
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+
+    @Override
+    public FineTuneData getFineTuneData(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id );
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return FineTuneDataDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public DeleteFineTuneResponse deleteFineTune(String id) {
+
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/models/" + id).DELETE();
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return DeleteFineTuneResponseDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<DeleteFineTuneResponse> deleteFineTuneAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/models/" + id).DELETE();
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                     .thenApply(response -> DeleteFineTuneResponseDeserializer.deserialize(response.body()));
+
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public CompletableFuture<FineTuneData> cancelFineTuneAsync(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/fine-tunes/" + id + "/cancel").POST(HttpRequest.BodyPublishers.ofString(""));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> FineTuneDataDeserializer.deserialize(response.body()));
+        } catch (Exception e) {
+           return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public FineTuneData cancelFineTune(String id) {
+        final HttpRequest.Builder requestBuilder = createRequestBuilder("/fine-tunes/" + id + "/cancel").POST(HttpRequest.BodyPublishers.ofString(""));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return FineTuneDataDeserializer.deserialize(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public CompletableFuture<ClientResponse<CreateFineTuneRequest, FineTuneData>> createFineTuneAsync(CreateFineTuneRequest createFineTuneRequest) {
+        final String jsonRequest = CreateFineTuneRequestSerializer.serialize(createFineTuneRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/fine-tunes")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                     .thenApply(response -> getCreateFineTuneResponse(createFineTuneRequest, response));
+
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    @Override
+    public ClientResponse<CreateFineTuneRequest, FineTuneData> createFineTune(CreateFineTuneRequest createFineTuneRequest) {
+        final String jsonRequest = CreateFineTuneRequestSerializer.serialize(createFineTuneRequest);
+        // Build and send the HTTP request
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/fine-tunes")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getCreateFineTuneResponse(createFineTuneRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForCreateFineTuneRequest(e, createFineTuneRequest);
+        }
+    }
+
 
     @Override
     public CompletableFuture<FileDeleteResponse> deleteFileAsync(String id) {
@@ -330,6 +489,12 @@ public class OpenAIClient implements Client, ClientAsync {
         return HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + apiKey.getSecret())
                 .header("Content-Type", "application/json")
+                .uri(URI.create(apiEndpoint + path)).GET();
+    }
+
+    private HttpRequest.Builder createRequestBuilderGetNoContent(String path) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + apiKey.getSecret())
                 .uri(URI.create(apiEndpoint + path)).GET();
     }
 
@@ -412,7 +577,7 @@ public class OpenAIClient implements Client, ClientAsync {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getEditResponse(editRequest, response);
         } catch (Exception e) {
-            return getErrorResponseForEditRequest(e, editRequest);
+            return getErrorResponseForCreateFineTuneRequest(e, editRequest);
         }
     }
 
@@ -634,7 +799,7 @@ public class OpenAIClient implements Client, ClientAsync {
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<EditRequest, EditResponse>>) response ->
                         getEditResponse(editRequest, response)).exceptionally(e ->
-                        getErrorResponseForEditRequest(e, editRequest));
+                        getErrorResponseForCreateFineTuneRequest(e, editRequest));
     }
 
 

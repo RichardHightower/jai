@@ -8,6 +8,7 @@ import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.FileDeleteResponse;
 import com.cloudurable.jai.model.file.FileListResponse;
 import com.cloudurable.jai.model.file.UploadFileRequest;
+import com.cloudurable.jai.model.finetune.*;
 import com.cloudurable.jai.model.image.CreateImageRequest;
 import com.cloudurable.jai.model.image.CreateImageVariationRequest;
 import com.cloudurable.jai.model.image.EditImageRequest;
@@ -32,22 +33,114 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface ClientAsync {
 
+    /**
+     * Retrieves a list of models asynchronously.
+     *
+     * @return A CompletableFuture that resolves to the response containing the list of models.
+     */
     CompletableFuture<ModelListResponse> listModelsAsync();
 
+    /**
+     * Retrieves information about a specific model asynchronously.
+     *
+     * @param id The ID of the model.
+     * @return A CompletableFuture that resolves to the response containing the model data.
+     */
     CompletableFuture<ModelData> getModelAsync(String id);
 
+    /**
+     * Retrieves a list of files asynchronously.
+     *
+     * @return A CompletableFuture that resolves to the response containing the list of files.
+     */
     CompletableFuture<FileListResponse> listFilesAsync();
 
+    /**
+     * Retrieves data about a specific file asynchronously.
+     *
+     * @param id The ID of the file.
+     * @return A CompletableFuture that resolves to the response containing the file data.
+     */
     CompletableFuture<FileData> getFileDataAsync(String id);
 
+    /**
+     * Deletes a file asynchronously.
+     *
+     * @param id The ID of the file to delete.
+     * @return A CompletableFuture that resolves to the response containing the file delete status.
+     */
     CompletableFuture<FileDeleteResponse> deleteFileAsync(String id);
 
-
+    /**
+     * Retrieves the binary content of a file asynchronously.
+     *
+     * @param id The ID of the file.
+     * @return A CompletableFuture that resolves to the binary content of the file.
+     */
     CompletableFuture<byte[]> getFileContentBinaryAsync(String id);
 
+    /**
+     * Retrieves the string content of a file asynchronously.
+     *
+     * @param id The ID of the file.
+     * @return A CompletableFuture that resolves to the string content of the file.
+     */
     CompletableFuture<String> getFileContentStringAsync(String id);
 
+    /**
+     * Uploads a file to the JAI system asynchronously.
+     *
+     * @param uploadFileRequest The request containing the file to upload.
+     * @return A CompletableFuture that resolves to the response containing the uploaded file data.
+     */
     CompletableFuture<ClientResponse<UploadFileRequest, FileData>> uploadFileAsync(UploadFileRequest uploadFileRequest);
+
+    /**
+     * Retrieves a list of fine tunes asynchronously.
+     *
+     * @return A CompletableFuture that resolves to the response containing the list of fine tunes.
+     */
+    CompletableFuture<ListFineTuneResponse> listFineTunesAsync();
+
+    /**
+     * Retrieves a list of fine tune events for a specific fine tune asynchronously.
+     *
+     * @param id The ID of the fine tune.
+     * @return A CompletableFuture that resolves to the response containing the list of fine tune events.
+     */
+    CompletableFuture<ListFineTuneEventResponse> listFineTuneEventsAsync(String id);
+
+    /**
+     * Retrieves data about a specific fine tune asynchronously.
+     *
+     * @param id The ID of the fine tune.
+     * @return A CompletableFuture that resolves to the response containing the fine tune data.
+     */
+    CompletableFuture<FineTuneData> getFineTuneDataAsync(String id);
+
+    /**
+     * Creates a new fine tune asynchronously.
+     *
+     * @param createFineTuneRequest The request containing the fine tune parameters.
+     * @return A CompletableFuture that resolves to the response containing the created fine tune data.
+     */
+    CompletableFuture<ClientResponse<CreateFineTuneRequest, FineTuneData>> createFineTuneAsync(CreateFineTuneRequest createFineTuneRequest);
+
+    /**
+     * Deletes a fine tune asynchronously.
+     *
+     * @param id The ID of the fine tune to delete.
+     * @return A CompletableFuture that resolves to the response containing the fine tune delete status.
+     */
+    CompletableFuture<DeleteFineTuneResponse> deleteFineTuneAsync(String id);
+
+    /**
+     * Cancels a fine tune in progress asynchronously.
+     *
+     * @param id The ID of the fine tune to cancel.
+     * @return A CompletableFuture that resolves to the fine tune data with the updated status.
+     */
+    CompletableFuture<FineTuneData> cancelFineTuneAsync(String id);
 
     /**
      * Asynchronously performs a chat request.

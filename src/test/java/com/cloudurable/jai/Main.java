@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
@@ -44,9 +43,8 @@ public class Main {
             System.out.println(contents);
 
 
-             client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
+            client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
             listFiles();
-
 
 
 //            listFilesAsync();
@@ -87,6 +85,7 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         System.out.println(client.uploadFile(UploadFileRequest.builder().file(file).purpose("fine-tune").build()));
     }
+
     private static void getModelAsync(String s) throws ExecutionException, InterruptedException {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         System.out.println(client.getModelAsync(s).get());
@@ -97,7 +96,7 @@ public class Main {
         System.out.println(client.getFileDataAsync(s).get());
     }
 
-    private static String  getFileContents(String s) throws ExecutionException, InterruptedException {
+    private static String getFileContents(String s) throws ExecutionException, InterruptedException {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         return client.getFileContentString(s);
     }
@@ -127,6 +126,7 @@ public class Main {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         System.out.println(client.getFileData(s));
     }
+
     private static void listModels() throws Exception {
         final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
         client.listModels().getData().forEach(modelData -> System.out.println(modelData.getId()));
