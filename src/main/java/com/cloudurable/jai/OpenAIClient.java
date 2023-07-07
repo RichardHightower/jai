@@ -16,6 +16,9 @@ import com.cloudurable.jai.model.model.ModelData;
 import com.cloudurable.jai.model.model.ModelDataDeserializer;
 import com.cloudurable.jai.model.model.ModelListResponse;
 import com.cloudurable.jai.model.model.ModelListResponseDeserializer;
+import com.cloudurable.jai.model.moderation.CreateModerationRequest;
+import com.cloudurable.jai.model.moderation.CreateModerationRequestSerializer;
+import com.cloudurable.jai.model.moderation.CreateModerationResponse;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionRequestSerializer;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
@@ -118,6 +121,39 @@ public class OpenAIClient implements Client, ClientAsync {
 
 
     @Override
+    public CompletableFuture<ClientResponse<CreateModerationRequest, CreateModerationResponse>> moderateAsync(CreateModerationRequest moderationRequest) {
+        final String jsonRequest = CreateModerationRequestSerializer.serialize(moderationRequest);
+
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/moderations")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> getCreateModerationResponse(moderationRequest, response));
+
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+
+    @Override
+    public ClientResponse<CreateModerationRequest, CreateModerationResponse> moderate(CreateModerationRequest moderationRequest) {
+
+        final String jsonRequest = CreateModerationRequestSerializer.serialize(moderationRequest);
+
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/moderations")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
+        final HttpRequest request = requestBuilder.build();
+        try {
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return getCreateModerationResponse(moderationRequest, response);
+        } catch (Exception e) {
+            return getErrorResponseForCreateModerationRequest(e, moderationRequest);
+        }
+    }
+
+    @Override
     public CompletableFuture<ModelListResponse> listModelsAsync() {
         final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/models");
         final HttpRequest request = requestBuilder.build();
@@ -165,6 +201,7 @@ public class OpenAIClient implements Client, ClientAsync {
             return CompletableFuture.failedFuture(e);
         }
     }
+
 
     @Override
     public ModelListResponse listModels() {
@@ -328,7 +365,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<ListFineTuneEventResponse> listFineTuneEventsAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id + "/events");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/" + id + "/events");
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -341,7 +378,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public ListFineTuneEventResponse listFineTuneEvents(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id + "/events");
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/" + id + "/events");
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -353,7 +390,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<FineTuneData> getFineTuneDataAsync(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id );
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/" + id);
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -366,7 +403,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public FineTuneData getFineTuneData(String id) {
-        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/"+id );
+        final HttpRequest.Builder requestBuilder = createRequestBuilderGet("/fine-tunes/" + id);
         final HttpRequest request = requestBuilder.build();
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -396,7 +433,7 @@ public class OpenAIClient implements Client, ClientAsync {
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                     .thenApply(response -> DeleteFineTuneResponseDeserializer.deserialize(response.body()));
+                    .thenApply(response -> DeleteFineTuneResponseDeserializer.deserialize(response.body()));
 
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
@@ -411,7 +448,7 @@ public class OpenAIClient implements Client, ClientAsync {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(response -> FineTuneDataDeserializer.deserialize(response.body()));
         } catch (Exception e) {
-           return CompletableFuture.failedFuture(e);
+            return CompletableFuture.failedFuture(e);
         }
     }
 
@@ -437,7 +474,7 @@ public class OpenAIClient implements Client, ClientAsync {
         final HttpRequest request = requestBuilder.build();
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                     .thenApply(response -> getCreateFineTuneResponse(createFineTuneRequest, response));
+                    .thenApply(response -> getCreateFineTuneResponse(createFineTuneRequest, response));
 
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);

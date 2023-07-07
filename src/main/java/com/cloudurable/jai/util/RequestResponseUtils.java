@@ -13,6 +13,9 @@ import com.cloudurable.jai.model.finetune.CreateFineTuneRequest;
 import com.cloudurable.jai.model.finetune.FineTuneData;
 import com.cloudurable.jai.model.finetune.FineTuneDataDeserializer;
 import com.cloudurable.jai.model.image.*;
+import com.cloudurable.jai.model.moderation.CreateModerationRequest;
+import com.cloudurable.jai.model.moderation.CreateModerationResponse;
+import com.cloudurable.jai.model.moderation.CreateModerationResponseDeserializer;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.CompletionResponseDeserializer;
@@ -282,6 +285,27 @@ public class RequestResponseUtils {
         }
     }
 
+
+    public static ClientResponse<CreateModerationRequest, CreateModerationResponse>
+    getCreateModerationResponse(CreateModerationRequest cRequest, HttpResponse<String> response) {
+        if (isOk(response.statusCode())) {
+            ClientSuccessResponse.Builder<CreateModerationRequest, CreateModerationResponse> builder = ClientSuccessResponse.builder();
+            CreateModerationResponse modResponse = CreateModerationResponseDeserializer.deserialize(response.body());
+
+            return builder
+                    .request(cRequest)
+                    .response(modResponse)
+                    .statusCode(response.statusCode())
+                    .build();
+        } else {
+            ClientSuccessResponse.Builder<CreateModerationRequest, CreateModerationResponse> builder = ClientSuccessResponse.builder();
+            return builder.request(cRequest)
+                    .statusCode(response.statusCode())
+                    .statusMessage(response.body())
+                    .build();
+        }
+    }
+
     /**
      * getEditImageResponse
      *
@@ -343,6 +367,22 @@ public class RequestResponseUtils {
         ClientErrorResponse.Builder<CreateImageRequest, ImageResponse> builder = ClientErrorResponse.builder();
         return builder.exception(e)
                 .request(createImageRequest)
+                .build();
+    }
+
+
+    /**
+     * getErrorResponseForCreateModerationRequest
+     *
+     * @param e                  exception
+     * @param request  mod request
+     * @return cilent response
+     */
+    public static ClientResponse<CreateModerationRequest, CreateModerationResponse>
+    getErrorResponseForCreateModerationRequest(Throwable e, CreateModerationRequest request) {
+        ClientErrorResponse.Builder<CreateModerationRequest, CreateModerationResponse> builder = ClientErrorResponse.builder();
+        return builder.exception(e)
+                .request(request)
                 .build();
     }
 

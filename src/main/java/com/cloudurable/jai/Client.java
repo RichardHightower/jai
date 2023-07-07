@@ -15,6 +15,8 @@ import com.cloudurable.jai.model.image.EditImageRequest;
 import com.cloudurable.jai.model.image.ImageResponse;
 import com.cloudurable.jai.model.model.ModelData;
 import com.cloudurable.jai.model.model.ModelListResponse;
+import com.cloudurable.jai.model.moderation.CreateModerationRequest;
+import com.cloudurable.jai.model.moderation.CreateModerationResponse;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
 import com.cloudurable.jai.model.text.completion.CompletionResponse;
 import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
@@ -34,6 +36,15 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
  * <p>Note that these methods are synchronous, meaning they will block until a response is received from the client.</p>
  */
 public interface Client {
+
+
+    /**
+     * Moderation
+     * @param moderationRequest moderationRequest
+     * @return results.
+     */
+    ClientResponse<CreateModerationRequest, CreateModerationResponse> moderate(CreateModerationRequest moderationRequest);
+
     /**
      * Retrieves a list of models.
      *
