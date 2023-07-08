@@ -2,7 +2,9 @@ package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.Usage;
 import com.cloudurable.jai.model.text.DeserializerUtils;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 import io.nats.jparse.node.ArrayNode;
+import io.nats.jparse.node.NullNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
 import io.nats.jparse.parser.JsonParserBuilder;
@@ -82,12 +84,23 @@ public class ChatResponseDeserializer {
 
     private static Message deserializeMessage(ObjectNode message) {
         Message.Builder builder = Message.builder();
-        builder.content(message.getString("content"));
+        if (message.containsKey("content")) {
+            if (!(message.get("content") instanceof NullNode)) {
+                builder.content(message.getString("content"));
+            }
+        }
         if (message.get("name") != null) {
             builder.name(message.getString("name"));
         }
         builder.role(deserializeRole(message.getString("role")));
-        //TODO builder.setFunctionCall(deserializeFunctionCall(message.getObjectNode("function_call")));
+
+        if (message.containsKey("function_call")) {
+
+            ObjectNode objectNode = message.getObjectNode("function_call");
+            //TODO Fill out args.
+            builder.functionCall(FunctionalCall.builder().setName(objectNode.getString("name")).build());
+
+        }
         return builder.build();
     }
 

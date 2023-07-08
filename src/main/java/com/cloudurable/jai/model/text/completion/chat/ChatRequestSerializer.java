@@ -3,6 +3,7 @@ package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.text.SerializerUtils;
 import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.ObjectParameter;
 import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
 import com.cloudurable.jai.util.JsonSerializer;
 
@@ -77,27 +78,35 @@ public class ChatRequestSerializer {
             for (Function function : functions) {
                 jsonBodyBuilder.startNestedObjectElement();
                 jsonBodyBuilder.addAttribute("name", function.getName());
-                jsonBodyBuilder.startNestedArrayAttribute("parameters");
-//                List<Parameter> parameters = function.getParameters();
-//                for (Parameter parameter : parameters) {
-//                    jsonBodyBuilder.startNestedObjectElement();
-//                    jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
-//                    jsonBodyBuilder.endObject();
-//                }
-                jsonBodyBuilder.endArray();
+                ObjectParameter parameters = function.getParameters();
+                writeObjectParameter(jsonBodyBuilder, parameters);
+                jsonBodyBuilder.endObject();
                 jsonBodyBuilder.endObject();
             }
             jsonBodyBuilder.endArray();
         }
-
-
         SerializerUtils.outputCompletionParams(chatRequest, jsonBodyBuilder);
-
-
         // end JSON request body for an open ai API chat request
         jsonBodyBuilder.endObject();
 
-        return jsonBodyBuilder.toString();
+        String json = jsonBodyBuilder.toString();
+
+        System.out.println(json);
+        return json;
+    }
+
+    public static void writeObjectParameter(JsonSerializer jsonBodyBuilder, ObjectParameter op) {
+        jsonBodyBuilder.startNestedObjectAttribute("parameters");
+        jsonBodyBuilder.addAttribute("type", op.getType().toString().toLowerCase());
+
+        jsonBodyBuilder.startNestedObjectAttribute("properties");
+
+        for (Parameter parameter : op.getParameters()) {
+            jsonBodyBuilder.startNestedObjectAttribute(parameter.getName());
+            jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
+            jsonBodyBuilder.endObject();
+        }
+        jsonBodyBuilder.endObject();
     }
 
 

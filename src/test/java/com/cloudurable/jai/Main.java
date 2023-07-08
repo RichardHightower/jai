@@ -127,6 +127,9 @@ public class Main {
 
         System.out.println(chat.getStatusCode().orElse(666));
         System.out.println(chat.getStatusMessage().orElse(""));
+
+        chat.getException().ifPresent(e->
+                e.printStackTrace());
     }
 
     private static void uploadFile(File file) throws ExecutionException, InterruptedException {
