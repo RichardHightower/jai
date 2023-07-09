@@ -27,7 +27,7 @@ class ObjectParameterTest {
         // Verify the values of the ObjectParameter
         assertEquals("objectParam", objectParameter.getName());
         assertEquals(ParameterType.OBJECT, objectParameter.getType());
-        assertEquals(parameters, objectParameter.getParameters());
+        assertEquals(parameters, objectParameter.getProperties());
     }
 
     @Test

@@ -1,14 +1,11 @@
 package com.cloudurable.jai.model.text.completion.chat.function;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a function in a chat system.
  */
-public class Function {
+public class FunctionDef {
 
     private final String name;
     private final String description;
@@ -22,7 +19,7 @@ public class Function {
      * @param parameters  the list of parameters for the function
      * @throws NullPointerException if the name is null
      */
-    public Function(String name, String description, ObjectParameter parameters) {
+    public FunctionDef(String name, String description, ObjectParameter parameters) {
         Objects.requireNonNull(name, "Name is required");
         this.name = name;
         this.description = description;
@@ -74,8 +71,8 @@ public class Function {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Function)) return false;
-        Function function = (Function) o;
+        if (!(o instanceof FunctionDef)) return false;
+        FunctionDef function = (FunctionDef) o;
         return Objects.equals(name, function.name) && Objects.equals(description, function.description);
     }
 
@@ -136,7 +133,7 @@ public class Function {
          * @param description the description of the function
          * @return the Builder instance
          */
-        public Builder setDescription(String description) {
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
@@ -158,8 +155,8 @@ public class Function {
          *
          * @return a new Function object
          */
-        public Function build() {
-            return new Function(this.getName(), this.getDescription(), parameters);
+        public FunctionDef build() {
+            return new FunctionDef(this.getName(), this.getDescription(), parameters);
         }
     }
 }

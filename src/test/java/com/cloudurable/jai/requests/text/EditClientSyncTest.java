@@ -89,6 +89,6 @@ public class EditClientSyncTest {
                 .build();
 
         requestBody = EditRequestSerializer.serialize(editRequest);
-        System.out.println(requestBody);
+
     }
 }

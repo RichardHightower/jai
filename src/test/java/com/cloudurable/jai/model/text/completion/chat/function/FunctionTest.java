@@ -18,9 +18,9 @@ class FunctionTest {
         );
 
         // Create a Function using the builder
-        Function function = Function.builder()
+        FunctionDef function = FunctionDef.builder()
                 .name("myFunction")
-                .setDescription("My function description")
+                .description("My function description")
                 //.setParameters(parameters)
                 .build();
 
@@ -42,14 +42,14 @@ class FunctionTest {
                 Parameter.builder().name("param2").build()
         );
 
-        Function function1 = Function.builder()
+        FunctionDef function1 = FunctionDef.builder()
                 .name("myFunction")
-                .setDescription("My function description")
+                .description("My function description")
                 //.setParameters(parameters1)
                 .build();
-        Function function2 = Function.builder()
+        FunctionDef function2 = FunctionDef.builder()
                 .name("myFunction")
-                .setDescription("My function description")
+                .description("My function description")
                 //.setParameters(parameters2)
                 .build();
 

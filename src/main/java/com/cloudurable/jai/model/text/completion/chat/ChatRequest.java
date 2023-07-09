@@ -1,7 +1,7 @@
 package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.text.completion.CommonCompletionRequest;
-import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionDef;
 import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 
 import java.util.*;
@@ -55,10 +55,11 @@ import java.util.*;
  */
 public class ChatRequest extends CommonCompletionRequest {
 
-    public static FunctionalCall AUTO = FunctionalCall.builder().setName("AUTO").build();
+    public static FunctionalCall AUTO = FunctionalCall.builder().name("AUTO").build();
+    public static FunctionalCall NONE = FunctionalCall.builder().name("NONE").build();
 
     private final List<Message> messages;
-    private final List<Function> functions;
+    private final List<FunctionDef> functions;
     private final FunctionalCall functionalCall;
 
     /**
@@ -79,7 +80,7 @@ public class ChatRequest extends CommonCompletionRequest {
      * @param user             the user associated with the chat request
      * @param completionCount  the Number of chat completion choices to generate for each input message.
      */
-    public ChatRequest(String model, List<Message> messages, List<Function> functions,
+    public ChatRequest(String model, List<Message> messages, List<FunctionDef> functions,
                        FunctionalCall functionalCall, float temperature, float topP,
                        boolean stream, List<String> stop, int maxTokens,
                        float presencePenalty, float frequencyPenalty,
@@ -113,7 +114,7 @@ public class ChatRequest extends CommonCompletionRequest {
      *
      * @return the list of functions available for the chat request
      */
-    public List<Function> getFunctions() {
+    public List<FunctionDef> getFunctions() {
         return functions;
     }
 
@@ -193,10 +194,10 @@ public class ChatRequest extends CommonCompletionRequest {
      * Builder class for constructing ChatRequest objects.
      */
     public static class Builder {
-        private String model;
+        private String model="gpt-3.5-turbo-0613";
         private List<Message> messages;
         private int completionCount;
-        private List<Function> functions;
+        private List<FunctionDef> functions;
         private FunctionalCall functionalCall;
         private float temperature;
         private float topP;
@@ -315,7 +316,7 @@ public class ChatRequest extends CommonCompletionRequest {
          *
          * @return functions
          */
-        public List<Function> getFunctions() {
+        public List<FunctionDef> getFunctions() {
             if (functions == null) {
                 functions = new ArrayList<>();
             }
@@ -328,7 +329,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param functions the list of functions available for the chat request
          * @return the Builder instance
          */
-        public Builder functions(List<Function> functions) {
+        public Builder functions(List<FunctionDef> functions) {
             this.functions = functions;
             return this;
         }
@@ -522,7 +523,7 @@ public class ChatRequest extends CommonCompletionRequest {
          * @param function function to add
          * @return this.
          */
-        public Builder addFunction(Function function) {
+        public Builder addFunction(FunctionDef function) {
             this.getFunctions().add(function);
             return this;
         }

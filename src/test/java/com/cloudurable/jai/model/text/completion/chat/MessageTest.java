@@ -11,7 +11,7 @@ class MessageTest {
     void testMessageBuilder() {
         // Create a FunctionalCall for the Message
         FunctionalCall functionalCall = FunctionalCall.builder()
-                .setName("functionName")
+                .name("functionName")
                 .build();
 
         // Create a Message using the builder
@@ -33,7 +33,7 @@ class MessageTest {
     void testMessageEquality() {
         // Create two Messages with the same values
         FunctionalCall functionalCall = FunctionalCall.builder()
-                .setName("functionName")
+                .name("functionName")
                 .build();
 
         Message message1 = Message.builder()

@@ -203,6 +203,6 @@ public class FileUploadSyncTest {
                 return null;
             }
         };
-        System.out.println(requestBody);
+
     }
 }

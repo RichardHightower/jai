@@ -16,8 +16,8 @@ public class ArrayParameter extends Parameter {
      * @param type  the type of the list parameter
      * @param type1 the type of the list elements
      */
-    public ArrayParameter(String name, ParameterType type, ParameterType type1) {
-        super(name, type);
+    public ArrayParameter(String name, String description, ParameterType type, ParameterType type1) {
+        super(name, description, type);
         this.elementType = type1;
     }
 
@@ -83,8 +83,14 @@ public class ArrayParameter extends Parameter {
     public static class ArrayParameterBuilder {
         private String name;
         private ParameterType elementType;
+        private String description;
 
         private ArrayParameterBuilder() {
+        }
+
+        public ArrayParameterBuilder description(String description) {
+            this.description = description;
+            return this;
         }
 
         /**
@@ -116,7 +122,7 @@ public class ArrayParameter extends Parameter {
          * @return a new ListParameter object
          */
         public ArrayParameter build() {
-            return new ArrayParameter(this.name, ParameterType.ARRAY, this.elementType);
+            return new ArrayParameter(this.name, description, ParameterType.ARRAY, this.elementType);
         }
     }
 }

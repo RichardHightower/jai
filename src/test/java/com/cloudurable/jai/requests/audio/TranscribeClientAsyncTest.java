@@ -192,6 +192,5 @@ public class TranscribeClientAsyncTest {
                 return null;
             }
         };
-        System.out.println(requestBody);
     }
 }

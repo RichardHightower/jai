@@ -2,9 +2,7 @@ package com.cloudurable.jai.model.text.completion.chat;
 
 
 import com.cloudurable.jai.model.text.SerializerUtils;
-import com.cloudurable.jai.model.text.completion.chat.function.Function;
-import com.cloudurable.jai.model.text.completion.chat.function.ObjectParameter;
-import com.cloudurable.jai.model.text.completion.chat.function.Parameter;
+import com.cloudurable.jai.model.text.completion.chat.function.*;
 import com.cloudurable.jai.util.JsonSerializer;
 
 import java.util.List;
@@ -64,6 +62,10 @@ public class ChatRequestSerializer {
             jsonBodyBuilder.startNestedObjectElement();
             jsonBodyBuilder.addAttribute("role", message.getRole().toString().toLowerCase());
             jsonBodyBuilder.addAttribute("content", message.getContent());
+
+            if (message.getName()!=null) {
+                jsonBodyBuilder.addAttribute("name", message.getName());
+            }
             jsonBodyBuilder.endObject();
         }
         jsonBodyBuilder.endArray();
@@ -71,11 +73,25 @@ public class ChatRequestSerializer {
 
         SerializerUtils.outputTextParams(chatRequest, jsonBodyBuilder);
 
+        if (chatRequest.getFunctionalCall()  == ChatRequest.AUTO) {
+            jsonBodyBuilder.addAttribute("function_call", "auto");
+        } else if (chatRequest.getFunctionalCall()  == ChatRequest.NONE) {
+            jsonBodyBuilder.addAttribute("function_call", "none");
+        } else if (chatRequest.getFunctionalCall()!=null) {
+            final FunctionalCall functionalCall = chatRequest.getFunctionalCall();
+            jsonBodyBuilder.startNestedObjectAttribute("function_call");
+            jsonBodyBuilder.addAttribute("name", functionalCall.getName());
+            if (functionalCall.getArguments()!=null) {
+                jsonBodyBuilder.addAttribute("arguments", functionalCall.getArguments().toString());
+            }
+            jsonBodyBuilder.endObject();
+        }
 
-        final List<Function> functions = chatRequest.getFunctions();
+
+        final List<FunctionDef> functions = chatRequest.getFunctions();
         if (functions != null && !functions.isEmpty()) {
             jsonBodyBuilder.startNestedArrayAttribute("functions");
-            for (Function function : functions) {
+            for (FunctionDef function : functions) {
                 jsonBodyBuilder.startNestedObjectElement();
                 jsonBodyBuilder.addAttribute("name", function.getName());
                 ObjectParameter parameters = function.getParameters();
@@ -91,7 +107,7 @@ public class ChatRequestSerializer {
 
         String json = jsonBodyBuilder.toString();
 
-        System.out.println(json);
+        //ystem.out.println(json);
         return json;
     }
 
@@ -101,12 +117,27 @@ public class ChatRequestSerializer {
 
         jsonBodyBuilder.startNestedObjectAttribute("properties");
 
-        for (Parameter parameter : op.getParameters()) {
+        for (Parameter parameter : op.getProperties()) {
             jsonBodyBuilder.startNestedObjectAttribute(parameter.getName());
             jsonBodyBuilder.addAttribute("type", parameter.getType().toString().toLowerCase());
+            if (parameter instanceof EnumParameter) {
+                jsonBodyBuilder.startNestedArrayAttribute("enum");
+                for (String enumValue : ((EnumParameter) parameter).getEnumValues()) {
+                    jsonBodyBuilder.addElement(enumValue);
+                }
+                jsonBodyBuilder.endArray();
+            }
             jsonBodyBuilder.endObject();
         }
+
         jsonBodyBuilder.endObject();
+
+        jsonBodyBuilder.startNestedArrayAttribute("required");
+        for (String req : op.getRequired()) {
+            jsonBodyBuilder.addElement(req);
+        }
+        jsonBodyBuilder.endArray();
+
     }
 
 

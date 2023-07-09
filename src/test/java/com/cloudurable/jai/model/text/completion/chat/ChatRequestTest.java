@@ -1,6 +1,6 @@
 package com.cloudurable.jai.model.text.completion.chat;
 
-import com.cloudurable.jai.model.text.completion.chat.function.Function;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionDef;
 import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class ChatRequestTest {
     void testBuilder() {
         String model = "test_model";
         List<Message> messages = new ArrayList<>();
-        List<Function> functions = new ArrayList<>();
+        List<FunctionDef> functions = new ArrayList<>();
         FunctionalCall functionalCall = new FunctionalCall("function", null);
         float temperature = 0.8f;
         float topP = 0.9f;

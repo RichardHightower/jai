@@ -1,8 +1,7 @@
 package com.cloudurable.jai.model.text.completion.chat.function;
 
-import com.cloudurable.jai.model.file.FileData;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,18 +10,22 @@ import java.util.Objects;
  */
 public class ObjectParameter extends Parameter {
 
-    private final List<Parameter> parameters;
+    private final List<Parameter> properties;
+
+    private final List<String> required;
 
     /**
      * Constructs a new ObjectParameter object.
      *
      * @param name       the name of the object parameter
      * @param type       the type of the object parameter
-     * @param parameters the list of parameters for the object parameter
+     * @param properties the list of parameters for the object parameter
+     * @param required  required
      */
-    public ObjectParameter(String name, ParameterType type, List<Parameter> parameters) {
-        super(name, type);
-        this.parameters = parameters;
+    public ObjectParameter(String name, String description, ParameterType type, List<Parameter> properties, List<String> required) {
+        super(name, description, type);
+        this.properties = properties;
+        this.required = required;
     }
 
     /**
@@ -39,8 +42,8 @@ public class ObjectParameter extends Parameter {
      *
      * @return the list of parameters for the object parameter
      */
-    public List<Parameter> getParameters() {
-        return parameters;
+    public List<Parameter> getProperties() {
+        return properties;
     }
 
     /**
@@ -55,7 +58,7 @@ public class ObjectParameter extends Parameter {
         if (!(o instanceof ObjectParameter)) return false;
         if (!super.equals(o)) return false;
         ObjectParameter that = (ObjectParameter) o;
-        return Objects.equals(parameters, that.parameters);
+        return Objects.equals(properties, that.properties);
     }
 
     /**
@@ -65,7 +68,11 @@ public class ObjectParameter extends Parameter {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), parameters);
+        return Objects.hash(super.hashCode(), properties);
+    }
+
+    public List<String> getRequired() {
+        return required;
     }
 
     /**
@@ -73,10 +80,26 @@ public class ObjectParameter extends Parameter {
      */
     public static class ObjectParameterBuilder {
         private String name;
+        private String description;
         private ParameterType type = ParameterType.OBJECT;
         private List<Parameter> parameters;
+        private List<String> required;
 
         private ObjectParameterBuilder() {
+        }
+
+
+        public ObjectParameterBuilder required(List<String> required) {
+            this.required = required;
+            return this;
+        }
+
+        public ObjectParameterBuilder required(String... required) {
+            return required(Arrays.asList(required));
+        }
+        public ObjectParameterBuilder description(String description) {
+            this.description = description;
+            return this;
         }
 
         /**
@@ -130,7 +153,7 @@ public class ObjectParameter extends Parameter {
          * @return a new ObjectParameter object
          */
         public ObjectParameter build() {
-            return new ObjectParameter(this.name, this.type, this.parameters);
+            return new ObjectParameter(this.name, this.description,  this.type, this.parameters, required);
         }
 
 
