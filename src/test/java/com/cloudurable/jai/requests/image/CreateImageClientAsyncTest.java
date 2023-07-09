@@ -83,6 +83,5 @@ public class CreateImageClientAsyncTest {
                 .build();
 
         requestBody = ImageRequestSerializer.buildJson(createImageRequest);
-        System.out.println(requestBody);
     }
 }

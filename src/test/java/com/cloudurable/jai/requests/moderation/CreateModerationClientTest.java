@@ -109,6 +109,6 @@ public class CreateModerationClientTest {
                 .build();
 
         requestBody = CreateModerationRequestSerializer.serialize(createModerationRequest);
-        System.out.println(requestBody);
+
     }
 }

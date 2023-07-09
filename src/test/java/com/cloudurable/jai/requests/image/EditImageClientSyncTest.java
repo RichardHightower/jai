@@ -90,7 +90,6 @@ public class EditImageClientSyncTest {
         contentType = getEncodingContentType(form);
 
         requestBody = form.build();
-        System.out.println(requestBody);
 
 
         httpClientMock = new HttpClient() {

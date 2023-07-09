@@ -199,6 +199,5 @@ public class FileUploadAsyncTest {
                 return null;
             }
         };
-        System.out.println(requestBody);
     }
 }

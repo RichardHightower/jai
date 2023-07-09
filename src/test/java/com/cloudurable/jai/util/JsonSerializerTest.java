@@ -10,6 +10,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JsonSerializerTest {
 
     @Test
+    void writeObjectEncode() {
+        JsonSerializer serializer = new JsonSerializer();
+        serializer.startObject();
+        serializer.addAttribute("a", "b");
+        serializer.addAttribute("c", 11);
+        serializer.endObject();
+        String json = serializer.toString();
+        ObjectNode objectNode = Json.toObjectNode(json);
+        assertEquals("b", objectNode.getString("a"));
+        assertEquals(11, objectNode.getInt("c"));
+    }
+    @Test
     void writeObject() {
         JsonSerializer serializer = new JsonSerializer();
         serializer.startObject();
@@ -31,7 +43,6 @@ class JsonSerializerTest {
         serializer.endArray();
 
         String json = serializer.toString();
-        System.out.println(json);
         ArrayNode arrayNode = Json.toArrayNode(json);
         assertEquals("b", arrayNode.getString(0));
         assertEquals(11, arrayNode.getInt(1));
@@ -70,7 +81,6 @@ class JsonSerializerTest {
         serializer.endObject();
         serializer.endArray();
         String json = serializer.toString();
-        System.out.println(json);
         ArrayNode arrayNode = Json.toArrayNode(json);
         assertEquals("b", arrayNode.getString(0));
         assertEquals(11, arrayNode.getInt(1));
@@ -87,7 +97,7 @@ class JsonSerializerTest {
         serializer.startNestedArrayAttribute("b");
         serializer.addElement("b1");
         serializer.addElement(111);
-        serializer.startNestedListElement();
+        serializer.startNestedArrayElement();
         serializer.addElement("abcd");
         serializer.endArray();
         serializer.endArray();

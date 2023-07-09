@@ -2,7 +2,10 @@ package com.cloudurable.jai.model.text.completion.chat;
 
 import com.cloudurable.jai.model.Usage;
 import com.cloudurable.jai.model.text.DeserializerUtils;
+import com.cloudurable.jai.model.text.completion.chat.function.FunctionalCall;
 import io.nats.jparse.node.ArrayNode;
+import io.nats.jparse.node.Node;
+import io.nats.jparse.node.NullNode;
 import io.nats.jparse.node.ObjectNode;
 import io.nats.jparse.parser.JsonParser;
 import io.nats.jparse.parser.JsonParserBuilder;
@@ -56,6 +59,8 @@ public class ChatResponseDeserializer {
      */
     public static ChatResponse deserialize(final String jsonBody) {
 
+        //ystem.out.println(jsonBody);
+
         final JsonParser parser = JsonParserBuilder.builder().build();
         final ObjectNode objectNode = parser.parse(jsonBody).asObject();
         final String id = objectNode.getString("id");
@@ -82,12 +87,23 @@ public class ChatResponseDeserializer {
 
     private static Message deserializeMessage(ObjectNode message) {
         Message.Builder builder = Message.builder();
-        builder.content(message.getString("content"));
+        if (message.get("content") != null) {
+                builder.content(message.getString("content"));
+        }
         if (message.get("name") != null) {
             builder.name(message.getString("name"));
         }
         builder.role(deserializeRole(message.getString("role")));
-        //TODO builder.setFunctionCall(deserializeFunctionCall(message.getObjectNode("function_call")));
+
+        if (message.get("function_call") != null) {
+            ObjectNode functionCallNode = message.getObjectNode("function_call");
+            FunctionalCall.Builder funcBuilder = FunctionalCall.builder().name(functionCallNode.getString("name"));
+
+            if (functionCallNode.getString("arguments") != null) {
+                funcBuilder.arguments(JsonParserBuilder.builder().build().parse(functionCallNode.getString("arguments")).getObjectNode());
+            }
+            builder.functionCall(funcBuilder.build());
+        }
         return builder.build();
     }
 

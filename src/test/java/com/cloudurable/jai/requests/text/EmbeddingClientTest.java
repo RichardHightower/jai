@@ -92,6 +92,6 @@ public class EmbeddingClientTest {
                 .build();
 
         requestBody = EmbeddingRequestSerializer.serialize(embeddingRequest);
-        System.out.println(requestBody);
+
     }
 }

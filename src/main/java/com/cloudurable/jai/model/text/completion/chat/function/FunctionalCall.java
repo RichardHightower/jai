@@ -1,5 +1,7 @@
 package com.cloudurable.jai.model.text.completion.chat.function;
 
+import io.nats.jparse.node.ObjectNode;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -8,15 +10,15 @@ import java.util.Objects;
  */
 public class FunctionalCall {
     private final String name;
-    private final List<Argument<?>> arguments;
+    private final ObjectNode arguments;
 
     /**
      * Constructs a new FunctionalCall object.
      *
      * @param name      the name of the function being called
-     * @param arguments the list of arguments for the function call
+     * @param arguments the arguments for the function call
      */
-    public FunctionalCall(String name, List<Argument<?>> arguments) {
+    public FunctionalCall(String name, ObjectNode arguments) {
         this.name = name;
         this.arguments = arguments;
     }
@@ -44,7 +46,7 @@ public class FunctionalCall {
      *
      * @return the list of arguments for the function call
      */
-    public List<Argument<?>> getArguments() {
+    public ObjectNode getArguments() {
         return arguments;
     }
 
@@ -90,7 +92,7 @@ public class FunctionalCall {
      */
     public static class Builder {
         private String name;
-        private List<Argument<?>> arguments;
+        private ObjectNode arguments;
 
         private Builder() {
         }
@@ -101,7 +103,7 @@ public class FunctionalCall {
          * @param name the name of the function being called
          * @return the Builder instance
          */
-        public Builder setName(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
@@ -109,10 +111,10 @@ public class FunctionalCall {
         /**
          * Sets the list of arguments for the function call.
          *
-         * @param arguments the list of arguments for the function call
+         * @param arguments the arguments for the function call
          * @return the Builder instance
          */
-        public Builder setArguments(List<Argument<?>> arguments) {
+        public Builder arguments(ObjectNode arguments) {
             this.arguments = arguments;
             return this;
         }

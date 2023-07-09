@@ -193,6 +193,5 @@ public class TranslateClientAsyncTest {
                 return null;
             }
         };
-        System.out.println(requestBody);
     }
 }

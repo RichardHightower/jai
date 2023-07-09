@@ -86,7 +86,6 @@ public class TranslateClientSyncTest {
 
         requestBody = form.build();
 
-        System.out.println(requestBody);
 
 
         httpClientMock = new HttpClient() {

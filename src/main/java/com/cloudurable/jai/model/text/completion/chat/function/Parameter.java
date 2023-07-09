@@ -7,27 +7,23 @@ import java.util.Objects;
  */
 public class Parameter {
     private final String name;
+    private final String description;
     private final ParameterType type;
 
     /**
      * Constructs a new Parameter object.
      *
-     * @param name the name of the parameter
-     * @param type the type of the parameter
+     * @param name        the name of the parameter
+     * @param description description
+     * @param type        the type of the parameter
      */
-    public Parameter(String name, ParameterType type) {
+    public Parameter(String name, String description, ParameterType type) {
         this.name = name;
+        this.description = description;
         this.type = type;
     }
 
-    /**
-     * Returns a new Builder instance to construct a Parameter object.
-     *
-     * @return a new Builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
+
 
     /**
      * Gets the name of the parameter.
@@ -36,6 +32,10 @@ public class Parameter {
      */
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -86,13 +86,28 @@ public class Parameter {
     }
 
     /**
+     * Returns a new Builder instance to construct a Parameter object.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Builder class for constructing Parameter objects.
      */
     public static class Builder {
         private String name;
-        private ParameterType type;
+        private ParameterType type = ParameterType.STRING;
+        private String description;
 
         private Builder() {
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
         }
 
         /**
@@ -101,7 +116,7 @@ public class Parameter {
          * @param name the name of the parameter
          * @return the Builder instance
          */
-        public Builder setName(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
@@ -112,7 +127,7 @@ public class Parameter {
          * @param type the type of the parameter
          * @return the Builder instance
          */
-        public Builder setType(ParameterType type) {
+        public Builder type(ParameterType type) {
             this.type = type;
             return this;
         }
@@ -123,7 +138,7 @@ public class Parameter {
          * @return a new Parameter object
          */
         public Parameter build() {
-            return new Parameter(this.name, this.type);
+            return new Parameter(this.name, description, this.type);
         }
     }
 }

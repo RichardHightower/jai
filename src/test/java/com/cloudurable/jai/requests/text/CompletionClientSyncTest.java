@@ -92,6 +92,6 @@ public class CompletionClientSyncTest {
                 .build();
 
         basicCompletionRequestBody = CompletionRequestSerializer.serialize(basicCompletionRequest);
-        System.out.println(basicCompletionRequestBody);
+
     }
 }

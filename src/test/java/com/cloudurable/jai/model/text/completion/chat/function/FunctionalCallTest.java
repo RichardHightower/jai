@@ -12,41 +12,27 @@ class FunctionalCallTest {
     @Test
     void testFunctionalCallBuilder() {
         // Create a list of arguments
-        List<Argument<?>> arguments = Arrays.asList(
-                Argument.builder().setParameterType(ParameterType.STRING).setValue("arg1").build(),
-                Argument.builder().setParameterType(ParameterType.NUMBER).setValue(123).build()
-        );
+
 
         // Create a FunctionalCall using the builder
         FunctionalCall functionalCall = FunctionalCall.builder()
-                .setName("func")
-                .setArguments(arguments)
+                .name("func")
                 .build();
 
         // Verify the values of the FunctionalCall
         assertEquals("func", functionalCall.getName());
-        assertEquals(arguments, functionalCall.getArguments());
     }
 
     @Test
     void testFunctionalCallEquality() {
         // Create two FunctionalCalls with the same values
-        List<Argument<?>> arguments1 = Arrays.asList(
-                Argument.builder().setParameterType(ParameterType.STRING).setValue("arg1").build(),
-                Argument.builder().setParameterType(ParameterType.NUMBER).setValue(123).build()
-        );
-        List<Argument<?>> arguments2 = Arrays.asList(
-                Argument.builder().setParameterType(ParameterType.STRING).setValue("arg1").build(),
-                Argument.builder().setParameterType(ParameterType.NUMBER).setValue(123).build()
-        );
+
 
         FunctionalCall functionalCall1 = FunctionalCall.builder()
-                .setName("func")
-                .setArguments(arguments1)
+                .name("func")
                 .build();
         FunctionalCall functionalCall2 = FunctionalCall.builder()
-                .setName("func")
-                .setArguments(arguments2)
+                .name("func")
                 .build();
 
         // Verify that the two FunctionalCalls are equal

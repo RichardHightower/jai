@@ -14,7 +14,7 @@ import java.util.Stack;
  * <p>
  * The class provides methods to start and end the serialization of objects and lists. The startObject() method starts the serialization of an object by pushing a 0 onto the stack and appending a '{' character to the builder. The endObject() method pops the top element from the stack and appends a '}' character to the builder.
  * <p>
- * Similarly, the startList() and endList() methods perform similar operations for lists.
+ * Similarly, the startArray() and endArray() methods perform similar operations for lists.
  * <p>
  * There are methods to start the serialization of nested object attributes and nested list attributes. These methods take a name parameter representing the attribute name. The methods append the attribute name, ':', and either '{' or '[' characters to the builder, push 0 onto the stack, and update the serialization state.
  * <p>
@@ -112,7 +112,7 @@ public class JsonSerializer {
     /**
      * Starts a new nested JSON list element.
      */
-    public void startNestedListElement() {
+    public void startNestedArrayElement() {
         trackAndAddCommaIfNeeded();
         stack.push(0);
         builder.append('[');
@@ -147,7 +147,8 @@ public class JsonSerializer {
         if (value == null) {
             builder.append("null");
         } else {
-            builder.append('"').append(value).append('"');
+            StringBuilder strBuilder = encodeString(value);
+            builder.append('"').append(strBuilder).append('"');
         }
     }
 
@@ -208,8 +209,37 @@ public class JsonSerializer {
         if (value == null) {
             builder.append(':').append("null");
         } else {
-            builder.append(":\"").append(value).append('"');
+            StringBuilder strBuilder = encodeString(value);
+            builder.append(":\"").append(strBuilder).append('"');
         }
+    }
+
+    private static StringBuilder encodeString(String value) {
+        StringBuilder strBuilder = new StringBuilder(value.length());
+        char[] charArray = value.toCharArray();
+
+        for (int i = 0; i < charArray.length; i++) {
+            char ch = charArray[i];
+
+            switch (ch) {
+                case '"':
+                    strBuilder.append("\\\"");
+                    break;
+                case '\n':
+                    strBuilder.append("\\\n");
+                    break;
+                case '\r':
+                    strBuilder.append("\\\r");
+                    break;
+                case '\t':
+                    strBuilder.append("\\\t");
+                    break;
+                default:
+                    strBuilder.append(ch);
+            }
+
+        }
+        return strBuilder;
     }
 
     /**

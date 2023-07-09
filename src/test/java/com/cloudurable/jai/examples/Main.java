@@ -1,11 +1,11 @@
-package com.cloudurable.jai;
+package com.cloudurable.jai.examples;
 
+import com.cloudurable.jai.OpenAIClient;
 import com.cloudurable.jai.model.ClientResponse;
 import com.cloudurable.jai.model.audio.AudioResponse;
 import com.cloudurable.jai.model.audio.AudioResponseFormat;
 import com.cloudurable.jai.model.audio.TranscriptionRequest;
 import com.cloudurable.jai.model.audio.TranslateRequest;
-import com.cloudurable.jai.model.file.FileData;
 import com.cloudurable.jai.model.file.UploadFileRequest;
 import com.cloudurable.jai.model.image.*;
 import com.cloudurable.jai.model.text.completion.CompletionRequest;
@@ -14,37 +14,46 @@ import com.cloudurable.jai.model.text.completion.chat.ChatRequest;
 import com.cloudurable.jai.model.text.completion.chat.ChatResponse;
 import com.cloudurable.jai.model.text.completion.chat.Message;
 import com.cloudurable.jai.model.text.completion.chat.Role;
+import com.cloudurable.jai.model.text.completion.chat.function.*;
 import com.cloudurable.jai.model.text.edit.EditRequest;
 import com.cloudurable.jai.model.text.edit.EditResponse;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
+import com.cloudurable.jai.util.JsonSerializer;
+import io.nats.jparse.node.ObjectNode;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class Main {
     public static void main(final String... args) {
         try {
 
-            listFiles();
-            final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
-
-            uploadFile(new File("prompts.jsonl"));
-
-            Thread.sleep(1000);
-            listFiles();
-            FileData fileData = client.listFiles().getData().get(0);
-            getFileDataAsync(fileData.getId());
-
-            final String contents = getFileContents(fileData.getId());
-            System.out.println(contents);
+            chatWithFunctions();
 
 
-            client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
-            listFiles();
+//            listFiles();
+//            final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+//
+//            uploadFile(new File("prompts.jsonl"));
+//
+//            Thread.sleep(1000);
+//            listFiles();
+//            FileData fileData = client.listFiles().getData().get(0);
+//            getFileDataAsync(fileData.getId());
+//
+//            final String contents = getFileContents(fileData.getId());
+//
+//
+//            client.listFiles().getData().forEach(fileData1 -> deleteFile(fileData1.getId()));
+//            listFiles();
 
 
 //            listFilesAsync();
@@ -79,6 +88,97 @@ public class Main {
         }
 
 
+    }
+
+
+    private static void chatWithFunctions() throws ExecutionException, InterruptedException {
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
+
+        FunctionDef getCurrentWeatherFunc = FunctionDef.builder().name("get_current_weather")
+                .description("Get the current weather in a given location")
+                .setParameters(
+                    ObjectParameter.objectParamBuilder()
+                        .addParameter(Parameter.builder().name("location").description("The city and state, e.g. Austin, TX").build())
+                        .addParameter(
+                                EnumParameter.enumBuilder()
+                                        .name("unit").enumValues("celsius", "fahrenheit").build())
+                            .required("location")
+                        .build()
+        ).build();
+
+        Map<String, java.util.function.Function<ObjectNode, String>> functionMap = new HashMap<>();
+        functionMap.put("get_current_weather", objectNode -> {
+            final String location = objectNode.getString("location");
+
+            final String unit = Optional.ofNullable(objectNode.get("unit"))
+                    .map(node->node.asScalar().stringValue()).orElse("fahrenheit");
+            final JsonSerializer json = new JsonSerializer();
+
+            json.startObject();
+            json.addAttribute("location", location);
+            json.addAttribute("unit", unit);
+
+            switch (location)  {
+                case "Austin, TX":
+                    json.addAttribute("temperature", 92);
+                    json.endObject();
+                    return json.toString();
+                case "Boston, MA":
+                    json.addAttribute("temperature", 72);
+                    json.endObject();
+                    return json.toString();
+                default:
+                    json.addAttribute("temperature", 70);
+                    json.endObject();
+                    return json.toString();
+            }
+        });
+
+
+
+        // messages = [{"role": "user", "content": "What's the weather like in Boston?"}]
+
+        ChatRequest.Builder chatBuilder = ChatRequest.builder().model("gpt-3.5-turbo-0613")
+                .addMessage(Message.builder().role(Role.USER).content("What's the weather like in Boston in fahrenheit?").build())
+                .addFunction(getCurrentWeatherFunc)
+                .functionalCall(ChatRequest.AUTO);
+
+
+        ChatRequest chatRequest = chatBuilder.build();
+
+        ClientResponse<ChatRequest, ChatResponse> chat = client.chat(chatRequest);
+
+        chat.getResponse().ifPresent(chatResponse -> {
+            var responseMessage = chatResponse.getChoices().get(0).getMessage();
+            var functionCall = responseMessage.getFunctionCall();
+            if (functionCall!=null && functionMap.containsKey(functionCall.getName())) {
+                String functionResponse = functionMap.get(functionCall.getName()).apply(functionCall.getArguments());
+
+                chatBuilder.addMessage(Message.builder().name(functionCall.getName()).role(Role.FUNCTION)
+                        .content(functionResponse)
+                        .build());
+
+                ClientResponse<ChatRequest, ChatResponse> response2 = client.chat(chatBuilder.build());
+
+
+                response2.getResponse().ifPresent(new Consumer<ChatResponse>() {
+                    @Override
+                    public void accept(ChatResponse chatResponse) {
+                        System.out.println(chatResponse.getChoices().get(0).getMessage().getContent());
+                    }
+                });
+
+                if (response2.getStatusMessage().isPresent()) {
+                    System.out.println(response2.getStatusMessage().orElse(""));
+                }
+            }
+        });
+
+        System.out.println(chat.getStatusCode().orElse(666));
+        System.out.println(chat.getStatusMessage().orElse(""));
+
+        chat.getException().ifPresent(e->
+                e.printStackTrace());
     }
 
     private static void uploadFile(File file) throws ExecutionException, InterruptedException {
