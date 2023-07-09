@@ -129,6 +129,11 @@ response.getStatusMessage().ifPresent(
 
 ```
 
+### Full Chat with Function Callback example. 
+
+Checkout this [full example with Function callbacks](https://github.com/RichardHightower/jai/wiki/Using-ChatGPT-FunctionCall-from-Java). 
+
+
 ### Next steps
 
 | No. | Feature                             | Status | endPoint |
