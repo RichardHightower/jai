@@ -552,6 +552,7 @@ public class OpenAIClient implements Client, ClientAsync {
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
         final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
+
         final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/chat/completions")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
         final HttpRequest request = requestBuilder.build();

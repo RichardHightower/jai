@@ -226,10 +226,10 @@ public class JsonSerializer {
                     strBuilder.append("\\\"");
                     break;
                 case '\n':
-                    strBuilder.append("\\\n");
+                    strBuilder.append("\\\\n");
                     break;
                 case '\r':
-                    strBuilder.append("\\\r");
+                    strBuilder.append("\\\\r");
                     break;
                 case '\t':
                     strBuilder.append("\\\t");

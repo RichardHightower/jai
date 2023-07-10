@@ -77,7 +77,7 @@ public class WeatherFunctionCallExample {
 
         // Call the ChatGPT chat with the user query.
         final var message = Message.builder().role(Role.USER)
-                .content("What's the weather like in Boston in fahrenheit?").build();
+                .content("What's the weather like in Austin, TX in fahrenheit? What state is Austin? Is there anything special about austin" ).build();
 
 
         // And include the set of functions defined in the functions parameter.
