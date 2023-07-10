@@ -107,7 +107,7 @@ public class ChatRequestSerializer {
 
         String json = jsonBodyBuilder.toString();
 
-        System.out.println(json);
+        //ystem.out.println(json);
         return json;
     }
 
