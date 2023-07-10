@@ -2,6 +2,9 @@ package com.cloudurable.jai.model.text.embedding;
 
 import com.cloudurable.jai.model.Request;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -10,7 +13,7 @@ import java.util.Objects;
 public class EmbeddingRequest implements Request {
 
     private final String model;
-    private final String input;
+    private final List<String> input;
 
     /**
      * Constructs a new EmbeddingRequest object.
@@ -18,7 +21,7 @@ public class EmbeddingRequest implements Request {
      * @param model The model to use for the embedding.
      * @param input The input text for the embedding.
      */
-    public EmbeddingRequest(String model, String input) {
+    public EmbeddingRequest(String model, List<String> input) {
         this.model = model;
         this.input = input;
     }
@@ -46,7 +49,7 @@ public class EmbeddingRequest implements Request {
      *
      * @return The input text for the embedding.
      */
-    public String getInput() {
+    public List<String> getInput() {
         return input;
     }
 
@@ -76,8 +79,8 @@ public class EmbeddingRequest implements Request {
      */
     public static class Builder {
 
-        private String model;
-        private String input;
+        private String model = "text-embedding-ada-002";
+        private List<String> input;
 
         /**
          * Constructs a new Builder object.
@@ -96,17 +99,33 @@ public class EmbeddingRequest implements Request {
             return this;
         }
 
+        public List<String> getInput() {
+            if (input == null) {
+                input = new ArrayList<>();
+            }
+            return input;
+        }
+
         /**
          * Sets the input text for the embedding.
          *
          * @param input The input text for the embedding.
          * @return The Builder instance.
          */
-        public Builder input(String input) {
+        public Builder addInput(String input) {
+            this.getInput().add(input);
+            return this;
+        }
+
+        public Builder input(List<String> input) {
             this.input = input;
             return this;
         }
 
+        public Builder input(String... input) {
+            input(Arrays.asList(input));
+            return this;
+        }
         /**
          * Builds and returns a new EmbeddingRequest object.
          *

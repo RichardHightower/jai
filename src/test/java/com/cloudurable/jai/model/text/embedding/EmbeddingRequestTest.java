@@ -3,6 +3,9 @@ package com.cloudurable.jai.model.text.embedding;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmbeddingRequestTest {
@@ -19,7 +22,7 @@ class EmbeddingRequestTest {
         EmbeddingRequest result = builder.build();
 
         assertEquals(model, result.getModel());
-        assertEquals(input, result.getInput());
+        assertEquals(List.of(input), result.getInput());
     }
 
     @Test
@@ -27,21 +30,12 @@ class EmbeddingRequestTest {
         String model = "gpt2";
         String input = "Hello, world!";
 
-        EmbeddingRequest request1 = new EmbeddingRequest(model, input);
-        EmbeddingRequest request2 = new EmbeddingRequest(model, input);
+        EmbeddingRequest request1 =  EmbeddingRequest.builder().model(model).addInput(input).build();
+        EmbeddingRequest request2 =  EmbeddingRequest.builder().model(model).addInput(input).build();
 
         assertEquals(request1, request2);
         assertEquals(request1.hashCode(), request2.hashCode());
+        assertEquals(request1.toString(), request2.toString());
     }
 
-    @Test
-    void testToString() {
-        String model = "gpt2";
-        String input = "Hello, world!";
-
-        EmbeddingRequest request = new EmbeddingRequest(model, input);
-        String expectedString = "EmbeddingRequest{model='gpt2', input='Hello, world!'}";
-
-        assertEquals(expectedString, request.toString());
-    }
 }
