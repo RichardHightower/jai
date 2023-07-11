@@ -16,9 +16,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GetTopAINewsArticles {
 
@@ -39,7 +42,7 @@ public class GetTopAINewsArticles {
             final var chatRequest = ChatRequest.builder()
                     .addMessage(Message.builder().role(Role.SYSTEM).content("All output shall be JSON").build())
                     .addMessage(Message.builder().role(Role.USER).content(QUERIES_INPUT.replace("{USER_QUESTION}",
-                            "What are the top AI stocks to invest in?")).build())
+                            "What is Tesla new AI initiative?")).build())
                     .build();
 
             final var chat = client.chat(chatRequest);
@@ -49,13 +52,12 @@ public class GetTopAINewsArticles {
                 System.out.println(queriesJson);
                 List<String> queries = JsonParserBuilder.builder().build().parse(queriesJson).getObjectNode().getArrayNode("queries")
                         .filter(node -> node instanceof StringNode).stream().map(Object::toString).collect(Collectors.toList());
-                List<ArrayNode> results = queries.stream().map(GetTopAINewsArticles::searchNews).collect(Collectors.toList());
+                List<ArrayNode> results = queries.subList(0, 10).stream().map(GetTopAINewsArticles::searchNews).collect(Collectors.toList());
 
                 results.forEach(arrayNode -> {
                     arrayNode.forEach(on -> {
                         final var node = on.asCollection().asObject();
                         handleArticle(node);
-
                     });
                 });
             } else {
@@ -77,14 +79,18 @@ public class GetTopAINewsArticles {
 
         final var client = OpenAIClient.builder().setApiKey(System.getenv("OPENAI_API_KEY")).build();
 
+
         final var chatRequest = ChatRequest.builder()
                 .addMessage(Message.builder().role(Role.SYSTEM).content("All output shall be Markdown").build())
-                .addMessage(Message.builder().role(Role.USER).content("Summarize this article to less than 500 words while " +
-                        "getting all of the main points").build())
+                .addMessage(Message.builder().role(Role.USER).content("First Summarize this article to less than 500 words while " +
+                        "getting all of the main points. Also Extract the author, publication, publication date, and link to the article ||| " + node).build())
+                .addMessage(Message.builder().role(Role.USER).content("Then create 10 high level bullet points from the article").build())
                 .build();
 
         ClientResponse<ChatRequest, ChatResponse> chat = client.chat(chatRequest);
         if (chat.getResponse().isPresent()) {
+
+
             System.out.println(chat.getResponse().get().getChoices().get(0).getMessage().getContent());
         } else {
             System.out.println("" + chat.getStatusCode().orElse(666) + "" + chat.getStatusMessage().orElse(""));
@@ -95,13 +101,25 @@ public class GetTopAINewsArticles {
 
     }
 
+    public static String dateStr(Instant instant) {
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'yyyy-MM-dd'");
+        return localDate.format(formatter);
+    }
 
     public static ArrayNode searchNews(final String query) {
+        final var end = Instant.now();
+        final var start = end.minus(java.time.Duration.ofDays(5));
+        return searchNews(query, start, end, 5);
+    }
+
+    public static ArrayNode searchNews(final String query, final Instant start, final Instant end, final int pageSize) {
         System.out.println(query);
         try {
 
             String url = "https://newsapi.org/v2/everything?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8)
-                    + "&apiKey=" + System.getenv("NEWS_API_KEY") + "&language=en" + "&sortBy=relevancy";
+                    + "&apiKey=" + System.getenv("NEWS_API_KEY") + "&language=en" + "&sortBy=relevancy"
+                    + "&from=" + dateStr(start) + "&to=" + dateStr(end) + "&pageSize=" + pageSize;
 
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder().uri(URI.create(url))

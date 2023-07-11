@@ -23,7 +23,15 @@ public class EmbeddingRequestSerializer {
         // start JSON request body for an open ai API chat request
         jsonBodyBuilder.startObject();
 
-        jsonBodyBuilder.addAttribute("input", request.getInput());
+        if (request.getInput().size() == 1) {
+            jsonBodyBuilder.addAttribute("input", request.getInput().get(0));
+        } else if (request.getInput().size() > 1){
+           jsonBodyBuilder.startNestedArrayAttribute("input");
+           for (String in : request.getInput()) {
+               jsonBodyBuilder.addElement(in);
+           }
+           jsonBodyBuilder.endArray();
+        }
         jsonBodyBuilder.addAttribute("model", request.getModel());
 
         // end JSON request body for an open ai API chat request

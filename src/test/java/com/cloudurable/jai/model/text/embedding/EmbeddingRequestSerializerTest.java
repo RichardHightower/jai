@@ -12,9 +12,22 @@ class EmbeddingRequestSerializerTest {
         String model = "gpt2";
         String input = "Hello, world!";
 
-        EmbeddingRequest request = new EmbeddingRequest(model, input);
+        EmbeddingRequest request =  EmbeddingRequest.builder().model(model).addInput(input).build();
 
         String expectedJson = "{\"input\":\"Hello, world!\",\"model\":\"gpt2\"}";
+        String actualJson = EmbeddingRequestSerializer.serialize(request);
+
+        assertEquals(expectedJson, actualJson);
+    }
+
+    @Test
+    void testSerialize2() {
+        String model = "gpt2";
+        String input = "Hello, world!";
+
+        EmbeddingRequest request =  EmbeddingRequest.builder().model(model).addInput(input).addInput("Mom").build();
+
+        String expectedJson = "{\"input\":[\"Hello, world!\",\"Mom\"],\"model\":\"gpt2\"}";
         String actualJson = EmbeddingRequestSerializer.serialize(request);
 
         assertEquals(expectedJson, actualJson);
