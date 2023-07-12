@@ -147,6 +147,7 @@ public class WhoWonUFC290 {
 
     public static void main(String... args) {
         try {
+            long startTime = System.currentTimeMillis();
             // Generating queries based on user question
             String queriesJson = jsonGPT(QUERIES_INPUT.replace("{USER_QUESTION}", USER_QUESTION));
             List<String> queries = JsonParserBuilder.builder().build().parse(queriesJson)
@@ -162,7 +163,7 @@ public class WhoWonUFC290 {
             var hypotheticalAnswerEmbedding = embeddings(hypotheticalAnswer);
 
             // Searching news articles based on the queries
-            List<ArrayNode> results = queries.subList(0, 10).stream()
+            List<ArrayNode> results = queries.stream()
                     .map(WhoWonUFC290::searchNews).collect(Collectors.toList());
 
             // Extracting relevant information from the articles
@@ -206,6 +207,8 @@ public class WhoWonUFC290 {
                     .replace("{formatted_top_results}", formattedTopResults));
 
             System.out.println(finalAnswer);
+            long endTime = System.currentTimeMillis();
+            System.out.println(endTime - startTime);
         } catch (Exception e) {
             e.printStackTrace();
         }
