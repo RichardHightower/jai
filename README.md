@@ -131,7 +131,29 @@ response.getStatusMessage().ifPresent(
 
 ### Full Chat with Function Callback example. 
 
+As artificial intelligence and chatbots continue to gain popularity, integrating functions into chat conversations is 
+becoming increasingly important. Functions are small units of code that can be reused and embedded into larger programs 
+to perform a specific task. In this blog post, we will discuss how to implement and integrate functions 
+into ChatGPT conversations using JAI, a Java Open AI API client. This guide will define a function, 
+handle function callbacks, and mix function results with content/context returned from the function to enhance ChatGPTs’ 
+response with your domain. Additionally, we will provide an example implementation of a weather-related function and its 
+integration into a larger program using a function map.
+
+This developer notebook guides implementing and integrating functions into a ChatGPT conversation with JAI, a Java Open AI API client. It covers everything from defining a function to handling function callbacks and mixing the results with the content/context returned. In addition, the guide includes an example implementation of a weather-related function and its integration into a larger program using a function map.
+
 Checkout this [full example with Function callbacks](https://github.com/RichardHightower/jai/wiki/Using-ChatGPT-FunctionCall-from-Java). 
+
+
+### Full example enhancing search with Embeddings.
+
+As CTOs, CIOs, engineering managers, and software engineers, you have much to gain by implementing this approach 
+and making your search engine more efficient.
+Combining ChatGPT with retrieval and re-ranking methods, you can achieve accurate, relevant, and fast search results that will set 
+you apart from your competitors. This approach also facilitates seamless integration with existing search engines, 
+making it an ideal way to improve search engine performance for businesses of all sizes.
+
+Checkout this [Using ChatGPT, Embeddings, and HyDE to Improve Search Results](https://github.com/RichardHightower/jai/wiki/Using-ChatGPT,-Embeddings,-and-HyDE-to-Improve-Search-Results).
+
 
 
 ### Next steps

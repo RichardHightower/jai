@@ -27,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class WhoWonUFC290 {
 
@@ -71,7 +70,8 @@ public class WhoWonUFC290 {
         }
     }
 
-    private static final String QUERIES_INPUT =  "Generate an array of search queries that are relevant to this question.\n" +
+    private static final String QUERIES_INPUT =  "Generate an array of search queries that are " +
+            "relevant to this question.\n" +
             "Use a variation of related keywords for the queries, trying to be as general as possible.\n" +
             "Include as many queries as you can think of, including and excluding terms.\n" +
             "For example, include queries like ['keyword_1 keyword_2', 'keyword_1', 'keyword_2'].\n" +
@@ -81,22 +81,27 @@ public class WhoWonUFC290 {
             "\n" +
             "Format: {{\"queries\": [\"query_1\", \"query_2\", \"query_3\"]}}";
 
-    private static final String HA_INPUT ="Generate a hypothetical answer to the user's question. This answer will be used to rank search results. \n" +
-            "Pretend you have all the information you need to answer, but don't use any actual facts. Instead, use placeholders\n" +
+    private static final String HA_INPUT ="Generate a hypothetical answer to the user's question. " +
+            "This answer will be used to rank search results. \n" +
+            "Pretend you have all the information you need to answer, but don't use any actual facts. " +
+            "Instead, use placeholders\n" +
             "like NAME did something, or NAME said something at PLACE. \n" +
             "\n" +
             "User question: {USER_QUESTION}\n" +
             "\n" +
             "Format: {{\"hypotheticalAnswer\": \"hypothetical answer text\"}}";
 
-    private static final String USER_QUESTION = "Who won Main card fights in UFC 290? Tell us who won. Are there any new champions? Where are they from?";
+    private static final String USER_QUESTION = "Who won Main card fights in UFC 290? Tell us who won. " +
+            "Are there any new champions? Where are they from?";
 
 
-    private static final String ANSWER_INPUT ="Generate an answer to the user's question based on the given search results. \n" +
+    private static final String ANSWER_INPUT ="Generate an answer to the user's question " +
+            "based on the given search results. \n" +
             "TOP_RESULTS: {formatted_top_results}\n" +
             "USER_QUESTION: {USER_QUESTION}\n" +
             "\n" +
-            "Include as much information as possible in the answer. Reference the relevant search result urls as markdown links";
+            "Include as much information as possible in the answer. Reference the " +
+            "relevant search result urls as markdown links";
 
     public static String jsonGPT(String input) {
 
@@ -113,14 +118,15 @@ public class WhoWonUFC290 {
             return chat.getResponse().get().getChoices().get(0).getMessage().getContent();
         } else {
             System.out.println("" + chat.getStatusCode().orElse(666) + "" + chat.getStatusMessage().orElse(""));
-            return "";
+            throw new IllegalStateException();
         }
-
     }
     public static String hypotheticalAnswer() {
         final var input = HA_INPUT.replace("{USER_QUESTION}",
                 USER_QUESTION );
-        return jsonGPT(input);
+
+        return JsonParserBuilder.builder().build().parse(jsonGPT(input))
+                .getObjectNode().getString("hypotheticalAnswer");
 
     }
 
@@ -137,78 +143,75 @@ public class WhoWonUFC290 {
             throw new IllegalStateException();
         }
     }
+
+
     public static void main(String... args) {
         try {
+            long startTime = System.currentTimeMillis();
+            // Generating queries based on user question
+            String queriesJson = jsonGPT(QUERIES_INPUT.replace("{USER_QUESTION}", USER_QUESTION));
+            List<String> queries = JsonParserBuilder.builder().build().parse(queriesJson)
+                    .getObjectNode().getArrayNode("queries")
+                    .filter(node -> node instanceof StringNode)
+                    .stream().map(Object::toString).collect(Collectors.toList());
 
-            String queriesJson = jsonGPT(QUERIES_INPUT.replace("{USER_QUESTION}",
-                    USER_QUESTION));
-            List<String> queries = JsonParserBuilder.builder().build().parse(queriesJson).getObjectNode().getArrayNode("queries")
-                    .filter(node -> node instanceof StringNode).stream().map(Object::toString).collect(Collectors.toList());
-           
+            queries.forEach(System.out::println);
 
+            // Generating a hypothetical answer and its embedding
             var hypotheticalAnswer = hypotheticalAnswer();
             System.out.println(hypotheticalAnswer);
             var hypotheticalAnswerEmbedding = embeddings(hypotheticalAnswer);
 
+            // Searching news articles based on the queries
+            List<ArrayNode> results = queries.stream()
+                    .map(WhoWonUFC290::searchNews).collect(Collectors.toList());
 
-            List<ArrayNode> results = queries.subList(0, 10).stream().map(WhoWonUFC290::searchNews).collect(Collectors.toList());
+            // Extracting relevant information from the articles
+            List<ObjectNode> articles = results.stream().map(arrayNode ->
+                            arrayNode.map(on -> on.asCollection().asObject()))
+                    .flatMap(List::stream).collect(Collectors.toList());
 
-            List<ObjectNode> articles = results.stream().map(arrayNode -> arrayNode.map(on -> on.asCollection().asObject()
-            )).flatMap(List::stream).collect(Collectors.toList());
-
-
-            List<String> articleContent = articles.stream().map(article->
-                    String.format("%s %s %s", article.getString("title"),
-                            article.getString("description"), article.getString("content").substring(0, 100))).collect(Collectors.toList());
-
+            // Extracting article content and generating embeddings for each article
+            List<String> articleContent = articles.stream().map(article ->
+                            String.format("%s %s %s", article.getString("title"),
+                                    article.getString("description"), article.getString("content").substring(0, 100)))
+                    .collect(Collectors.toList());
             List<float[]> articleEmbeddings = embeddings(articleContent);
 
-            List<Float> cosineSimilarities = articleEmbeddings.stream().map(articleEmbedding -> dot(hypotheticalAnswerEmbedding, articleEmbedding)).collect(Collectors.toList());
+            // Calculating cosine similarities between the hypothetical answer embedding and article embeddings
+            List<Float> cosineSimilarities = articleEmbeddings.stream()
+                    .map(articleEmbedding -> dot(hypotheticalAnswerEmbedding, articleEmbedding))
+                    .collect(Collectors.toList());
 
-
-            Set<ScoredArticle> articleSet = IntStream
-                    .range(0, Math.min(cosineSimilarities.size(), articleContent.size()))
+            // Creating a set of scored articles based on cosine similarities
+            Set<ScoredArticle> articleSet = IntStream.range(0,
+                            Math.min(cosineSimilarities.size(), articleContent.size()))
                     .mapToObj(i -> new ScoredArticle(articles.get(i), cosineSimilarities.get(i)))
                     .collect(Collectors.toSet());
 
-
-
-
+            // Sorting the articles based on their scores
             List<ScoredArticle> sortedArticles = new ArrayList<>(articleSet);
-
             Collections.sort(sortedArticles, (o1, o2) -> Float.compare(o2.getScore(), o1.getScore()));
 
+            // Printing the top 5 scored articles
+            sortedArticles.subList(0, 5).forEach(s -> System.out.println(s));
 
-            sortedArticles.subList(0, 5).stream().forEach(s->System.out.println(s));
+            // Formatting the top results as JSON strings
+            String formattedTopResults = String.join(",\n", sortedArticles.stream().map(sa -> sa.getContent())
+                    .map(article -> String.format(Json.niceJson("{'title':'%s', 'url':'%s', 'description':'%s', 'content':'%s'}\n"),
+                            article.getString("title"), article.getString("url"), article.getString("description"),
+                            getArticleContent(article))).collect(Collectors.toList()).subList(0, 10));
 
-            String formattedTopResults = String.join(",\n", sortedArticles.stream().map(sa-> sa.getContent())
-                    .map(article->
-                    String.format(Json.niceJson("{'title':'%s', 'url':'%s', 'description':'%s', 'content':'%s'}\n"), article.getString("title"), article.getString("url"),
-                            article.getString("description"), getArticleContent(article))).collect(Collectors.toList()).subList(0, 10));
-
-
-            String finalAnswer = jsonGPT(ANSWER_INPUT.replace("{USER_QUESTION}",
-                    USER_QUESTION).replace( "{formatted_top_results}", formattedTopResults));
+            // Generating the final answer with the formatted top results
+            String finalAnswer = jsonGPT(ANSWER_INPUT.replace("{USER_QUESTION}", USER_QUESTION)
+                    .replace("{formatted_top_results}", formattedTopResults));
 
             System.out.println(finalAnswer);
-
-            /*
-            {
-  "answer": "In the main card fights of UFC 290, the winners were:\n\n1. Alexander Volkanovski from Australia defeated Yair Rodriguez from Mexico by TKO (punches) in Round 3.\n2. Alexandre Pantoja from Brazil defeated Brandon Moreno from Mexico by split decision.\n\nAs a result, Alexander Volkanovski retained the featherweight championship title. He is from Australia.",
-  "links": [
-    {
-      "title": "Alexander Volkanovski And the Real Winners and Losers from UFC 290",
-      "url": "https://bleacherreport.com/articles/10082051-alexander-volkanovski-and-the-real-winners-and-losers-from-ufc-290"
-    }
-  ]
-}
-             */
-
-
-        }catch (Exception ex) {
-            ex.printStackTrace();
+            long endTime = System.currentTimeMillis();
+            System.out.println(endTime - startTime);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     private static Object getArticleContent(ObjectNode article) {
@@ -292,7 +295,6 @@ public class WhoWonUFC290 {
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
-
     }
 
 
