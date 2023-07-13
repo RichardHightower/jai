@@ -165,6 +165,9 @@ Open AI API provided by JAI. In this blog, we will dive into how you can speed u
 Checkout the full example [Speeding Up Your AI‐Powered Search with JAI Async](https://github.com/RichardHightower/jai/wiki/Speeding-Up-Your-AI%E2%80%90Powered-Search-with-JAI-Async).
 
 
+---
+
+
 ### Next steps
 
 | No. | Feature                             | Status | endPoint |
