@@ -152,8 +152,20 @@ Combining ChatGPT with retrieval and re-ranking methods, you can achieve accurat
 you apart from your competitors. This approach also facilitates seamless integration with existing search engines, 
 making it an ideal way to improve search engine performance for businesses of all sizes.
 
-Checkout this [Using ChatGPT, Embeddings, and HyDE to Improve Search Results](https://github.com/RichardHightower/jai/wiki/Using-ChatGPT,-Embeddings,-and-HyDE-to-Improve-Search-Results).
+Checkout this full example [Using ChatGPT, Embeddings, and HyDE to Improve Search Results](https://github.com/RichardHightower/jai/wiki/Using-ChatGPT,-Embeddings,-and-HyDE-to-Improve-Search-Results).
 
+
+Our previous developer notebook discussed how combining ChatGPT with retrieval and re-ranking methods can improve search accuracy. 
+You can obtain a fast and efficient search function place by retrieving the most related content through cosine similarity
+to a hypothetical answer.  By using async calls, you can even decrease the search time further, resulting in a 50% 
+to 200% increase in speed! Steps 1 and 2 can be done in parallel with steps 3 and 4 using the async interface for 
+Open AI API provided by JAI. In this blog, we will dive into how you can speed up your search with 
+[JAI Async methods](https://github.com/RichardHightower/jai).
+
+Checkout the full example [Speeding Up Your AI‐Powered Search with JAI Async](https://github.com/RichardHightower/jai/wiki/Speeding-Up-Your-AI%E2%80%90Powered-Search-with-JAI-Async).
+
+
+---
 
 
 ### Next steps
