@@ -154,8 +154,7 @@ public class WhoWonUFC290Async {
         }
     }
 
-    public static void main(String... args) throws Exception {
-
+    public static void main(String... args)  {
         try {
 
             long startTime = System.currentTimeMillis();
@@ -168,6 +167,7 @@ public class WhoWonUFC290Async {
                         return floats;
                     });
 
+            // Generate a list of queries and use them to look up articles.
             final var queriesFuture = jsonGPT(QUERIES_INPUT.replace("{USER_QUESTION}", USER_QUESTION))
                     .thenApply(queriesJson ->
                             JsonParserBuilder.builder().build().parse(queriesJson)
@@ -236,7 +236,6 @@ public class WhoWonUFC290Async {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     private static CompletableFuture<List<ObjectNode>> getArticles(List<String> queries) {
