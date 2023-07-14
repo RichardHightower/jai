@@ -1,6 +1,8 @@
 # JAI
 
-Jai - Open AI API Java ClientIntroducing Jai - a simple and efficient Java client powered by Open AI. We developed 
+Jai - Open AI API Java Client
+
+Introducing Jai - a simple and efficient Java client powered by Open AI. We developed 
 this client to provide a lightweight and uncomplicated option for accessing the Open AI API. With Jai, you can 
 effortlessly send chat requests and receive accurate responses without unnecessary features.
 
@@ -215,3 +217,19 @@ JAI is a minimalist Java library for the Open AI API, designed to be simple and 
 It aims to be lightweight and fast, allowing developers to quickly and easily integrate it into their projects. 
 To use JAI, you can create a client and make chat requests to the Open AI API. You can include JAI in your project using 
 Maven or Gradle, and use it to create and invoke chat requests synchronously or asynchronously.
+
+
+
+## Follow up links
+* [Java Open AI Client](https://www.linkedin.com/pulse/jai-java-ai-open-api-client-rick-hightower)
+* [Using ChatGpt embeddings and hyde to improve search results](https://www.linkedin.com/pulse/using-chatgpt-embeddings-hyde-improve-search-results-rick-hightower)
+* [Anthropics Claude Chatbot Gets Upgrade](https://www.linkedin.com/pulse/anthropics-claude-chatbot-gets-upgrade-meet-2-rick-hightower)
+* [Elon Musks XAi new frontier for artificial intelligence](https://www.linkedin.com/pulse/elon-musks-xai-new-frontier-artificial-intelligence-rick-hightower)
+* [Using Mockito to test JAI Java Open AI Client](https://www.linkedin.com/pulse/dev-notebook-mockito-witchcraft-jai-java-ai-open-api-client-rick)
+* [Fine-tuning journey with Open AI API](https://www.linkedin.com/pulse/redefining-ai-training-unanticipated-impacts-openais-api-hightower)
+* [Using Open AI to create callback functions, the basis for plugins](https://www.linkedin.com/pulse/using-chatgpt-chat-functioncall-from-java-rick-hightower)
+* [Using Java Open AI Client Async](https://www.linkedin.com/pulse/speeding-up-your-ai-powered-search-jai-async-rick-hightower)
+* [Fastest Java JSON Parser](https://github.com/nats-io/jparse)
+* [Java Open AI API Client on GitHub](https://github.com/RichardHightower/jai)
+* [Medium: Introducing Java Open AI Client](https://medium.com/@richardhightower/jai-open-ai-api-java-clientintroducing-jai-a-simple-and-efficient-java-client-powered-by-open-3b2e8a00e1a)
+* [Medium: Using ChatGPT, Embeddings, and HyDE to Improve Search Results](https://medium.com/@richardhightower/using-chatgpt-embeddings-and-hyde-to-improve-search-results-5e518890026)

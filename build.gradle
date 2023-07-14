@@ -49,7 +49,7 @@ test {
 javadoc {
     options.overview = 'src/main/javadoc/overview.html' // relative to source root
     source = sourceSets.main.allJava
-    title = "JSON Parser that uses events and index overlay"
+    title = "Java Open AI API client"
     classpath = sourceSets.main.runtimeClasspath
     doLast {
         if (!OperatingSystem.current().isWindows()) {
@@ -123,7 +123,7 @@ publishing {
                     }
                 }
                 scm {
-                    url = 'https://github.com/RichardHightower/jai'
+                    url = 'https://github.com/RichardHightower/jai.git'
                 }
             }
         }
