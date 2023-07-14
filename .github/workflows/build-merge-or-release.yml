@@ -21,7 +21,7 @@ jobs:
       SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
     steps:
       - name: Verify 
-        run: echo $TEST 
+        run: echo "This is a test $TEST" 
       - name: Setup JDK 11
         uses: actions/setup-java@v3
         with:
