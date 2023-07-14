@@ -9,7 +9,7 @@ plugins {
 }
 
 
-def jarVersion = "1.0.0"
+def jarVersion = "1.0.1"
 
 group = 'com.cloudurable'
 
