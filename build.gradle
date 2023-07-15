@@ -9,7 +9,7 @@ plugins {
 }
 
 
-def jarVersion = "1.0.2"
+def jarVersion = "1.0.3"
 
 group = 'com.cloudurable'
 archivesBaseName = "jai"
@@ -89,6 +89,9 @@ if (isMerge || isRelease) {
     nexusPublishing {
         repositories {
             sonatype {
+                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
+                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+                //repositoryUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
                 username = System.getenv('OSSRH_USERNAME')
                 password = System.getenv('OSSRH_PASSWORD')
             }
