@@ -89,9 +89,8 @@ if (isMerge || isRelease) {
     nexusPublishing {
         repositories {
             sonatype {
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
+                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
                 snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-                //repositoryUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
                 username = System.getenv('OSSRH_USERNAME')
                 password = System.getenv('OSSRH_PASSWORD')
             }
@@ -100,14 +99,14 @@ if (isMerge || isRelease) {
 }
 
 publishing {
-    repositories {
-        maven {
-            // change URLs to point to your repos, e.g. http://my.org/repo
-            def releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            def snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        }
-    }
+//    repositories {
+//        maven {
+//            // change URLs to point to your repos, e.g. http://my.org/repo
+//            def releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+//            def snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//        }
+//    }
     publications {
         mavenJava(MavenPublication) {
             from components.java
