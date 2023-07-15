@@ -12,6 +12,7 @@ plugins {
 def jarVersion = "1.0.2"
 
 group = 'com.cloudurable'
+archivesBaseName = "jai"
 
 def isMerge = System.getenv("BUILD_EVENT") == "push"
 def isRelease = System.getenv("BUILD_EVENT") == "release"
@@ -96,6 +97,14 @@ if (isMerge || isRelease) {
 }
 
 publishing {
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            def snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
     publications {
         mavenJava(MavenPublication) {
             from components.java
@@ -106,8 +115,8 @@ publishing {
                 packaging = 'jar'
                 groupId = group
                 artifactId = archivesBaseName
-                description = 'JSON Parser that uses events and index overlay.'
-                url = 'https://github.com/nats-io/jparse'
+                description = 'Java Open AI API client.'
+                url = 'https://github.com/RichardHightower/jai'
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
@@ -129,6 +138,7 @@ publishing {
         }
     }
 }
+
 
 if (isRelease) {
     signing {
