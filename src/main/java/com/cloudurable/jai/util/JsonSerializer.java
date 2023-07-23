@@ -234,6 +234,12 @@ public class JsonSerializer {
                 case '\t':
                     strBuilder.append("\\\t");
                     break;
+                case '\\':
+                    strBuilder.append("\\\\");
+                    break;
+                case '/':
+                    strBuilder.append("\\/");
+                    break;
                 default:
                     strBuilder.append(ch);
             }

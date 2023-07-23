@@ -9,7 +9,7 @@ plugins {
 }
 
 
-def jarVersion = "1.0.3"
+def jarVersion = "1.0.4"
 
 group = 'com.cloudurable'
 archivesBaseName = "jai"
