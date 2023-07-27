@@ -164,7 +164,7 @@ public class WhoWonUFC290 {
 
             // Searching news articles based on the queries
             List<ArrayNode> results = queries.stream()
-                    .map(WhoWonUFC290::searchNews).collect(Collectors.toList());
+                    .map(SearchNewsService::searchNews).collect(Collectors.toList());
 
             // Extracting relevant information from the articles
             List<ObjectNode> articles = results.stream().map(arrayNode ->
@@ -172,39 +172,23 @@ public class WhoWonUFC290 {
                     .flatMap(List::stream).collect(Collectors.toList());
 
             // Extracting article content and generating embeddings for each article
-            List<String> articleContent = articles.stream().map(article ->
-                            String.format("%s %s %s", article.getString("title"),
-                                    article.getString("description"), article.getString("content").substring(0, 100)))
-                    .collect(Collectors.toList());
-            List<float[]> articleEmbeddings = embeddings(articleContent);
+            List<String> articleContent = ArticleExtractor.extractArticlesFromJsonNodes(articles);
+            List<float[]> articleEmbeddings = EmbeddingsExtractor.extractEmbeddingsFromArticles(articleContent);
 
-            // Calculating cosine similarities between the hypothetical answer embedding and article embeddings
-            List<Float> cosineSimilarities = articleEmbeddings.stream()
-                    .map(articleEmbedding -> dot(hypotheticalAnswerEmbedding, articleEmbedding))
-                    .collect(Collectors.toList());
-
-            // Creating a set of scored articles based on cosine similarities
-            Set<ScoredArticle> articleSet = IntStream.range(0,
-                            Math.min(cosineSimilarities.size(), articleContent.size()))
-                    .mapToObj(i -> new ScoredArticle(articles.get(i), cosineSimilarities.get(i)))
-                    .collect(Collectors.toSet());
+            //Add similarity scores to the articles
+            Set<ScoredArticle> articleSet = ArticleScoreCreator.scoreArticles(hypotheticalAnswerEmbedding, articles, articleContent, articleEmbeddings);
 
             // Sorting the articles based on their scores
-            List<ScoredArticle> sortedArticles = new ArrayList<>(articleSet);
-            Collections.sort(sortedArticles, (o1, o2) -> Float.compare(o2.getScore(), o1.getScore()));
+            List<ScoredArticle> sortedArticles = sortArticles(articleSet);
 
             // Printing the top 5 scored articles
-            sortedArticles.subList(0, 5).forEach(s -> System.out.println(s));
+            displayTopFiveArticles(sortedArticles);
 
             // Formatting the top results as JSON strings
-            String formattedTopResults = String.join(",\n", sortedArticles.stream().map(sa -> sa.getContent())
-                    .map(article -> String.format(Json.niceJson("{'title':'%s', 'url':'%s', 'description':'%s', 'content':'%s'}\n"),
-                            article.getString("title"), article.getString("url"), article.getString("description"),
-                            getArticleContent(article))).collect(Collectors.toList()).subList(0, 10));
+            String formattedTopResults = formatTopResultsToAddToContext(sortedArticles);
 
             // Generating the final answer with the formatted top results
-            String finalAnswer = jsonGPT(ANSWER_INPUT.replace("{USER_QUESTION}", USER_QUESTION)
-                    .replace("{formatted_top_results}", formattedTopResults));
+            String finalAnswer = generateFinalResponse(formattedTopResults);
 
             System.out.println(finalAnswer);
             long endTime = System.currentTimeMillis();
@@ -213,6 +197,30 @@ public class WhoWonUFC290 {
             e.printStackTrace();
         }
     }
+
+    private static void displayTopFiveArticles(List<ScoredArticle> sortedArticles) {
+        sortedArticles.subList(0, 5).forEach(s -> System.out.println(s));
+    }
+
+    private static String generateFinalResponse(String formattedTopResults) {
+        return jsonGPT(ANSWER_INPUT.replace("{USER_QUESTION}", USER_QUESTION)
+                .replace("{formatted_top_results}", formattedTopResults));
+    }
+
+    private static String formatTopResultsToAddToContext(List<ScoredArticle> sortedArticles) {
+        String formattedTopResults = String.join(",\n", sortedArticles.stream().map(sa -> sa.getContent())
+                .map(article -> String.format(Json.niceJson("{'title':'%s', 'url':'%s', 'description':'%s', 'content':'%s'}\n"),
+                        article.getString("title"), article.getString("url"), article.getString("description"),
+                        getArticleContent(article))).collect(Collectors.toList()).subList(0, 10));
+        return formattedTopResults;
+    }
+
+    public static List<ScoredArticle> sortArticles(Set<ScoredArticle> articleSet) {
+        List<ScoredArticle> sortedArticles = new ArrayList<>(articleSet);
+        Collections.sort(sortedArticles, (o1, o2) -> Float.compare(o2.getScore(), o1.getScore()));
+        return sortedArticles;
+    }
+
 
     private static Object getArticleContent(ObjectNode article) {
         String content = article.getString("content");
@@ -269,31 +277,80 @@ public class WhoWonUFC290 {
         return localDate.format(formatter);
     }
 
-    public static ArrayNode searchNews(final String query) {
-        final var end = Instant.now();
-        final var start = end.minus(java.time.Duration.ofDays(5));
-        return searchNews(query, start, end, 5);
+
+    public static class ArticleExtractor {
+
+        public static List<String> extractArticlesFromJsonNodes(List<ObjectNode> articles) {
+            List<String> articleContent = articles.stream().map(article ->
+                            String.format("%s %s %s", article.getString("title"),
+                                    article.getString("description"), article.getString("content").substring(0, 100)))
+                    .collect(Collectors.toList());
+            return articleContent;
+        }
+
     }
 
-    public static ArrayNode searchNews(final String query, final Instant start, final Instant end, final int pageSize) {
-        System.out.println(query);
-        try {
+    public static class EmbeddingsExtractor {
 
-            String url = "https://newsapi.org/v2/everything?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8)
-                    + "&apiKey=" + System.getenv("NEWS_API_KEY") + "&language=en" + "&sortBy=relevancy"
-                    + "&from=" + dateStr(start) + "&to=" + dateStr(end) + "&pageSize=" + pageSize;
+        public static List<float[]> extractEmbeddingsFromArticles(List<String> articleContent) {
+            List<float[]> articleEmbeddings = embeddings(articleContent);
+            return articleEmbeddings;
+        }
 
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder().uri(URI.create(url))
-                    .GET().setHeader("Content-Type", "application/json").build(), HttpResponse.BodyHandlers.ofString());
+    }
 
-            if (response.statusCode() >= 200 && response.statusCode() < 299) {
-                return JsonParserBuilder.builder().build().parse(response.body()).atPath("articles").asCollection().asArray();
-            } else {
-                throw new IllegalStateException(" status code " + response.statusCode() + " " + response.body());
+    public static class ArticleScoreCreator {
+
+        public static Set<ScoredArticle> scoreArticles(float[] hypotheticalAnswerEmbedding, List<ObjectNode> articles, List<String> articleContent, List<float[]> articleEmbeddings) {
+
+            List<Float> cosineSimilarities = similarityScores(hypotheticalAnswerEmbedding, articleEmbeddings);
+
+            // Creating a set of scored articles based on cosine similarities
+            Set<ScoredArticle> articleSet = IntStream.range(0,
+                            Math.min(cosineSimilarities.size(), articleContent.size()))
+                    .mapToObj(i -> new ScoredArticle(articles.get(i), cosineSimilarities.get(i)))
+                    .collect(Collectors.toSet());
+            return articleSet;
+        }
+
+        public static List<Float> similarityScores(float[] hypotheticalAnswerEmbedding, List<float[]> articleEmbeddings) {
+            // Calculating cosine similarities between the hypothetical answer embedding and article embeddings
+            List<Float> cosineSimilarities = articleEmbeddings.stream()
+                    .map(articleEmbedding -> dot(hypotheticalAnswerEmbedding, articleEmbedding))
+                    .collect(Collectors.toList());
+            return cosineSimilarities;
+        }
+    }
+
+
+    public static class SearchNewsService {
+
+        public static ArrayNode searchNews(final String query) {
+            final var end = Instant.now();
+            final var start = end.minus(java.time.Duration.ofDays(5));
+            return searchNews(query, start, end, 5);
+        }
+
+        public static ArrayNode searchNews(final String query, final Instant start, final Instant end, final int pageSize) {
+            System.out.println(query);
+            try {
+
+                String url = "https://newsapi.org/v2/everything?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8)
+                        + "&apiKey=" + System.getenv("NEWS_API_KEY") + "&language=en" + "&sortBy=relevancy"
+                        + "&from=" + dateStr(start) + "&to=" + dateStr(end) + "&pageSize=" + pageSize;
+
+                HttpClient httpClient = HttpClient.newHttpClient();
+                HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder().uri(URI.create(url))
+                        .GET().setHeader("Content-Type", "application/json").build(), HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() >= 200 && response.statusCode() < 299) {
+                    return JsonParserBuilder.builder().build().parse(response.body()).atPath("articles").asCollection().asArray();
+                } else {
+                    throw new IllegalStateException(" status code " + response.statusCode() + " " + response.body());
+                }
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
             }
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
         }
     }
 

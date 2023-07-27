@@ -214,7 +214,7 @@ public class JsonSerializer {
         }
     }
 
-    private static StringBuilder encodeString(String value) {
+    public static StringBuilder encodeString(String value) {
         StringBuilder strBuilder = new StringBuilder(value.length());
         char[] charArray = value.toCharArray();
 
@@ -226,13 +226,16 @@ public class JsonSerializer {
                     strBuilder.append("\\\"");
                     break;
                 case '\n':
-                    strBuilder.append("\\\\n");
+                    strBuilder.append("\\n");
                     break;
                 case '\r':
-                    strBuilder.append("\\\\r");
+                    strBuilder.append("\\r");
                     break;
                 case '\t':
-                    strBuilder.append("\\\t");
+                    strBuilder.append("\\t");
+                    break;
+                case '\b':
+                    strBuilder.append("\\b");
                     break;
                 case '\\':
                     strBuilder.append("\\\\");
