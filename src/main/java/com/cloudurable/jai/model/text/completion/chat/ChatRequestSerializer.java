@@ -127,6 +127,24 @@ public class ChatRequestSerializer {
                 }
                 jsonBodyBuilder.endArray();
             }
+
+            /**
+             * {
+             *   "type": "array",
+             *   "items": {
+             *     "type": "number"
+             *   }
+             * }
+             */
+            if (parameter instanceof ArrayParameter) {
+                jsonBodyBuilder.startNestedObjectAttribute("items");
+                ArrayParameter ap =(ArrayParameter) parameter;
+                jsonBodyBuilder.addAttribute("type", ap.getElementType().toString().toLowerCase());
+                if (ap.getType() == ParameterType.OBJECT) {
+                    //writeObjectParameter(jsonBodyBuilder, ap.getObjectParam().get());
+                }
+                jsonBodyBuilder.endObject();
+            }
             jsonBodyBuilder.endObject();
         }
 

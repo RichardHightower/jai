@@ -36,7 +36,7 @@ public class Main {
     public static void main(final String... args) {
         try {
 
-            chatWithFunctions();
+//            chatWithFunctions();
 
 
 //            listFiles();
@@ -75,7 +75,7 @@ public class Main {
 //            editImage();
 //            callCreateImage();
 //           callTranslate();
-//            callTranscribe();
+            callTranscribe();
 //            callEmbeddingAsyncExample();
 //            callEmbeddingExample();
 //            callEditAsyncExample();
@@ -388,9 +388,11 @@ public class Main {
 
     private static void callTranscribe() throws IOException {
         // Create the client
-        final OpenAIClient client = OpenAIClient.builder().setApiKey(System.getenv("OPEN_AI_KEY")).build();
 
-        File file = new File("test.m4a");
+        final var openAiKey = System.getenv("OPENAI_API_KEY");
+        final OpenAIClient client = OpenAIClient.builder().setApiKey(openAiKey).build();
+
+        File file = new File("/Users/richardhightower/Documents/audio_notes_patents/meeting_notes1.m4a");
 
         byte[] bytes = Files.readAllBytes(file.toPath());
         // Create the chat request

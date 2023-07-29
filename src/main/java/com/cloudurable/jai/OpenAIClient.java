@@ -33,6 +33,7 @@ import com.cloudurable.jai.model.text.embedding.EmbeddingRequestSerializer;
 import com.cloudurable.jai.model.text.embedding.EmbeddingResponse;
 import com.cloudurable.jai.util.MultipartEntityBuilder;
 import com.cloudurable.jai.util.RequestResponseUtils;
+import io.nats.jparse.parser.JsonParserBuilder;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -54,18 +55,21 @@ public class OpenAIClient implements Client, ClientAsync {
     private final SecretHolder apiKey;
     private final String apiEndpoint;
     private final HttpClient httpClient;
+    private final boolean validateJson;
 
     /**
      * Constructs an OpenAIClient object.
      *
-     * @param apiKey      The API key for authentication with the OpenAI API.
-     * @param apiEndpoint The API endpoint URL for the OpenAI API.
-     * @param httpClient  The HTTP client used for making API requests.
+     * @param apiKey       The API key for authentication with the OpenAI API.
+     * @param apiEndpoint  The API endpoint URL for the OpenAI API.
+     * @param httpClient   The HTTP client used for making API requests.
+     * @param validateJson
      */
-    public OpenAIClient(SecretHolder apiKey, String apiEndpoint, HttpClient httpClient) {
+    public OpenAIClient(SecretHolder apiKey, String apiEndpoint, HttpClient httpClient, boolean validateJson) {
         this.apiKey = apiKey;
         this.apiEndpoint = apiEndpoint;
         this.httpClient = httpClient;
+        this.validateJson = validateJson;
     }
 
     /**
@@ -87,16 +91,26 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public CompletableFuture<ClientResponse<ChatRequest, ChatResponse>> chatAsync(final ChatRequest chatRequest) {
 
-        final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/chat/completions")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(ChatRequestSerializer.serialize(chatRequest), "/chat/completions");
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<ChatRequest, ChatResponse>>) response ->
                         getChatResponse(chatRequest, response)).exceptionally(e ->
                         getErrorResponseForChatRequest(e, chatRequest));
 
+    }
+
+    private HttpRequest buildGptRequest(String jsonRequestBody, String path) {
+        if (validateJson) {
+            try {
+                JsonParserBuilder.builder().build().parse(jsonRequestBody);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException(jsonRequestBody, ex);
+            }
+        }
+        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody(path)
+                .POST(HttpRequest.BodyPublishers.ofString(jsonRequestBody));
+        return requestBuilder.build();
     }
 
     /**
@@ -108,10 +122,7 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public CompletableFuture<ClientResponse<CompletionRequest, CompletionResponse>> completionAsync(
             final CompletionRequest completionRequest) {
-        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/completions")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CompletionRequestSerializer.serialize(completionRequest), "/completions");
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<CompletionRequest, CompletionResponse>>) response ->
@@ -122,11 +133,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<ClientResponse<CreateModerationRequest, CreateModerationResponse>> moderateAsync(CreateModerationRequest moderationRequest) {
-        final String jsonRequest = CreateModerationRequestSerializer.serialize(moderationRequest);
-
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/moderations")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CreateModerationRequestSerializer.serialize(moderationRequest), "/moderations");
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(response -> getCreateModerationResponse(moderationRequest, response));
@@ -140,11 +147,7 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public ClientResponse<CreateModerationRequest, CreateModerationResponse> moderate(CreateModerationRequest moderationRequest) {
 
-        final String jsonRequest = CreateModerationRequestSerializer.serialize(moderationRequest);
-
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/moderations")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CreateModerationRequestSerializer.serialize(moderationRequest), "/moderations");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getCreateModerationResponse(moderationRequest, response);
@@ -467,11 +470,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<ClientResponse<CreateFineTuneRequest, FineTuneData>> createFineTuneAsync(CreateFineTuneRequest createFineTuneRequest) {
-        final String jsonRequest = CreateFineTuneRequestSerializer.serialize(createFineTuneRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/fine-tunes")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CreateFineTuneRequestSerializer.serialize(createFineTuneRequest), "/fine-tunes");
         try {
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(response -> getCreateFineTuneResponse(createFineTuneRequest, response));
@@ -483,11 +482,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public ClientResponse<CreateFineTuneRequest, FineTuneData> createFineTune(CreateFineTuneRequest createFineTuneRequest) {
-        final String jsonRequest = CreateFineTuneRequestSerializer.serialize(createFineTuneRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/fine-tunes")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CreateFineTuneRequestSerializer.serialize(createFineTuneRequest), "/fine-tunes");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getCreateFineTuneResponse(createFineTuneRequest, response);
@@ -551,11 +546,7 @@ public class OpenAIClient implements Client, ClientAsync {
     @Override
     public ClientResponse<ChatRequest, ChatResponse> chat(final ChatRequest chatRequest) {
 
-        final String jsonRequest = ChatRequestSerializer.serialize(chatRequest);
-
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/chat/completions")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(ChatRequestSerializer.serialize(chatRequest), "/chat/completions");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getChatResponse(chatRequest, response);
@@ -591,11 +582,7 @@ public class OpenAIClient implements Client, ClientAsync {
      */
     @Override
     public ClientResponse<CompletionRequest, CompletionResponse> completion(final CompletionRequest completionRequest) {
-        final String jsonRequest = CompletionRequestSerializer.serialize(completionRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/completions")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(CompletionRequestSerializer.serialize(completionRequest), "/completions");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getCompletionResponse(completionRequest, response);
@@ -606,11 +593,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public ClientResponse<EditRequest, EditResponse> edit(final EditRequest editRequest) {
-        final String jsonRequest = EditRequestSerializer.serialize(editRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/edits")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(EditRequestSerializer.serialize(editRequest), "/edits");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getEditResponse(editRequest, response);
@@ -621,11 +604,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public ClientResponse<EmbeddingRequest, EmbeddingResponse> embedding(EmbeddingRequest embeddingRequest) {
-        final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(EmbeddingRequestSerializer.serialize(embeddingRequest), "/embeddings");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getEmbeddingResponse(embeddingRequest, response);
@@ -721,11 +700,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public ClientResponse<CreateImageRequest, ImageResponse> createImage(CreateImageRequest imageRequest) {
-        final String jsonRequest = ImageRequestSerializer.buildJson(imageRequest);
-
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/images/generations")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(ImageRequestSerializer.buildJson(imageRequest), "/images/generations");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return getCreateImageResponse(imageRequest, response);
@@ -769,11 +744,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<ClientResponse<CreateImageRequest, ImageResponse>> createImageAsync(CreateImageRequest imageRequest) {
-        final String jsonRequest = ImageRequestSerializer.buildJson(imageRequest);
-
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/images/generations")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(ImageRequestSerializer.buildJson(imageRequest), "/images/generations");
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response ->
@@ -815,11 +786,7 @@ public class OpenAIClient implements Client, ClientAsync {
     }
 
     public CompletableFuture<ClientResponse<EmbeddingRequest, EmbeddingResponse>> embeddingAsync(final EmbeddingRequest embeddingRequest) {
-        final String jsonRequest = EmbeddingRequestSerializer.serialize(embeddingRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/embeddings")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(EmbeddingRequestSerializer.serialize(embeddingRequest), "/embeddings");
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<EmbeddingRequest, EmbeddingResponse>>) response ->
                         getEmbeddingResponse(embeddingRequest, response)).exceptionally(e ->
@@ -829,11 +796,7 @@ public class OpenAIClient implements Client, ClientAsync {
 
     @Override
     public CompletableFuture<ClientResponse<EditRequest, EditResponse>> editAsync(EditRequest editRequest) {
-        final String jsonRequest = EditRequestSerializer.serialize(editRequest);
-        // Build and send the HTTP request
-        final HttpRequest.Builder requestBuilder = createRequestBuilderWithJsonBody("/edits")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonRequest));
-        final HttpRequest request = requestBuilder.build();
+        final HttpRequest request = buildGptRequest(EditRequestSerializer.serialize(editRequest), "/edits");
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply((Function<HttpResponse<String>, ClientResponse<EditRequest, EditResponse>>) response ->
                         getEditResponse(editRequest, response)).exceptionally(e ->
@@ -850,6 +813,8 @@ public class OpenAIClient implements Client, ClientAsync {
         private HttpClient httpClient;
 
         private HttpClient.Builder httpClientBuilder;
+
+        private boolean validateJson;
 
         private Builder() {
         }
@@ -922,6 +887,11 @@ public class OpenAIClient implements Client, ClientAsync {
             return this;
         }
 
+        public Builder validateJson(boolean validateJson) {
+            this.validateJson = validateJson;
+            return this;
+        }
+
         /**
          * Builds the OpenAIClient object.
          *
@@ -930,8 +900,10 @@ public class OpenAIClient implements Client, ClientAsync {
          */
         public OpenAIClient build() {
             validateParameters();
-            return new OpenAIClient(apiKey, apiEndpoint, getHttpClient());
+            return new OpenAIClient(apiKey, apiEndpoint, getHttpClient(), validateJson);
         }
+
+
 
         private void validateParameters() {
             if (apiKey == null || apiKey.isEmpty()) {
@@ -942,6 +914,8 @@ public class OpenAIClient implements Client, ClientAsync {
             }
 
         }
+
+
     }
 
 }

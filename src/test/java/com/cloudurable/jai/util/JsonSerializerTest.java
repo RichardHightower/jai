@@ -113,5 +113,12 @@ class JsonSerializerTest {
 
     }
 
+    @Test
+    void encode() {
+        StringBuilder builder = JsonSerializer.encodeString("Hi mom \n how are you \\ \t \b \r \"'good'\" ");
+        assertEquals("Hi mom \\n how are you \\\\ \\t \\b \\r \\\"'good'\\\" ", builder.toString());
+        System.out.println(builder);
+    }
+
 
 }
