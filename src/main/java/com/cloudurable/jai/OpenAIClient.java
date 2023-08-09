@@ -549,9 +549,9 @@ public class OpenAIClient implements Client, ClientAsync {
         final HttpRequest request = buildGptRequest(ChatRequestSerializer.serialize(chatRequest), "/chat/completions");
         try {
             final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("RESPONSE\n\n\n" + response.body());
-            System.out.println("<<<<<<<<<<<<<<<<<<<<< RESPONSE\nSTATUS CODE " + response.statusCode()
-                    + "\n" + response.body() + "\n########################\n");
+            //System.out.println("RESPONSE\n\n\n" + response.body());
+            //System.out.println("<<<<<<<<<<<<<<<<<<<<< RESPONSE\nSTATUS CODE " + response.statusCode()
+            //        + "\n" + response.body() + "\n########################\n");
             return getChatResponse(chatRequest, response);
         } catch (Exception e) {
             return getErrorResponseForChatRequest(e, chatRequest);

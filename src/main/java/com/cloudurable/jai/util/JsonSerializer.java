@@ -32,7 +32,7 @@ import java.util.Stack;
  * <p>
  * In summary, the JsonSerializer class provides a convenient way to build JSON strings by sequentially adding elements, attributes, and nested objects or lists. It maintains the serialization state using a stack and a StringBuilder for efficient string concatenation.
  */
-public class JsonSerializer {
+public class JsonSerializer implements JsonBuilder{
 
     /**
      * The StringBuilder used to build the JSON string.

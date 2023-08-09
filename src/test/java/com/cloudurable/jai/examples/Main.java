@@ -392,7 +392,7 @@ public class Main {
         final var openAiKey = System.getenv("OPENAI_API_KEY");
         final OpenAIClient client = OpenAIClient.builder().setApiKey(openAiKey).build();
 
-        File file = new File("/Users/richardhightower/Documents/audio_notes_patents/meeting_notes1.m4a");
+        File file = new File("./test.m4a");
 
         byte[] bytes = Files.readAllBytes(file.toPath());
         // Create the chat request
